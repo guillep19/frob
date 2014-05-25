@@ -7,6 +7,9 @@ Proyecto de grado - Guillermo Pacheco - Facultad de Ingeniería - UdelaR
 Noticias
 --------
 
+* Martes 27-05: 
+  Reunión.
+
 * Martes 29-04:
   Reunión para evaluar el documento con los datos de los kits relevados.
 
