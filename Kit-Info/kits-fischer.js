@@ -1,5 +1,10 @@
-var k_fischer_1 = new Models.kit({
-  family: f_fischer,
+var fischer_family = new Models.Family({
+  name: 'Fischertechnik',
+  kits: new Collections.Kit()
+});
+
+var k_fischer_1 = new Models.Kit({
+  family: fischer_family,
   type: TYPES.kit,
   name: 'ROBO TX Automation Robots',
   description: 'Four reality-based and fully functional industrial robots:' +
@@ -15,8 +20,8 @@ var k_fischer_1 = new Models.kit({
                ' Additionally required: ROBO TX Controller,' +
                ' Software ROBO Pro, Power Set or Accu Set'
 });
-var k_fischer_2 = new Models.kit({
-  family: f_fischer,
+var k_fischer_2 = new Models.Kit({
+  family: fischer_family,
   type: TYPES.kit,
   name: 'ROBO TX ElectroPneumatic',
   description: 'The subjects of electro-pneumatics and vacuum technology are' +
@@ -37,8 +42,8 @@ var k_fischer_2 = new Models.kit({
                '  Software ROBO Pro' +
                '  Power Set or Accu Set'
 });
-var k_fischer_3 = new Models.kit({
-  family: f_fischer,
+var k_fischer_3 = new Models.Kit({
+  family: fischer_family,
   type: TYPES.kit,
   name: 'ROBO TX Explorer',
   description: 'Explore unknown areas, measure distances, follow trails,' +
@@ -62,30 +67,30 @@ var k_fischer_3 = new Models.kit({
                ' optical color sensor and an IR trail sensor' +
                ' Additionally required is ROBO TX Controller, Software ROBO Pro, Accu Set'
 });
-var k_fischer_4 = new Models.kit({
-  family: f_fischer,
+var k_fischer_4 = new Models.Kit({
+  family: fischer_family,
   type: TYPES.kit,
   name: 'ROBOTICS LT Beginner Set',
   description: ''
 });
-var k_fischer_5 = new Models.kit({
-  family: f_fischer,
+var k_fischer_5 = new Models.Kit({
+  family: fischer_family,
   type: TYPES.kit,
   name: 'ROBOTICS TXT Discovery Set',
   description: ''
 });
 
-var k_fischer_board_1 = new Models.kit({
-  family: f_fischer,
+var k_fischer_board_1 = new Models.Kit({
+  family: fischer_family,
   type: TYPES.board,
   name: 'ROBO TX Controller',
   description: '',
   price: '5000 UY/$',
-  firmware-size: "2.1 Mb"
+  firmwaresize: "2.1 Mb"
 });
 
-var k_fischer_board_2 = new Models.kit({
-  family: f_fischer,
+var k_fischer_board_2 = new Models.Kit({
+  family: fischer_family,
   type: TYPES.board,
   name: 'ROBOTICS TXT Controller',
   description: 'The compact ROBOTICS TXT Controller (90 x 90 x 25mm) can be' +
@@ -99,11 +104,11 @@ var k_fischer_board_2 = new Models.kit({
   firmware: 'Linux based',
   processors: [arm_cortex_a8, arm_cortex_m3],
   frequency: "500Mhz", //Processor 1
-  memory: [
+  memory: {
     ram: {type: 'DDR3', size: '128 MB'},
     flash: {type: '', size: '64 MB'},
     expansion: {type: 'Micro SD card slot'}
-  ],
+  },
   display: {
     size: '2.4"',
     color: 'Yes',
@@ -134,18 +139,18 @@ var k_fischer_board_2 = new Models.kit({
     ' for capturing measured values within a defined period of time',
     'Dimensions: 90 x 90 x 25 mm',
     'Power supply: 9V DC 3.45 mm socket, or 2.5 mm fischertechnik sockets (for Accu Set)'
-  ] 
+  ],
   programming: [
     'ROBO Pro',
     'C-Compiler',
     'PC-Library'
   ]
 });
-var k_fischer_soft_1 = new Models.kit({
-  family: f_fischer,
+var k_fischer_soft_1 = new Models.Kit({
+  family: fischer_family,
   type: TYPES.software,
   name: 'ROBO Pro Software',
-  description: 'New graphic programmer\'s application'
+  description: 'New graphic programmer\'s application' +
                'Simple entry for beginners through programing of flow charts' +
                ' consisting of various software building blocks. The' +
                ' exchange of the data between the software building blocks' +

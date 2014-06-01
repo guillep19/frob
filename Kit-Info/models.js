@@ -1,19 +1,19 @@
 
-var Models = Models || {};
+var Models = Models || {},
+    Collections = Collections || {};
 
-var Models.Family = Backbone.Model.extend({
+/* Models */
+Models.Family = Backbone.Model.extend({
   defaults: {
     name: undefined,
     kits: undefined //Collections.Kit
   },
-  url: '/family' + this.get('name')
+  url: function() {
+    return '/family' + this.get('name');
+  }
 });
 
-var Collections.Family = Backbone.Collection.extend({
-  url: '/family'
-});
-
-var Models.Kit = Backbone.Model.extend({
+Models.Kit = Backbone.Model.extend({
   defaults: {
     'name': '', 
     'family': undefined, // Models.Family
@@ -23,48 +23,25 @@ var Models.Kit = Backbone.Model.extend({
   }
 });
 
-var Collections.Kit = Backbone.Collection.extend({
-  model: Models.Kit
-});
-
-
-var Models.Processor = Backbone.Model.extend({
+Models.Processor = Backbone.Model.extend({
   defaults: {
-
+    architecture: undefined
   }
 });
 
-kit: {
-  "name": "string" (primary key)
-  "type": "platform" | "board"
-}
+/* Collections */
+Collections.Family = Backbone.Collection.extend({
+  url: '/family',
+  model: Models.Family
+});
 
-platform: {
-  "name": "string" (foreign key (kit))
-  ...
-}
+Collections.Kit = Backbone.Collection.extend({
+  model: Models.Kit,
+  url: '/kit'
+});
 
-board: {
-  "name": "string", (foreign key (kit))
-  "processor": "string", (foreign key (processor))
-  "other_processors": (can be null)
-}
-
-processor: {
-  "model": "string", (
-  "vendor": "string",
-  "
-}
-
-processor_models: {
-  "model": "string" (primary_key),
-  "architecture": "avr" | "arm"
-}
-
-Family 
-
-Kit = new Models.kit({
-  family: 'Arduino',
-  name: ''
-
+Collections.Processor = Backbone.Collection.extend({
+  model: Models.Processor,
+  url: '/processor'
+});
 

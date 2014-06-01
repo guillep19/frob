@@ -1,9 +1,10 @@
 
-var arm_cortex_m3 = new Models.processor({
+var arm_cortex_m3 = new Models.Processor({
   architecture: ARCHITECTURES.arm,
-  bits: 32,
+  bits: 32
+});
 
-var arm_cortex_a8 = new Models.processor({
+var arm_cortex_a8 = new Models.Processor({
   architecture: ARCHITECTURES.arm,
   specific_architecture: "ARMv7",
   bits: 32,
