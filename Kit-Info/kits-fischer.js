@@ -35,7 +35,7 @@ var k_fischer_2 = new Models.kit({
                'Additionally required is:' +
                '  ROBO TX Controller' +
                '  Software ROBO Pro' +
-               '  Power Set or Accu Set' 
+               '  Power Set or Accu Set'
 });
 var k_fischer_3 = new Models.kit({
   family: f_fischer,
@@ -80,7 +80,8 @@ var k_fischer_board_1 = new Models.kit({
   type: TYPES.board,
   name: 'ROBO TX Controller',
   description: '',
-  price: '5000 UY/$'
+  price: '5000 UY/$',
+  firmware-size: "2.1 Mb"
 });
 
 var k_fischer_board_2 = new Models.kit({
@@ -94,48 +95,51 @@ var k_fischer_board_2 = new Models.kit({
                ' interfaces also include a USB host port for USB sticks and' +
                ' other components such as the fischertechnik USB camera.' +
                ' The integrated Micro SD card slot allows expansion of the' +
-               ' memory capacity. Controllers can be coupled.'
-  processors: [arm_cortex_a8, arm_cortex_m3]
-  
-  • Dual Processor: ARM Cortex A8 (32bit/500mHz) + Cortex M3
-  
-  • Memory capacity: 128 MB DDR3 RAM, 64 MB Flash
-  
-  • Memory expansion Micro SD card slot
-  
-  • Display: Color 2.4" touch display (320x240 pixels)
-  
-  • 8 Universal inputs: Digital/analog 0-9VDC, analog 0-5 kΩ
-  
-  • 4 high speed numerical inputs: Digital, frequency up to 1kHz
-  
-  • 4 Motor outputs 9V/250mA (max: 800 mA): speed infinitely controllable, short-circuit proof, alternative 8 single outputs for components such as lights, etc.
-  
-  • Combined Bluetooth/WiFi RF module: BT 2.1 EDR+ 4.0, WLAN 802.11 b/g/n
-  
-  • Infrared receiver diode: for fischertechnik Control Set transmitter
-  
-  • USB 2.0 Client: Mini USB port for connection to PC
-  
-  • USB Host interface: USB A port for fischertechnik USB camera, USB sticks, etc.
-  
-  • Camera interface: over USB Host, Linux camera driver integrated into operating system
-  
-  • 10-pin male connector for additional inputs and outputs as well as I2C interface
-  
-  • Integrated loud speaker
-  
-  • Integrated real time clock with exchangeable buffer battery: for capturing measured values within a defined period of time
-  
-  • Linux-based open source operating system
-  
-  • Programming possible with ROBO Pro, C-Compiler, PC-Library, and many others.
-  
-  • Link to smartphones/tablet PC's via Bluetooth or WLAN, allowing them to be used as terminals for the controller. Programming using ROBO-Pro software.
-  
-  • Dimensions: 90 x 90 x 25 mm
-  
-  • Power supply: 9V DC 3.45 mm socket, or 2.5 mm fischertechnik sockets (for Accu Set)'
+               ' memory capacity. Controllers can be coupled.',
+  firmware: 'Linux based',
+  processors: [arm_cortex_a8, arm_cortex_m3],
+  frequency: "500Mhz", //Processor 1
+  memory: [
+    ram: {type: 'DDR3', size: '128 MB'},
+    flash: {type: '', size: '64 MB'},
+    expansion: {type: 'Micro SD card slot'}
+  ],
+  display: {
+    size: '2.4"',
+    color: 'Yes',
+    touch: 'Yes',
+    resolution: '320x240'
+  },
+  io: [
+    '8 Universal inputs: Digital/analog 0-9VDC, analog 0-5 kΩ',
+    '4 high speed numerical inputs: Digital, frequency up to 1kHz',
+    '4 Motor outputs 9V/250mA (max: 800 mA): speed infinitely controllable,' +
+    ' short-circuit proof, alternative 8 single outputs',
+    '10-pin male connector (additional inputs and outputs as well as I2C interface)'
+  ],
+  wireless: [
+    'Combined Bluetooth/WiFi RF module: BT 2.1 EDR+ 4.0, WLAN 802.11 b/g/n',
+    'Infrared receiver diode: for fischertechnik Control Set transmitter',
+    'Link to smartphones/tablet PCs via Bluetooth or WLAN, allowing them' +
+    ' to be used as terminals for the controller.' 
+  ],
+  usb: [
+    'USB 2.0 Client: Mini USB port for connection to PC',
+    'USB Host interface: USB A port for fischertechnik USB camera, USB sticks, etc.'
+  ],
+  others: [
+    'Camera over USB Host, Linux camera driver integrated into operating system',
+    'Integrated loud speaker',
+    'Integrated real time clock with exchangeable buffer battery:' +
+    ' for capturing measured values within a defined period of time',
+    'Dimensions: 90 x 90 x 25 mm',
+    'Power supply: 9V DC 3.45 mm socket, or 2.5 mm fischertechnik sockets (for Accu Set)'
+  ] 
+  programming: [
+    'ROBO Pro',
+    'C-Compiler',
+    'PC-Library'
+  ]
 });
 var k_fischer_soft_1 = new Models.kit({
   family: f_fischer,
