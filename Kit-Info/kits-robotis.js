@@ -7,7 +7,7 @@ var k_robotis_board_1 = new Models.Kit({
   name: 'CM-530',
   description: '',
   firmware: '',
-  processors: [arm_cortex_m3],
+  processors: ['arm_cortex_m3'],
   frequency: '72 MHz',
   memory: {
     ram: 2,

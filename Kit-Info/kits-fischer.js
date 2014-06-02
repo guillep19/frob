@@ -102,7 +102,7 @@ var k_fischer_board_2 = new Models.Kit({
                ' The integrated Micro SD card slot allows expansion of the' +
                ' memory capacity. Controllers can be coupled.',
   firmware: 'Linux based',
-  processors: [arm_cortex_a8, arm_cortex_m3],
+  processors: ['arm_cortex_a8', 'arm_cortex_m3'],
   frequency: "500Mhz", //Processor 1
   memory: {
     ram: {type: 'DDR3', size: '128 MB'},
