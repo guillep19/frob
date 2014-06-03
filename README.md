@@ -7,6 +7,14 @@ Proyecto de grado - Guillermo Pacheco - Facultad de Ingeniería - UdelaR
 Noticias
 --------
 
+* Martes 10-06:
+  Armar manuales para programar en C en cada plataforma (y MV).
+  Evaluar pblua (lego), elua (varios micro), leJos, mbedlogo. Armar benchmark.
+  Lenguajes de programación funcional reactiva.
+
+* Martes 03-06:
+  Estado del arte - versión inicial.
+
 * Martes 27-05: 
   Reunión.
 
