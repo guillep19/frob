@@ -1,0 +1,59 @@
+
+
+\section{Kits Arduino}
+
+Arduino es una plataforma abierta de prototipado, basada en software y hardware flexible fácil de usar. Está pensada para ser usada por diseñadores, artistas, como hobby, para crear objetos y ambientes interactivos. Entre sus productos, hay placas y kits de componentes.
+Los kits de arduino generalmente tienen interfaz usb con soporte para programarlo usando la propia placa sin necesidad de un programador por hardware. También los pines de entrada/salida del microprocesador están diseñados para poder colocar fácilmente cables y conectar periféricos sin necesidad de soldar. 
+También incluyen leds y botones para resetear la placa o utilizarlos como sensor.
+Un IDE que utiliza una implementación de gcc para la arquitectura avr puede ser utilizado para programar sobre los kits. Variedad de librerías y abstracciones de sensores, actuadores, protocolos de comunicación, ya están implementados y pueden ser usados en los kits.
+Procesadores y arquitectura: Atmel, algunos con arquitectura ARM otros AVR.
+Lenguaje estándar: C.
+Herramientas de desarrollo: Arduino Ide
+
+\subsection{Arduino Uno}
+
+Kit:
+Arduino Uno
+Web:
+http://arduino.cc/en/Main/ArduinoBoardUno
+Características generales:
+Es una placa basada en el microcontrolador ATmega328. 
+0.5 kb de la memoria flash son utilizados por bootloader.
+Existe una placa construida en uruguay llamada Urduino328, la cuál es compatible con la Arduino Uno y tiene un costo aproximado de 50 dólares.
+Microcontrolador:
+ATmega328
+
+
+\subsection{Arduino Leonardo}
+Web:
+http://arduino.cc/en/Main/ArduinoBoardLeonardo
+Características generales:
+Es una placa basada en el microcontrolador ATmega32u4. Tiene 20 pins de entrada/salida digitales, frecuencia de 16 MHz y conección micro USB. 
+La diferencia principal con otras placas es que el microcontrolador permite la comunicación usb sin necesidad de un microcontrolador secundario que la implemente.
+Un bootloader es incluído, el cuál se puede utilizar para programar la placa sin un programador por hardware. Éste bootloader ocupa 4 kb de la memoria Flash del microcontrolador, puede ser eliminado pero teniendo en cuenta que luego no se cuenta con su funcionalidad.
+Microcontrolador:
+ATmega32u4
+
+
+\subsection{Arduino Due}
+Web: 
+http://arduino.cc/en/Main/ArduinoBoardDue
+Características:
+Es la primer placa arduino basada en la arquitectura ARM de 32 bits. Tiene 54 pins de entrada/salida digital, 12 de los cuáles pueden ser usados como salidas PWM. 12 entradas analógicas, un reloj de 84 MHz integrado, conección USB, 2 convertidores digital-analógico. Un botón de reset y un botón de borrado.
+A diferencia de otras placas, ésta placa corre con un voltaje de 3.3V.
+La mejora sustancial con respecto a otras placas, puede ejecutarhttp://arduino.cc/en/Main/Robot operaciones sobre 4 bytes en un sólo ciclo de reloj, tiene una frecuencia alta de reloj, 96 kbytes de SRAM, 512 kb de memoria flash para código y un controlador DMA para liberar el CPU de tareas basadas en muchos accesos a memoria.
+El bootloader que incluye viene de fábrica y está en una ROM dedicada, por lo que no ocupa espacio de la memoria Flash.
+Microcontrolador:
+Atmel SAM3X8E ARM Cortex-M3
+
+\subsection{Arduino Robot}
+Web:
+http://arduino.cc/en/Main/Robot
+Características:
+Es el primer Arduino sobre ruedas oficial. Cuenta con dos procesadores, cada uno sobre una placa. Hay una placa utilizada para controlar los motores, y otra placa de control que maneja los sensores y decide como operar.
+Cada placa se puede programar por separado usando el IDE Arduino. Alguons de los pines de la placa ya están mapeados a sensores y actuadores.
+El chasis cuenta con una brújula, un parlante, un panel de control de 5 botones, leds, conexiones I2C, dos ruedas y sensores infrarrojos. También tiene zonas de prototipado.
+Microcontrolador:
+2 microcontroladores ATmega32u4
+
+

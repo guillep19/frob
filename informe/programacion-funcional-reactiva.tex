@@ -1,0 +1,35 @@
+
+
+\section{Programación funcional reactiva}
+
+http://www.haskell.org/haskellwiki/Functional_Reactive_Programming
+
+Programar sistemas reactivos con un enfoque funcional.
+  
+
+http://www.haskell.org/haskellwiki/Yampa
+
+Implementación de FRP como una librería de combinadores haskell. (combinator library)
+DSEL = Domain Specific Embedded Language
+Es un DSL embebido en Haskell.
+
+Concepto clave: Funciones sobre señales. x --- f ---- y
+
+Stateful : Si y(t) depende de x(t) y state(t).
+Stateless: Si y(t) depende solo de x(t).
+
+Los sistemas son formados combinando funciones de seniales. 
+Por ejemplo composición lineal:
+
+ x ---- y ---- z   eq
+( >> ) ::  SF x y -> SF y z -> SF x z
+
+Se utiliza el framework arrow para esto.
+
+first :: SF a b -> SF (a, c) (b, c)
++++
+***
+second
+..
+
+Interesante ejemplo de frp: Elm language, FRP en navegadores web. http://elm-lang.org/
