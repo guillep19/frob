@@ -1,15 +1,6 @@
 
-\documentclass{article}
-\usepackage[utf8]{inputenc}
 
-\title{A Task Description Language for Robot Control}
-\date{\today}
-
-\begin{document}
-
-\maketitle
-
-\section{Resumen}
+\section{TDL: A Task Description Language for Robot Control}
 
 Los sistema robóticos deben cumplir con objetivos al mismo tiempo que
 reaccionan ante el entorno y nuevas oportunidades.
@@ -27,7 +18,7 @@ El articulo introduce TDL, describe la representacion de arboles de tareas,
 (Task tree representation) y presenta algunos aspectos de su implementacion 
 y su uso en la creación de robots moviles autónomos.
 
-\section{Introducción}
+\subsection{Introducción}
 
 Los sistemas robóticos, como robots móviles autónomos, necesitan alcanzar
 objetivos de alto nivel, y a su vez mantenerse reactivos a contingencias y
@@ -93,7 +84,7 @@ Finalmente se muestra un poco de la implementación de TDL y TCM, así como
 herramientas desarroladas para soportar diseño y debugging.
 
 
-\section{Trabajo relacionado}
+\subsection{Trabajo relacionado}
 
 TDL y TCM estan fuertemente influenciados en trabajos anteriores sobre
  Arquitectura de control de tareas. (TCA)
@@ -116,14 +107,14 @@ control de tareas, para robots moviles y otros sistemas autonomos.
 Como TDL, la mayoria incluyen soporte para descomposicion de tareas, 
 sincronizacion, monitoreo y manejo de excepciones.
 
-\begin{enumeration}
+\begin{enumerate}
 \item RAP
 \item PRS
 \item ESL
 \item Colbert
-\end{enumeration}
+\end{enumerate}
 
-\section{Árboles de tareas}
+\subsection{Árboles de tareas}
 
 Los arboles de tareas son la representacion basica subyacente a TDL y TCM. 
 Un arbol codifica las relaciones padre/hijo y
@@ -199,7 +190,7 @@ arbol estan deshabilitados.
 
 $(\forall N: Node)(Tree(N) /equiv {N} \cup_{c \in children(N)} Tree (c)$
 
-....
+TODO: Agregar las otras restricciones.
 
 Mientras que un arbol de tareas impone restricciones entre nodos y sus hijos, 
 por defecto no existen restricciones entre 
@@ -207,10 +198,14 @@ hijos. Por defecto se manejan concurrentemente.
 Sin embargo, a menudo se necesitan restricciones adicionales de sincronización
 para coordinar el comportamiento del robot de forma apropiada.
 Por ejemplo, la tarea de llevar  el correo a un lugar incluye 
- 1) Ir hasta el lugar
- 2) Centrarse en la puerta
- 3) Anunciar la presencia
- 4) Esperar que el correo sea recibido.
+
+\begin{enumerate}
+\item Ir hasta el lugar
+\item Centrarse en la puerta
+\item Anunciar la presencia
+\item Esperar que el correo sea recibido.
+\end{enumerate}
+
 Las primeras 3 deben ser secuenciales, mientras que las ultimas dos pueden 
 ser concurrentes.
 
@@ -223,21 +218,21 @@ o un evento externo (un boton, etc).
 Por ejemplo uno podria hacer que el nodo A no pueda estar habilitado hasta 
 que la ejecucion del nodo B se complete. (secuencial)
 
-Similarmente, se puede decir que cierto nodo esta deshabilitado hasta las 13:00
- hs.
+Similarmente, se puede decir que cierto nodo está deshabilitado hasta las
+13:00 hs.
 
-Las restricciones de terminacion son similares. Indican que un nodo y todos 
+Las restricciones de terminación son similares. Indican que un nodo y todos 
 sus hijos deben finalizar cuando cierto evento ocurra, si
-toma demasiado tiempo en completarse o alguna otra tarea comenzo su ejecucion.
+toma demasiado tiempo en completarse o alguna otra tarea comenzó su ejecución.
 
-Permitiendo activacion y terminacion ser especificada en la -expansion-, 
--ejecucion- o -estado- del nodo, se puede tener un control
-muy fino de cuando se activa cada parte del arbol.
-Por ejemplo si dos tareas deben ser secuenciales, pero la expansion de la 
-segunda es computacionalmente cara. Se podria
-restringir la ejecucion de la segunda tarea para que sea secuencial, pero 
-permitir que su expansion sea concurrente, de manera
-que este lista para ejecutarse cuando la primer tarea se complete.
+Permitiendo activación y terminación ser especificada en la -expansión-, 
+-ejecución- o -estado- del nodo, se puede tener un control
+muy fino de cuando se activa cada parte del árbol.
+Por ejemplo si dos tareas deben ser secuenciales, pero la expansión de la 
+segunda es computacionalmente cara. Se podría
+restringir la ejecución de la segunda tarea para que sea secuencial, pero 
+permitir que su expansión sea concurrente, de manera
+que esté lista para ejecutarse cuando la primer tarea se complete.
 
 Similarmente, se podria querer expandir una tarea antes que otra, pero 
 ejecutarlas en orden opuesto. Por ejemplo, para hacer un
@@ -284,8 +279,7 @@ El arbol permanece intacto durante este mecanismo, el manejador de excepciones
 debe decidir que partes del arbol modificar para recuperarse.
 
 
-TDL
-===
+\subsection{TDL}
 
 TDL es una extension de C++ que facilita la creacion, sincronizacion y 
 manipulacion de arboles de tareas.
@@ -323,19 +317,19 @@ saber cual seria la tarea previa antes, esto se determina con codigo agregado
 por el compilador TDL.
 Las tareas se pueden etiquetar si multiples tareas fueron creadas:
 
-$
+\begin{verbatim}
 t1: spawn a(1)
 t2: spawn a(2)
 spawn b(3) with
   disable until t1 execution completed,
   disable expansion until t2 handling active;
-$
+\end{verbatim}
 
 La etiqueta "previous" puede ser util, pero puede llevar a codigo dificil de 
 entender, en estos casos deberian usarse etiquetas.
 
 Las restricciones pueden ser aplicadas a varias tareas. TDL lo soporta
-usando la sintaxis "with (<constraint>) do {<body>}".
+usando la sintaxis $with (<constraint>) do {<body>}$.
 Las restricciones son aplicadas a todas las tareas que se creen en <body>.
 
 Para sentencias with do anidadas, las restricciones son aplicadas al 
@@ -346,14 +340,15 @@ En el cuerpo de una tarea puede contener sentencias *succeed* y
 Ambas hacen que la tarea se marque como completada, y *fail* lanza una 
 excepcion.
 Los manejadores de excepciones se definen analogamente a los objetivos y 
-comandos (*goal* y *command*).
+comandos (\emph{goal} y *command*).
 Los manejadores pueden contener la sentencia "bypass", que indican que otro
 manejador deberia ser encontrado para manejar la excepcion.
 Los manejadores de excepciones son asociados con los nodos de tareas usando
-la sentencia "with exception (<motivo>:<manejador> ...) do {<body>}"
+la sentencia $with exception (<motivo>:<manejador> ...) do {<body>}$
 
 Por ejemplo:
-$
+
+\begin{verbatim}
 Goal navigateToLocation(double x, double y) {
   with exception
     ("Overheating": handleOverheating(x, y),
@@ -361,7 +356,7 @@ Goal navigateToLocation(double x, double y) {
 
      }
 }
-$
+\end{verbatim}
 
 Los monitores son definidos y lanzados de la misma forma que los objetivos
 y los comandos.
@@ -369,8 +364,7 @@ Sin embargo, para los monitores se puede especificar restricciones globales.
 Por ejemplo "max triggers = <num>", "max activations = <num>"
 y "period = <time>".
 
-Implementacion
-==============
+\subsection{Implementación}
 
 TDL esta implementado usando un compilador que transforma las definiciones
 de tareas en C++ puro que incluye invocaciones a la biblioteca TCM.
@@ -405,7 +399,7 @@ la tarea como si fuese una funcion C estandar.
 
 Muchas clases especializadas se usan para ayudar a manejar los nodos
 de tareas y las restricciones de sincronizacion. En particular
-el objeto _TDL_HandleManager se usa para mapear los nombres de tareas con
+el objeto $_TDL_HandleManager$ se usa para mapear los nombres de tareas con
 las referencias al nodo correspondiente en el arbol.
 Este mismo objeto se usa para mantener referencia al anidado de "with/do" y
 cuando los nodos se crean, para poder determinar que nodo se
@@ -429,16 +423,16 @@ Lo hace mucho mas portable, pero limita la concurrencia real que pueda
 soportar.
 
 
-Leer:
-=====
+\subsection{Leer}
 
-[15] task-level control.
-[11] soporte para manejo de recursos.
-[13,14,15] Task control architecture.
-[14] estructura jerarquica de manejo de excepciones.
-[13] restricciones a diferentes niveles del arbol.
-[15] manejo de Excepciones
-[12] ControlShell, provee control de tiempo real.
+\begin{itemize}
+\item \[15\] task-level control.
+\item \[11\] soporte para manejo de recursos.
+\item [13,14,15] Task control architecture.
+\item [14] estructura jerarquica de manejo de excepciones.
+\item [13] restricciones a diferentes niveles del arbol.
+\item [15] manejo de Excepciones
+\item [12] ControlShell, provee control de tiempo real.
+\item [8, 6] RAP, PRS
+\end{itemize}
 
-
-[8, 6] RAP, PRS
