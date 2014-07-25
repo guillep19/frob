@@ -1,0 +1,103 @@
+Root Node transitioning from Unplanned to Planning
+Root Node transitioning from Unachieved to Achieving
+Attempting to connect to IPC central server on localhost... connected.
+Root Node transitioning from Unplanned to Planning
+Root Node transitioning from Unachieved to Achieving
+Attempting to connect to IPC central server on localhost... connected.
+Goal                    A {1}:        TCM {0} --> ON HOLD         (Inactive)
+A transitioning from Unplanned to Planning
+A transitioning from Unhandled to Handling
+Goal                    A {1}:  ON HOLD  --> TCM             (Sent)
+A transitioning from Unachieved to Achieving
+Invoking AHnd 0
+Virtual                 B {2}:        TCM {1} --> ON HOLD         (Inactive)
+C transitioning from Alive to Terminating
+Will Terminate C {3} when all references to it are released
+C transitioning from Unplanned to Planning
+C transitioning from Unhandled to Handling
+Virtual                 D {4}:        TCM {1} --> ON HOLD         (Inactive)
+B transitioning from Unplanned to Planning
+B transitioning from Unhandled to Handling
+Goal                    B {2}:  ON HOLD  --> TCM             (Sent)
+B transitioning from Unachieved to Achieving
+A transitioning from Handling to Handled
+  Success               A {1}:
+C requested multi-state transition (from Unachieved to Achieved)
+C transitioning from Planning to Planned
+C transitioning from Handling to Handled
+Invoking BHnd 0
+Virtual                E1 {5}:        TCM {2} --> ON HOLD         (Inactive)
+Virtual                E2 {6}:        TCM {2} --> ON HOLD         (Inactive)
+B transitioning from Handling to Handled
+  Success               B {2}:
+E1 transitioning from Unplanned to Planning
+E1 transitioning from Planning to Planned
+E2 transitioning from Unplanned to Planning
+E2 transitioning from Planning to Planned
+E2 transitioning from Unachieved to Achieving
+E2 transitioning from Unhandled to Handling
+Command                E2 {6}:  ON HOLD  --> TCM             (Sent)
+B transitioning from Planning to Planned
+Invoking EHnd 0
+E2 transitioning from Achieving to Achieved
+E2 transitioning from Handling to Handled
+  Success              E2 {6}:
+Cleaning up E2
+Deleting Action
+E1 transitioning from Unachieved to Achieving
+E1 transitioning from Unhandled to Handling
+Command                E1 {5}:  ON HOLD  --> TCM             (Sent)
+Deleting E2
+Invoking EHnd 0
+E1 transitioning from Achieving to Achieved
+E1 transitioning from Handling to Handled
+  Success              E1 {5}:
+Cleaning up E1
+Deleting Action
+Deleting E1
+B transitioning from Achieving to Achieved
+Cleaning up B
+Deleting Action
+Deleting Action
+D transitioning from Unachieved to Achieving
+Deleting B
+D transitioning from Unplanned to Planning
+D transitioning from Unhandled to Handling
+Goal                    D {4}:  ON HOLD  --> TCM             (Sent)
+Invoking DHnd 0
+D transitioning from Achieving to Achieved
+D transitioning from Planning to Planned
+D transitioning from Handling to Handled
+  Success               D {4}:
+Cleaning up D
+Deleting Action
+Deleting D
+C transitioning from Unachieved to Achieving
+C transitioning from Achieving to Achieved
+Skipping C
+C transitioning from Terminating to Terminated
+Terminated C {3}
+Deleting C
+A transitioning from Planning to Planned
+A transitioning from Achieving to Achieved
+Cleaning up A
+Deleting Action
+A transitioning from Alive to Terminating
+Will Terminate A {1} when all references to it are released
+A transitioning from Terminating to Terminated
+Terminated A {1}
+Deleting A
+Killing B (agentB/agentA/2)
+Deleting B
+Killing D (agentB/agentA/4)
+Deleting D
+Closed Connection Detected from: Central Server localhost
+
+Killing Unknown (agentA/agentA/1)
+Deleting Unknown
+Killing Unknown (agentA/agentA/3)
+Deleting Unknown
+Killing E1 (agentA/agentB/5)
+Deleting E1
+Killing E2 (agentA/agentB/6)
+Deleting E2

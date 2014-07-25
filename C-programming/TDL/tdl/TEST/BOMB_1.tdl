@@ -1,0 +1,374 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal foo()                
+{
+	/* This should work */
+  cerr << "foo 'a' bar" /*1*/ //foo
+/*2*/ "boo 'clock' zoa"
+      "zzz"  << endl;
+
+	/* This should work */
+  spawn f() with disable until 09:08:09.098;
+
+  g: spawn g();            // should work.
+			   // Reference to "g", however, would bomb...
+
+	/* The rest should bomb */
+
+  spawn g() with serial h;
+  spawn h();
+  h: spawn h();
+  spawn g() with serial h; // no error, reports only for first "serial h".
+
+  i: spawn i();
+  spawn i();
+  spawn g() with serial i;
+
+  j: spawn j1();
+  j: spawn j2();
+  spawn f() with serial j;
+
+  k: spawn k1();
+  k: spawn k2();
+
+  L: spawn L();
+  L: with ( serial L)
+  {
+    spawn f();
+  }
+
+  spawn f() with serial M, wait;
+  M: spawn f();
+  
+  with ( wait )
+  {
+    spawn Z1() with serial Z2;
+  }
+  spawn Z();
+
+
+  with ( serial SELF )
+  {
+    spawn Z3();
+  }
+
+
+	/* These should bomb. */
+  spawn f() with serial CHILD;  
+  spawn f() with sequential handling CHILD;  
+  spawn f() with sequential planning CHILD;  
+  spawn f() with sequential achievement CHILD;  
+
+	/* These should work. */
+  spawn f() with disable planning until CHILD achievement enabled;
+  spawn f() with disable achievement until CHILD planning enabled;
+  spawn f() with disable achievement until CHILD handling enabled;
+
+	/* Most of these should bomb. */
+  spawn f() with serial CHILD;
+
+  spawn f() with disable             until CHILD handling    enabled;
+  spawn f() with disable             until CHILD planning    enabled;
+  spawn f() with disable             until CHILD achievement enabled;
+  spawn f() with disable             until CHILD             enabled;
+
+  spawn f() with disable handling    until CHILD handling    enabled;
+  spawn f() with disable handling    until CHILD planning    enabled;
+  spawn f() with disable handling    until CHILD achievement enabled;
+  spawn f() with disable handling    until CHILD             enabled;
+
+  spawn f() with disable planning    until CHILD handling    enabled;
+  spawn f() with disable planning    until CHILD planning    enabled;
+  spawn f() with disable planning    until CHILD achievement enabled; /*valid*/
+  spawn f() with disable planning    until CHILD             enabled;
+
+  spawn f() with disable achievement until CHILD handling    enabled; /*valid*/
+  spawn f() with disable achievement until CHILD planning    enabled; /*valid*/
+  spawn f() with disable achievement until CHILD achievement enabled;
+  spawn f() with disable achievement until CHILD             enabled; /*valid*/
+
+  spawn f() with serial CHILD;
+
+  spawn f() with disable             until CHILD handling    active;
+  spawn f() with disable             until CHILD planning    active;
+  spawn f() with disable             until CHILD achievement active;
+  spawn f() with disable             until CHILD             active;
+
+  spawn f() with disable handling    until CHILD handling    active;
+  spawn f() with disable handling    until CHILD planning    active;
+  spawn f() with disable handling    until CHILD achievement active;
+  spawn f() with disable handling    until CHILD             active;
+
+  spawn f() with disable planning    until CHILD handling    active;
+  spawn f() with disable planning    until CHILD planning    active;
+  spawn f() with disable planning    until CHILD achievement active;
+  spawn f() with disable planning    until CHILD             active;
+
+  spawn f() with disable achievement until CHILD handling    active; /*valid*/
+  spawn f() with disable achievement until CHILD planning    active; /*valid*/
+  spawn f() with disable achievement until CHILD achievement active;
+  spawn f() with disable achievement until CHILD             active; /*valid*/
+
+  spawn f() with serial CHILD;
+
+  spawn f() with disable             until CHILD handling    completed;
+  spawn f() with disable             until CHILD planning    completed;
+  spawn f() with disable             until CHILD achievement completed;
+  spawn f() with disable             until CHILD             completed;
+
+  spawn f() with disable handling    until CHILD handling    completed;
+  spawn f() with disable handling    until CHILD planning    completed;
+  spawn f() with disable handling    until CHILD achievement completed;
+  spawn f() with disable handling    until CHILD             completed;
+
+  spawn f() with disable planning    until CHILD handling    completed;
+  spawn f() with disable planning    until CHILD planning    completed;
+  spawn f() with disable planning    until CHILD achievement completed;
+  spawn f() with disable planning    until CHILD             completed;
+
+  spawn f() with disable achievement until CHILD handling    completed; /*valid*/
+  spawn f() with disable achievement until CHILD planning    completed; /*valid*/
+  spawn f() with disable achievement until CHILD achievement completed;
+  spawn f() with disable achievement until CHILD             completed;
+
+  spawn f() with serial CHILD;
+
+  spawn f() with disable for 0:0:1.09 after CHILD handling    enabled;
+  spawn f() with disable for 0:0:1.09 after CHILD planning    enabled;
+  spawn f() with disable for 0:0:1.09 after CHILD achievement enabled;
+  spawn f() with disable for 0:0:1.09 after CHILD             enabled;
+
+  spawn f() with disable handling for 0:0:1.09 after CHILD handling    enabled;
+  spawn f() with disable handling for 0:0:1.09 after CHILD planning    enabled;
+  spawn f() with disable handling for 0:0:1.09 after CHILD achievement enabled;
+  spawn f() with disable handling for 0:0:1.09 after CHILD             enabled;
+
+  spawn f() with disable planning for 0:0:1.09 after CHILD handling    enabled;
+  spawn f() with disable planning for 0:0:1.09 after CHILD planning    enabled;
+  spawn f() with disable planning for 0:0:1.09 after CHILD achievement enabled; /*works*/
+  spawn f() with disable planning for 0:0:1.09 after CHILD             enabled;
+
+  spawn f() with disable achievement for 0:0:1.09 after CHILD handling  enabled; /*works*/
+  spawn f() with disable achievement for 0:0:1.09 after CHILD planning  enabled; /*works*/
+  spawn f() with disable achievement for 0:0:1.09 after CHILD achievement enabled;
+  spawn f() with disable achievement for 0:0:1.09 after CHILD           enabled; /*works*/
+
+
+
+  spawn f() with serial CHILD;
+
+  spawn f() with disable planning until THIS handling    completed; /*ok*/
+  spawn f() with disable planning until THIS planning    completed;
+  spawn f() with disable planning until THIS achievement completed;
+  spawn f() with disable planning until THIS             completed; /*ok*/
+
+
+  spawn f() with serial Z [ 03 ];
+
+  spawn f() with serial parent;
+  spawn f() with sequential handling THIS; /*ok*/
+  spawn f() with sequential planning THIS;
+  spawn f() with sequential achievement THIS;
+
+  spawn f() with terminate at CHILD  handling completed;
+  spawn f() with terminate at THIS planning completed;
+
+  switch ( i )
+  {
+    case '0': f();
+    if ( bool )
+    {
+      case '1': f();
+      for ( int j=0; j<10; j++ )
+      {
+	case '2': f();
+      }
+    }
+  }
+
+  break;
+  continue;
+
+  spawn Y1();
+  with ( parallel )
+  {
+    spawn Y() with serial Y1;
+    spawn Y() with parallel;
+    spawn Y() with parallel, serial;
+    with ( serial )
+    {
+      spawn Y();
+    }
+    with ( sequential handling, parallel )
+    {
+      spawn Y();
+    }
+  }
+
+  xx: if ( 0 ) ;
+
+  xx wait;
+
+  x wait;
+
+  x: spawn X1();
+
+  x parallel;
+  x disable for 10:1:2.098;
+
+
+  FAIL;
+}
+
+
+void foo()
+{
+  spawn foo_1() with sequential handling THIS;
+  spawn foo_1() with serial previous;
+  spawn foo_1() with disable until THIS handling enabled;
+  spawn foo_1() with disable until THIS completed;
+  spawn foo_1() with disable until THIS planning completed;
+}
+
+Monitor bar()
+  PERIOD   ( x + y )
+	 * ( z + w ), PERIOD 9:8:7.6, PERIOD 1:2:3.4,
+  Maximum trigger  3, Maximum trigger  2, Maximum trigger  1,
+  Maximum activate 3, Maximum activate 2, Maximum activate 1
+{
+  a sequential handling    w1;
+  a: spawn a() with serial w1;
+  a sequential expansion   w1;
+
+  a exception handler baz(2);
+
+  w1: with ( exception handler baz(1) )
+  {
+    spawn b();
+  }
+
+  a sequential expansion   w1;
+}
+
+Goal foo2()
+{
+  spawn f() with serial ffor;
+  spawn f() with serial wfor;
+
+  for ( int i=0; i<1; i++ )
+  {
+    ffor: spawn f();
+    wfor: with ( serial )
+    {
+      spawn f();
+      spawn f();
+    }
+    for ( j=0; j<1; j++ )
+    {
+      f3for: spawn f() with serial ffor[.]; // Legal
+      f4for: spawn f() with serial ffor;    // Illegal
+    }
+  }
+
+  spawn f() with serial ffor;
+  spawn f() with serial ffor[1][2];
+
+  ffor       SEQUENTIAL HANDLING wfor;
+  ffor[1][2] SEQUENTIAL HANDLING wfor[1][2];
+}
+
+
+Goal foo3()
+{
+  with ( period 0:0:2.2, period 0:0:2.1,
+	 maximum activate 23, maximum activate 21,
+	 maximum trigger  24,  maximum trigger 22 )
+  {
+    with ( period 0:0:1.2, period 0:0:1.1,
+	   maximum activate 13, maximum activate 11,
+	   maximum trigger  14, maximum trigger  12  )
+    {
+      spawn bar() with period 0:0:0.2, period 0:0:0.1,
+	               maximum activate 3, maximum activate 1,
+	               maximum trigger  4, maximum trigger  2;
+
+      spawn foo();
+    }
+  }
+}
+
+
+Goal foo4()
+{
+  f period 0:0:0.8;
+
+  WITH ( period 0:0:0.7 )
+  {
+    for ( i=0; i<10; i++ )
+    {
+      if ( i == 1 )
+	f[0] period 0:0:0.3;
+      if ( i == 2 )
+	f[1] period 0:0:0.4;
+
+      WITH ( period 0:0:0.2 )
+      {
+	SPAWN f() WITH period 0:0:0.1;
+      }
+    }
+  }
+  f period 0:0:0.9;
+
+
+ w1 period 0:0:5;
+ w1: WITH ( period 0:0:7 )
+ {
+   SPAWN f1() with period 0:0:1; 
+ }
+ w1 period 0:0:6;
+
+
+ w2 period 0:0:5;
+ for ( i = 1; i<10; i++ )
+ {
+   w2: WITH ( period 0:0:7 )
+   {
+     SPAWN f2() with period 0:0:1; 
+   }
+ }
+ w2[1] period 0:0:6;
+
+
+ w3 period 0:0:5;
+ for ( i = 1; i<10; i++ )
+ {
+   w3: WITH ( period 0:0:7 )
+   {
+     SPAWN f3();
+   }
+ }
+ w3[1] period 0:0:6;
+
+
+ for ( i = 1; i<10; i++ )
+ {
+   SPAWN f4() with period 0:0:1; 
+ }
+ f4[1] period 0:0:6;
+
+
+ WITH ( period 0:0:0.3, period 0:0:0.1 )
+ {
+   SPAWN f5() WITH period 0:0:0.4, period 0:0:0.2;
+ }
+
+
+ spawn f6();
+ f6 period 0:0:0.1;
+ f6 period 0:0:0.2;
+}
+

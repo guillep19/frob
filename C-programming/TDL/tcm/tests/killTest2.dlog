@@ -1,0 +1,23 @@
+Root Node transitioning from Unplanned to Planning
+Root Node transitioning from Unachieved to Achieving
+Attempting to connect to IPC central server on localhost... connected.
+Root Node transitioning from Unplanned to Planning
+Root Node transitioning from Unachieved to Achieving
+Attempting to connect to IPC central server on localhost... connected.
+Goal                    A {1}:        TCM {0} --> ON HOLD         (Inactive)
+A transitioning from Alive to Terminating
+Will Terminate A {1} when all references to it are released
+A transitioning from Unplanned to Planning
+A transitioning from Unhandled to Handling
+A transitioning from Unachieved to Achieving
+A transitioning from Achieving to Achieved
+A transitioning from Planning to Planned
+A transitioning from Handling to Handled
+Skipping A
+Deleting Action
+A transitioning from Terminating to Terminated
+Terminated A {1}
+WARNING: Trying to terminate already dead node A
+Deleting A
+Closed Connection Detected from: Central Server localhost
+

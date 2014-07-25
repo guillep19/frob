@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal f1( int i)
+{
+  cerr << "test-f1" << endl;
+}
+
+Goal f2( int j )
+{
+  cerr << "test-f2" << endl;
+}
+
+Goal f3()
+{
+  cerr << "test-f3" << endl;
+}
+
+Goal foo ( int i, char j )
+{
+  with ( sequential handling )
+  {
+    with ( sequential planning, serial )
+    {
+      cerr << "test-foo-pre-f1" << endl;
+
+      spawn f1(0);
+
+      cerr << "test-foo-post-f1-pre-f2" << endl;
+
+      spawn f2(1);
+
+      cerr << "test-foo-post-f2" << endl;
+    }
+
+    spawn f3() with sequential achievement;
+
+    cerr << "test-foo-post-f3" << endl;
+  }
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  cerr << "test1:  " << endl << (TCM_RootNode().operator*()) << endl << endl;
+  foo ( 1, 2 );
+}

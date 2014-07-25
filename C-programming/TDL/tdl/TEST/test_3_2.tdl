@@ -1,0 +1,107 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal f ( const char * theString )
+{
+  cerr << "test-f: " << theString << endl;
+}
+
+
+Goal foo ( int i,  int j )
+{
+  with ( serial )
+  {
+    spawn f ( "START foo" );
+
+    switch ( i )
+    {
+      case 0:
+	spawn f ( "start i=0" );
+	switch ( j )
+	{
+	  case 0:
+	    spawn f ( "j=0" );
+	    break;
+
+	  case 1:
+	    spawn f ( "j=1" );
+	    /* NO BREAK */
+
+	  default:
+	    spawn f ( "j=default" );	    
+	    break;
+	}
+	spawn f ( "end i=0" );
+	break;
+
+      case 1:
+	spawn f ( "start i=1" );
+	switch ( j )
+	{
+	  case 0:
+	    spawn f ( "j=0" );
+	    break;
+
+	  case 1:
+	    spawn f ( "j=1" );
+	    /* NO BREAK */
+
+	  default:
+	    spawn f ( "j=default" );	    
+	    break;
+	}
+	spawn f ( "end i=1" );
+	/* NO BREAK */
+
+      case 2:
+	;
+
+      case 3: ;
+
+      default:
+	spawn f ( "start i=default" );
+	switch ( j )
+	{
+	  case 0:
+	    spawn f ( "j=0" );
+	    break;
+
+	  case 1:
+	    spawn f ( "j=1" );
+	    /* NO BREAK */
+
+	  case 2:
+	    ;
+
+	  case 3: ;
+
+	  default:
+	    spawn f ( "j=default" );	    
+	    break;
+	}
+	spawn f ( "end i=default" );
+	break;
+    }
+
+    spawn f ( "END foo" );
+  }
+}
+
+int
+main()
+{
+  int i, j;
+
+  TCM_Initialize();
+  for ( i=0; i<3; i++ )
+  {
+    for ( j=0; j<3; j++ )
+    {
+      foo ( i, j );
+      cerr << "test-" << i << "-" << j << endl;
+    }
+  }
+}

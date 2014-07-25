@@ -1,0 +1,140 @@
+t5.setThreadFunction ( & runThread ) = SUCCESS
+t1 = Thread:  0xbffff624
+   Status   = "CREATED" (0)
+   Function = (nil)
+   ThreadMutex: Mutex:  0xbffff624   (Unlocked)
+
+   ThreadStartedSemaphore: Semaphore:  0xbffff660
+        isThreadWaiting.......: 0
+        wakeupAlreadyReceived.: 0
+        sem_getvalue..........:  0
+        SemaphoreMutex: Mutex:  0xbffff660   (Unlocked)
+
+   ThreadStoppedSemaphore: Semaphore:  0xbffff698
+        isThreadWaiting.......: 0
+        wakeupAlreadyReceived.: 0
+        sem_getvalue..........:  0
+        SemaphoreMutex: Mutex:  0xbffff698   (Unlocked)
+
+
+aMutex = Mutex:  0x80514b0   (Unlocked)
+
+aMutex = Mutex:  0x80514b0   (Locked)
+
+t1.start() = SUCCESS
+t2.start() = SUCCESS
+t3.start() = SUCCESS
+t4.start() = SUCCESS
+t5.start() = SUCCESS
+t1 = Thread:  0xbffff624
+   Status   = "RUNNING" (1)
+   Function = (nil)
+   ThreadMutex: Mutex:  0xbffff624   (Unlocked)
+
+   ThreadStartedSemaphore: Semaphore:  0xbffff660
+        isThreadWaiting.......: 0
+        wakeupAlreadyReceived.: 1
+        sem_getvalue..........:  0
+        SemaphoreMutex: Mutex:  0xbffff660   (Unlocked)
+
+   ThreadStoppedSemaphore: Semaphore:  0xbffff698
+        isThreadWaiting.......: 0
+        wakeupAlreadyReceived.: 0
+        sem_getvalue..........:  0
+        SemaphoreMutex: Mutex:  0xbffff698   (Unlocked)
+
+
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 0  Thread: 0xbffff624
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 0  Thread: 0xbffff578
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 0  Thread: 0xbffff4cc
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 0  Thread: 0xbffff420
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 0  Thread: unknown
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 1  Thread: 0xbffff624
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 1  Thread: 0xbffff4cc
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 1  Thread: 0xbffff578
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 1  Thread: 0xbffff420
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 1  Thread: unknown
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 2  Thread: 0xbffff624
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 2  Thread: 0xbffff578
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 2  Thread: 0xbffff4cc
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 2  Thread: 0xbffff420
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 2  Thread: unknown
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 3  Thread: 0xbffff624
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 3  Thread: 0xbffff4cc
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 3  Thread: 0xbffff578
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 3  Thread: 0xbffff420
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 3  Thread: unknown
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 4  Thread: 0xbffff624
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 4  Thread: 0xbffff578
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 4  Thread: 0xbffff4cc
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 4  Thread: 0xbffff420
+aMutex = Mutex:  0x80514b0   (Locked)
+
+i= 4  Thread: unknown
+t5 = Thread:  0xbffff374
+   Status   = "FINISHED" (2)
+   Function = 0x8048fb0
+   ThreadMutex: Mutex:  0xbffff374   (Unlocked)
+
+   ThreadStartedSemaphore: Semaphore:  0xbffff3b0
+        isThreadWaiting.......: 0
+        wakeupAlreadyReceived.: 1
+        sem_getvalue..........:  0
+        SemaphoreMutex: Mutex:  0xbffff3b0   (Unlocked)
+
+   ThreadStoppedSemaphore: Semaphore:  0xbffff3e8
+        isThreadWaiting.......: 0
+        wakeupAlreadyReceived.: 1
+        sem_getvalue..........:  0
+        SemaphoreMutex: Mutex:  0xbffff3e8   (Unlocked)
+
+
+ending...

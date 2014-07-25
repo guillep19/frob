@@ -1,0 +1,308 @@
+#!/bin/bash -noprofile
+
+# Copyright (c) 2008, Carnegie Mellon University
+#     This software is distributed under the terms of the 
+#     Simplified BSD License (see tdl/LICENSE.TXT)
+
+###
+### Caveat:  This script assumes all the paths involved
+###          *DO* **NOT** contain any '#' characters.
+###
+
+###
+### These may need to be overriden with environment variables.
+###
+
+### Note:  BASE_TDL_DIR *MUST* be setenv'ed to an absolute path!
+if [ "x${BASE_TDL_DIR}" = "x" ]; then
+  if [ "x${BASE_ROOT_DIR}" = "x" ]; then
+    echo 'Error:  Neither BASE_ROOT_DIR nor BASE_TDL_DIR is defined in the environment.'
+    echo 'Error:  Unable to find the file ${BASE_TDL_DIR}/Makefile.'
+    exit -1
+
+  elif [ -d ${BASE_ROOT_DIR}/tdl ]; then
+    export BASE_TDL_DIR=${BASE_ROOT_DIR}/tdl
+
+  elif [ -d ${BASE_ROOT_DIR}/tcaV8/tdl ]; then
+    export BASE_TDL_DIR=${BASE_ROOT_DIR}/tcaV8/tdl
+
+  else
+    echo 'Error:  Neither ${BASE_ROOT_DIR}/tdl nor ${BASE_ROOT_DIR}/tcaV8/tdl exists.'
+    echo 'Error:  Unable to locate ${BASE_TDL_DIR}/Makefile.'
+    exit -1
+  fi
+
+fi
+
+if [ "x${MAKE}" = "x" ]; then MAKE="make -f ${BASE_TDL_DIR}/Makefile"; fi
+
+if [ "x${DEFAULT_TDLC_FLAGS}" = "x" ]; then DEFAULT_TDLC_FLAGS="-2Sy"; fi
+
+if [ "x${DEFAULT_CXX_FLAGS}"  = "x" ]; then
+  DEFAULT_CXX_FLAGS="-O2 -Wall -W -Wswitch -Wuninitialized -Wparentheses"
+  if [ "x${NODEBUG}" = "x" ]; then
+    DEFAULT_CXX_FLAGS="-g ${DEFAULT_CXX_FLAGS}"
+  fi
+fi
+
+
+### These can now be extracted from TDL's makefile.generic:
+### (And if they ever need to be changed, the change need only occur
+###  in TDL's makefile.generic.)
+### Note: Only run MAKE once, otherwise it takes forever... 
+### Note: BASH lacks Arrays...
+
+TEMP_ARRAY=`${MAKE} printVariablesBash`
+
+TEMP_FRONT=${TEMP_ARRAY% #2#*}
+TEMP=${TEMP_FRONT#*#1# }
+if [ "${CLASSPATH%tdl_x.jar*}" = "${CLASSPATH}" ]; then
+  export CLASSPATH="${TEMP}";
+else
+  echo 'Using tdl_x.jar file instead of [default] ${TDL}/*/*.class files.'
+  echo " "
+fi
+
+TEMP_FRONT=${TEMP_ARRAY% #3#*}
+TEMP=${TEMP_FRONT#*#2# }
+if [ "x${JAVA}" = "x" ]; then JAVA="${TEMP}"; fi
+
+TEMP="`${JAVA} TDLC -V`"
+if [ $? != 0 ]; then
+  echo "Warning:  Unable to locate TDLC within the specified CLASSPATH."
+  echo "Warning:  Perhaps TDLC needs to be recompiled?"
+  echo " "
+fi
+TDLC_VERSION="${TEMP##TDLC Version:  }"
+
+TEMP_FRONT=${TEMP_ARRAY% #4#*}
+TEMP=${TEMP_FRONT#*#3# }
+if [ "x${CXX}" = "x" ]; then CXX="${TEMP}"; fi
+
+TEMP_FRONT=${TEMP_ARRAY% #5#*}
+TEMP=${TEMP_FRONT#*#4# }
+if [ "x${TCM_INCLUDE_DIR}" = "x" ]; then TCM_INCLUDE_DIR="${TEMP}"; fi
+
+TEMP_FRONT=${TEMP_ARRAY% #6#*}
+TEMP=${TEMP_FRONT#*#5# }
+if [ "x${TCM_LIBRARY_DIR}" = "x" ]; then TCM_LIBRARY_DIR="${TEMP}"; fi
+
+TEMP_FRONT=${TEMP_ARRAY% #7#*}
+TEMP=${TEMP_FRONT#*#6# }
+if [ "x${TDL_INCLUDE_DIR}" = "x" ]; then TDL_INCLUDE_DIR="${TEMP}"; fi
+
+TEMP_FRONT=${TEMP_ARRAY% #8#*}
+TEMP=${TEMP_FRONT#*#7# }
+if [ "x${TDL_LIBRARY_DIR}" = "x" ]; then TDL_LIBRARY_DIR="${TEMP}"; fi
+
+TEMP_FRONT=${TEMP_ARRAY% #9#*}
+TEMP=${TEMP_FRONT#*#8# }
+if [ "x${IPC_INCLUDE_DIR}" = "x" ]; then IPC_INCLUDE_DIR="${TEMP}"; fi
+
+TEMP_FRONT=${TEMP_ARRAY% #10#*}
+TEMP=${TEMP_FRONT#*#9# }
+if [ "x${IPC_LIBRARY_DIR}" = "x" ]; then IPC_LIBRARY_DIR="${TEMP}"; fi
+
+TEMP_FRONT=${TEMP_ARRAY% #11#*}
+TEMP=${TEMP_FRONT#*#10# }
+if [ "x${CXX_THREADS_INCLUDE_DIR}" = "x" ]; then CXX_THREADS_INCLUDE_DIR="${TEMP}"; fi
+
+TEMP_FRONT=${TEMP_ARRAY% #12#*}
+TEMP=${TEMP_FRONT#*#11# }
+if [ "x${CXX_THREADS_LIBRARY_DIR}" = "x" ]; then CXX_THREADS_LIBRARY_DIR="${TEMP}"; fi
+
+
+TEMP_FRONT=${TEMP_ARRAY% #13#*}
+TEMP=${TEMP_FRONT#*#12#}
+if [ "x${THREADED}" = "x" ]; then
+  if [ "x${TEMP}" != "x" ]; then
+    export THREADED="${TEMP# }"
+  fi
+fi
+
+
+
+
+
+
+####
+#### Process arguments.
+####
+for ARGUMENT do
+
+    if [ "${ARGUMENT}"       = "--verbose" ]; then
+    TDLC_VERBOSE="TRUE"
+
+  elif [ "${ARGUMENT}"       = "-verbose" ]; then
+    TDLC_VERBOSE="TRUE"
+
+  elif [ "${ARGUMENT}"       = "-V" ]; then
+    TDLC_VERBOSE="TRUE"
+
+  elif [ "${ARGUMENT}"       = "--distributed" ]; then
+    DISTRIBUTED=1
+
+  elif [ "${ARGUMENT}"       = "-distributed" ]; then
+    DISTRIBUTED=1
+
+  elif [ "${ARGUMENT}"       = "--threaded" ]; then
+    THREADED=1
+
+  elif [ "${ARGUMENT}"       = "-threaded" ]; then
+    THREADED=1
+
+  elif [ "${ARGUMENT#--}"   != "${ARGUMENT}" ]; then
+    CXX_FLAGS="${CXX_FLAGS} ${ARGUMENT#-}"
+
+  elif [ "${ARGUMENT#-}"    != "${ARGUMENT}" ]; then
+    TDLC_FLAGS="${TDLC_FLAGS} ${ARGUMENT}"
+
+  elif [ "${ARGUMENT%.tdl}" != "${ARGUMENT}" ]; then
+    TDLC_FILES="${TDLC_FILES} ${ARGUMENT}"
+
+  elif [ "${ARGUMENT%.C}"   != "${ARGUMENT}" ]; then
+    CXX_FILES="${CXX_FILES} ${ARGUMENT}"
+
+  elif [ "${ARGUMENT%.cxx}" != "${ARGUMENT}" ]; then
+    CXX_FILES="${CXX_FILES} ${ARGUMENT}"
+
+  elif [ "${ARGUMENT%.cc}"  != "${ARGUMENT}" ]; then
+    CXX_FILES="${CXX_FILES} ${ARGUMENT}"
+
+  elif [ "${ARGUMENT%.c}"   != "${ARGUMENT}" ]; then
+    CXX_FILES="${CXX_FILES} ${ARGUMENT}"
+
+  elif [ "${ARGUMENT%.o}"   != "${ARGUMENT}" ]; then
+    OBJECT_FILES="${OBJECT_FILES} ${ARGUMENT}"
+
+  fi
+
+done
+
+
+
+
+
+####
+#### No files?
+####
+if [    \(    \( "x${TDLC_FILES}"    = "x" \)    \
+           -a \( "x${CXX_FILES}"     = "x" \)    \
+           -a \( "x${OBJECT_FILES}"  = "x" \) \) \
+     -o \( "x${TDLC_VERBOSE}"       != "x"    \)   ]; then
+
+  if [ "x${THREADED}" != "x" ]; then
+    echo "               THREADED = ENABLED (${THREADED})"
+  else
+    echo "               THREADED = disabled"
+  fi
+
+  if [ "x${DISTRIBUTED}" != "x" ]; then
+    echo "            DISTRIBUTED = ENABLED (${DISTRIBUTED})"
+  else
+    echo "            DISTRIBUTED = disabled"
+  fi
+
+  echo "           BASE_TDL_DIR = ${BASE_TDL_DIR}"
+  echo "                   MAKE = ${MAKE}"
+  echo "                   JAVA = ${JAVA}"
+  echo "                    CXX = ${CXX}"
+  echo "        TCM_INCLUDE_DIR = ${TCM_INCLUDE_DIR}"
+  echo "        TCM_LIBRARY_DIR = ${TCM_LIBRARY_DIR}"
+  echo "        TDL_INCLUDE_DIR = ${TDL_INCLUDE_DIR}"
+  echo "        TDL_LIBRARY_DIR = ${TDL_LIBRARY_DIR}"
+
+  if [ "x${DISTRIBUTED}" != "x" ]; then
+    echo "        IPC_INCLUDE_DIR = ${IPC_INCLUDE_DIR}"
+    echo "        IPC_LIBRARY_DIR = ${IPC_LIBRARY_DIR}"
+  fi
+
+  if [ "x${THREADED}" != "x" ]; then
+    echo "CXX_THREADS_INCLUDE_DIR = ${CXX_THREADS_INCLUDE_DIR}"
+    echo "CXX_THREADS_LIBRARY_DIR = ${CXX_THREADS_LIBRARY_DIR}"
+  fi
+
+  echo "              CLASSPATH = ${CLASSPATH}"
+  echo "     DEFAULT_TDLC_FLAGS = ${DEFAULT_TDLC_FLAGS}"
+  echo "             TDLC_FLAGS = ${TDLC_FLAGS}"
+  echo "      DEFAULT_CXX_FLAGS = ${DEFAULT_CXX_FLAGS}"
+  echo "              CXX_FLAGS = ${CXX_FLAGS}"
+  echo "             TDLC_FILES = ${TDLC_FILES}"
+  echo "              CXX_FILES = ${CXX_FILES}"
+  echo "           OBJECT_FILES = ${OBJECT_FILES}"
+  echo "           TDLC_VERSION = ${TDLC_VERSION}"
+
+  echo "  "
+
+  if [    \( "x${TDLC_FILES}"    = "x" \) \
+       -a \( "x${CXX_FILES}"     = "x" \) \
+       -a \( "x${OBJECT_FILES}"  = "x" \)   ]; then
+    echo "Usage: ./tdlc [args] files"
+    echo "  --verbose, -verbose, -V enable verbose mode."
+    echo "  --distributed, -distributed are equivalent to DISTRIBUTED=1"
+    echo "  --threaded, -threaded are equivalent to THREADED=1"
+    echo "  Other Args starting with '-' are passed as-is to TDLC."
+    echo "  Other Args starting with '--' are passed to ${CXX} with the first '-' removed."
+
+    echo "  Files ending with .tdl are run through '${JAVA} TDLC'."
+    echo "  Files ending with .C,.cxx,.cc,.c are passed into ${CXX}."
+    echo "  Files ending with .o are linked in via ${CXX}."
+
+    exit 0;
+  fi
+
+fi
+
+
+
+###
+### Run the JAVA stage.  Abort if it fails... 
+###
+
+TDLC_CXX_FILES=""
+for FILE in ${TDLC_FILES}
+do
+  TDLC_CXX_FILES="${TDLC_CXX_FILES} ${FILE%.tdl}.C"
+  if [ "x${EXECUTABLE_NAME-}" = "x" ]; then EXECUTABLE_NAME=${FILE%.tdl}; fi
+
+  if [ ! -e  ${FILE%.tdl}.C  ] || [  ${FILE} -nt  ${FILE%.tdl}.C ]
+  then ## Generated files are older than tdl.
+    echo "${JAVA} TDLC ${DEFAULT_TDLC_FLAGS} ${TDLC_FLAGS} ${FILE}"
+    ${JAVA} TDLC ${DEFAULT_TDLC_FLAGS} ${TDLC_FLAGS} ${FILE}
+    STATUS=$?
+    if [ ${STATUS} != 0 ]; then exit ${STATUS}; fi
+  fi
+done
+
+
+
+
+###
+### And then C++ stage...
+###
+
+CXX_TDLC_FLAGS="-ltdl  -ltcm"
+
+if [ "x${DISTRIBUTED}" != "x" ]; then
+  CXX_TDLC_FLAGS="${CXX_TDLC_FLAGS} -lipcInterface -lipc"
+fi
+
+if [ "x${THREADED}" != "x" ]; then
+  CXX_TDLC_FLAGS="${CXX_TDLC_FLAGS} -lcxxThreads -lpthread"
+fi
+
+CXX_TDLC_FLAGS="${CXX_TDLC_FLAGS} -I. -I${TDL_INCLUDE_DIR} -L${TDL_LIBRARY_DIR} -I${TCM_INCLUDE_DIR} -L${TCM_LIBRARY_DIR}"
+
+if [ "x${DISTRIBUTED}" != "x" ]; then
+  CXX_TDLC_FLAGS="${CXX_TDLC_FLAGS} -I${IPC_INCLUDE_DIR} -L${IPC_LIBRARY_DIR}"
+fi
+
+if [ "x${THREADED}" != "x" ]; then
+  CXX_TDLC_FLAGS="${CXX_TDLC_FLAGS} -I${CXX_THREADS_INCLUDE_DIR} -L${CXX_THREADS_LIBRARY_DIR}"
+fi
+
+echo "${CXX} -o ${EXECUTABLE_NAME-program} ${TDLC_CXX_FILES} ${CXX_FILES} ${OBJECT_FILES} ${CXX_FLAGS} ${DEFAULT_CXX_FLAGS} ${CXX_TDLC_FLAGS}"
+${CXX} -o ${EXECUTABLE_NAME-program} ${TDLC_CXX_FILES} ${CXX_FILES} ${OBJECT_FILES} ${CXX_FLAGS} ${DEFAULT_CXX_FLAGS} ${CXX_TDLC_FLAGS}
+STATUS=$?
+exit ${STATUS}
+

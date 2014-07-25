@@ -1,0 +1,17 @@
+The Lisp version of IPC has currently been tested only under Linux and only
+with Allegro Common Lisp.
+
+To make IPC for Lisp on your system, you will need SWIG (currently
+tested using version 2.0.8).  With SWIG installed, you just type
+"gmake install" and everything should happen automatically.  After
+completing, you should have IPC.lisp in this directory and
+libipc_lisp.so in the ../lib/<sys> directory (where <sys> is Linux-2.6,
+for instance).
+
+Reid Simmons
+Carnegie Mellon University
+July 2013
+
+Copyright (c) 2008, Carnegie Mellon University
+    This software is distributed under the terms of the 
+    Simplified BSD License (see ipc/LICENSE.TXT)

@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+/*
+ *  TOP
+ *   +- function A
+ *         +- Task B as parent of Top, with delay.
+ *         +- Task B as parent of Top, with delay.
+ *   +- task C serial B1 and B2.
+ */	 
+
+TCM_Task_Tree_Ref A ( const TCM_Task_Tree_Ref & theTop, BOOLEAN theChoice )
+{
+  TCM_Task_Tree_Ref returnValue;
+
+  if ( theChoice == TRUE )
+    returnValue: SPAWN B() WITH PARENT theTop, DISABLE FOR 0.5;
+  else
+    SPAWN B() WITH PARENT theTop, DISABLE FOR 1.0, TDL_REF IN returnValue;
+
+  return returnValue;
+}
+
+PERSISTENT Goal Top()
+{
+  fflush(stdout);
+  fflush(stderr);
+  cout << "top\n" << flush;
+
+  TDL_BIND ( A ( TDL_REF ( THIS ), TRUE  ),    B1 );
+
+  TDL_BIND ( A ( TDL_REF ( THIS ), FALSE ),    B2 );
+
+  SPAWN C() WITH SERIAL B1, SERIAL B2, DISABLE FOR 0.2 AFTER B2 COMPLETED ;
+}
+
+PERSISTENT Goal B()
+{
+  fflush(stdout);
+  fflush(stderr);
+  cout << "b:\n" << flush;
+  TCM_DisplayTree ( stdout, TCM_RootNode() );
+  fflush(stdout);
+}
+
+
+PERSISTENT Goal C()
+{
+  fflush(stdout);
+  fflush(stderr);
+  cout << "c:\n" << flush;
+  TCM_DisplayTree ( stdout, TCM_RootNode() );
+  fflush(stdout);
+}
+
+int
+main()
+{
+  TDL_Initialize(FALSE);
+  SPAWN Top();
+  TCM_ProcessAgenda(TRUE,1500);
+}
+

@@ -1,0 +1,115 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+#define AGENT_A "AgentA"
+#define AGENT_B "AgentB"
+
+Distributed Exception ourException(STRING theLocation);
+
+Distributed Exception ourException2(STRING theLocation, int foo)
+  : ourException(theLocation);
+
+Exception Handler Excep1Hnd ( ) handles ourException, maximum activate 1
+{
+  FLUSHALL();
+  cout << "Excep1Hnd: " << ourException.theLocation << endl;
+  //BYPASS;
+  FAIL ourException2(ourException.theLocation, 1);
+}
+
+Exception Handler Excep2Hnd ( ) handles ourException2, maximum activate 2
+{
+  FLUSHALL();
+  cout << "Excep2Hnd: " << ourException2.theLocation << " "
+       << ourException2.foo << endl;
+  FAIL ourException(ourException2.theLocation);
+}
+
+Exception Handler Excep3Hnd ( ) handles ourException, maximum activate 3
+{
+  FLUSHALL();
+  cout << "Excep3Hnd: " << ourException.theLocation << endl;
+  SUCCESS;
+}
+
+Goal TaskA() 
+  with exception handler Excep3Hnd(),
+  exception handler Excep2Hnd()
+{
+  FLUSHALL();
+  cout << "TaskA\n" << flush;
+  WITH ( SERIAL ) {
+    SPAWN TaskB() WITH ON AGENT_B;
+    SPAWN TaskC()/* WITH ON AGENT_A*/;
+  }
+}
+
+distributed Goal TaskB() 
+  with exception handler Excep1Hnd()
+{
+  FLUSHALL();
+  cout << "TaskB\n" << flush;
+  WITH ( SERIAL ) {
+    SPAWN TaskE1() WITH ON AGENT_A;
+    SPAWN TaskE2() WITH ON AGENT_A;
+  }
+}
+
+distributed Goal TaskC()
+{
+  FLUSHALL();
+  SPAWN TaskE3() WITH ON AGENT_B;
+  cout << "TaskC\n" << flush;
+}
+
+distributed Command TaskE1()
+{
+  FLUSHALL();
+  cout << "TaskE1\n" << flush;
+  FAIL ourException2("E1 failed", -1);
+}
+
+distributed Command TaskE2()
+{
+  FLUSHALL();
+  cout << "TaskE2\n" << flush;
+}
+
+distributed Command TaskE3()
+{
+  FLUSHALL();
+  cout << "TaskE3\n" << flush;
+  FAIL ourException("E3 failed");
+}
+
+void agentA ( u_int4 theProcessIndex )
+{
+  MARKUSED ( theProcessIndex );
+  cout << "agentA/stdout\n";
+  cerr << "agentA/stderr\n";
+  TDL_Initialize ( AGENT_A, FALSE, TRUE );
+  sleep(2);
+  TaskA();
+  sleep(1);
+  cout << AGENT_A << " ending.\n";
+}
+
+void agentB ( u_int4 theProcessIndex )
+{
+  MARKUSED ( theProcessIndex );
+  cout << "agentB/stdout\n";
+  cerr << "agentB/stderr\n";
+  TDL_Initialize ( AGENT_B, FALSE, TRUE );
+  sleep(1);
+  TCM_ProcessAgenda(4000);
+  cout << AGENT_B << " ending.\n";
+}
+
+int main ( int argc, char * argv[] )
+{
+  TDL_ForkChildren ( agentA, agentB, 5000, 999,
+		     TO_BOOLEAN ( argc > 1 ) );
+}

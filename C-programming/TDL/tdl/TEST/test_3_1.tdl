@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal f ( int  count )
+{
+  cerr << "test-f: " << count << endl;
+}
+
+
+Goal foo( BOOLEAN  theBool, BOOLEAN theBool_2 )
+{
+  with ( serial )
+  {
+    spawn f ( 0 );
+
+    if ( theBool )
+    {
+      spawn f ( 1 );
+      if ( theBool_2 )
+	spawn f ( 2 );
+      else
+	spawn f ( 3 );
+      spawn f ( 4 );
+    }
+    else
+    {
+      spawn f ( 5 );
+      if ( theBool_2 )
+	spawn f ( 6 );
+      else
+	spawn f ( 7 );
+      spawn f ( 8 );
+    }
+
+    spawn f ( 9 );
+  }
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  foo ( TRUE,  TRUE );
+  cerr << "test-1-" << endl;
+  foo ( TRUE,  FALSE );
+  cerr << "test-2-" << endl;
+  foo ( FALSE, TRUE );
+  cerr << "test-3-" << endl;
+  foo ( FALSE, FALSE );
+}

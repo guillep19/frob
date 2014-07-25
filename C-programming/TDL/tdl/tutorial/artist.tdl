@@ -1,0 +1,193 @@
+/*****************************************************************************
+ * PROJECT: TDL Tutorial
+ *
+ * (c) Copyright 2001 Reid Simmons. All rights reserved.
+ * (c) Copyright 1994 Richard Goodwin. All rights reserved.
+ *
+ * FILE: artist.tdl
+ *
+ * ABSTRACT: Simple tutorial for using TDL to draw graphical shapes.
+ *
+ * $Source: /afs/cs.cmu.edu/project/TCA/Master/tcaV8/tutorial/simulator/artist.tdl,v $ 
+ * $Revision: 1.6 $
+ * $Date: 1996/08/05 16:10:22 $
+ * $Author: rich $
+ *
+ * REVISION HISTORY:
+ *
+ * $Log: artist.tdl,v $
+ *****************************************************************************/
+
+#include <stdio.h>
+#include <tdl.H>
+
+#include "ezx.h"
+#include "billBoard.h"
+#include "artist.h"
+
+Command clear_command (void)
+{
+  BB_clear();
+}
+
+Command fill_command (const char *colour)
+{
+  BB_fill(colour);
+}
+
+Command draw_line_command (int x0, int y0, int x1, int y1)
+{
+  BB_drawLine(x0, y0, x1, y1);
+}
+
+Command draw_square_command (const char *colour, int top, int left, int size)
+{
+  BB_setColour(colour);
+  BB_drawSquare(top, left, size);
+}
+
+Command draw_circle_command (const char *colour, int xc, int yc, int radius,
+			     int filled)
+{
+  BB_setColour(colour);
+  BB_drawCircle(xc, yc, radius, filled);
+}
+
+typedef struct { int x, y; } POINT_TYPE;
+typedef struct { POINT_TYPE start, end; } LINE_TYPE;
+
+Goal draw_tictactoe_goal (const char *colour)
+{
+  uint i;
+  LINE_TYPE ticArray[] = {{{ 30, 60},{150, 60}},
+			  {{ 30,120},{150,120}},
+			  {{ 60, 30},{ 60,150}},
+			  {{120, 30},{120,150}}};
+
+  BB_setColour(colour);
+  for (i=0; i<sizeof(ticArray)/sizeof(LINE_TYPE); i++) {
+    spawn draw_line_command(ticArray[i].start.x, ticArray[i].start.y,
+			    ticArray[i].end.x, ticArray[i].end.y)
+      with serial previous;
+  }
+}
+
+Goal draw_house_goal (const char *colour)
+{
+  uint i;
+  POINT_TYPE houseArray[] = {{200,240}, {240,240}, {200,200}, {240,200},
+			     {220,180}, {200,200}, {200,240}, {240,200},
+			     {240,240}, {0,0}};
+
+  BB_setColour(colour);
+  with (serial previous) {
+    for (i=1; houseArray[i].x != 0; i++) {
+      spawn draw_line_command(houseArray[i-1].x, houseArray[i-1].y,
+			      houseArray[i].x, houseArray[i].y);
+    }
+  }
+}
+
+Goal flash_goal (void)
+{
+  spawn clear_command();
+  with (disable for 1.0 after previous completed) {
+    spawn fill_command("red");
+    spawn fill_command("yellow");
+    spawn clear_command();
+  }
+}
+
+static void printCmdSummary (void)
+{
+  printf("Commands: clear, fill, line, square, circle,\n");
+  printf("          tictactoe, house, flash, color?, quit\n");
+  printf("> ");
+  fflush(stdout);
+}
+
+const char *requestColor (void)
+{
+  static char color[10];
+
+  printf("Enter Colour (red, white, blue, green, yellow) [%s] > ", 
+	 BB_getColour()); fflush(stdout);
+  fgets(color, 10, stdin);
+  // Remove the final newline 
+  color[strlen(color)-1] = '\0';
+  return (strlen(color) > 0 ? color : BB_getColour());
+}
+
+static void stdinHandler (int sd, const void *dummy)
+{
+  char inputLine[80];
+
+  fgets(inputLine, 80, stdin);
+  if (strstr(inputLine,"clear")) {
+    printf("Clearing...\n"); fflush(stdout);
+    clear_command();
+  } else if (strstr(inputLine, "fill")) {
+    fill_command(requestColor());
+  } else if (strstr(inputLine, "line")) {
+    int x0, y0, x1, y1;
+
+    printf("Enter x1, y1, x2, y2 > "); fflush(stdout);
+    fgets(inputLine, 80, stdin);
+    sscanf(inputLine, "%d %d %d %d", &x0, &y0, &x1, &y1);
+    draw_line_command(x0, y0, x1, y1);
+  } else if (strstr(inputLine, "square")) {
+    int top, left, size;
+
+    printf("Enter top left size > "); fflush(stdout);
+    fgets(inputLine, 80, stdin);
+    sscanf(inputLine, "%d %d %d", &top, &left, &size);
+    draw_square_command(requestColor(), top, left, size);
+  } else if (strstr(inputLine, "circle")) {
+    int xc, yc, radius, filled;
+
+    printf("Enter center x, center y, radius, fill (0,1) > "); fflush(stdout);
+    fgets(inputLine, 80, stdin);
+    sscanf(inputLine, "%d %d %d %d", &xc,  &yc, &radius, &filled);
+    draw_circle_command(requestColor(), xc, yc, radius, filled);
+  } else if (strstr(inputLine, "tictactoe")) {
+    draw_tictactoe_goal(requestColor());
+  } else if (strstr(inputLine, "house")) {
+    draw_house_goal(requestColor());
+  } else if (strstr(inputLine, "flash")) {
+    printf("Flashing...\n"); fflush(stdout);
+    flash_goal();
+  } else if (strstr(inputLine, "color?")) {
+    printf("Current billboard color is %s\n", BB_getColour()); fflush(stdout);
+  } else if (strstr(inputLine, "quit") || inputLine[0] == 'q') {
+    exit(0);
+  } else if (inputLine[0] == 'h' || inputLine[0] == '?') {
+    printCmdSummary();
+  } else {
+    fprintf(stderr, "Unknown command %s:\n", inputLine);
+    printCmdSummary();
+  }
+  printf("> "); fflush(stdout);
+}
+
+static void X11Handler (int sd, const void *dummy)
+{
+  XtInputMask mask;
+
+  while ((mask = (XtAppPending(app_context) & (XtIMXEvent | XtIMTimer))) != 0){
+    XtAppProcessEvent(app_context, mask);
+  }
+}
+
+int main (void)
+{
+  TCM_Initialize();
+  TDL::setLogStream ("/dev/null");
+  TCM_SetTerminalLoggingOptions(Log_None);
+  TCM_AddExternalEvent(fileno(stdin), stdinHandler, NULL);
+  BB_init();
+  TCM_AddExternalEvent(ConnectionNumber(theDisplay), X11Handler, NULL);
+
+  printCmdSummary();
+  TCM_ProcessAgenda();
+  return 0;
+}

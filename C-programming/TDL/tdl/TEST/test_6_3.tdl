@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal printme ( const char * theString )
+{
+  cout << "Test: [printme]:  " << theString << endl;
+}
+
+Goal foo( int4 theInt ) with persistent int4 testPersistent = 1
+{
+  testPersistent += 10;
+  cout << "Test: (1) Foo ( " << theInt << " ):  testPersistent = "
+       << testPersistent << endl;
+  SPAWN printme ( "foo test 1" );
+  SPAWN resumeFoo ( TDL_REF(THIS) ) with serial printme;
+  POSTPONE;
+}
+
+Goal resumeFoo( TCM_Task_Tree_Ref  thePostponedTask )
+{
+  cerr << "Test: (2) resumeFoo ( " << thePostponedTask.operator*() << " )"
+       << endl;
+  printme ( "Task resumeFoo: test 2" );
+  _TDL_INTERNAL_RESUME( _TDL_foo, thePostponedTask ) (100);
+}
+
+Resume foo( int4 theResumeInt )
+{
+  cerr << "Test: (3) Resume foo ( " << theResumeInt << " ):  testPersistent = "
+       << testPersistent << endl;
+  SPAWN printme ( "foo resume test 3" );
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  foo(1);
+}
+

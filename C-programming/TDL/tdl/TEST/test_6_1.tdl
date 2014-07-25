@@ -1,0 +1,60 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal printme ( const char * theString, TCM_Task_Tree_Ref theTask )
+{
+  cerr << "Test:  [printme]:  \"" << theString << "\"" << endl;
+
+/* Back in the "old" days, we needed to run SUCCESS on terminated tasks.
+ * Now'adays, you kids have it easy...
+ *
+ *  if ( theTask . operator*() != NULL )
+ *  {
+ *    TDL_BIND ( theTask );
+ *    TDL_SUCCESS ( theTask );
+ *  }
+ */
+}
+
+
+Goal foo()
+  WITH ON TERMINATE SPAWN printme ("First  Task level on terminate", NULL),
+       ON TERMINATE SPAWN printme ("Second Task level on terminate", NULL),
+       ON TERMINATE SPAWN printme ("Third  Task level on terminate", NULL)
+{
+  cerr << "Test: foo" << endl;
+  POSTPONE;
+}
+
+
+Goal run()
+{
+  two SERIAL one; 
+  three SERIAL two;
+ z1: z2: z3: z4: SPAWN foo() WITH
+    ON TERMINATE one: SPAWN printme("First  Internal on terminate" ,
+				     TDL_REF(foo) ),
+    ON TERMINATE two: SPAWN printme( "Second Internal on terminate" , NULL ),
+    ON TERMINATE three: a1: a2: a3: a4: printme("Third  Internal on terminate",
+						NULL );
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  SPAWN run()
+    WITH ON TERMINATE printme("First  External (main) on terminate", NULL),
+         ON TERMINATE printme("Second External (main) on terminate", NULL),
+         ON TERMINATE printme("Third  External (main) on terminate", NULL),
+         TERMINATE IN 0:0:1.0, WAIT;
+  cerr << "Starting TCM_ProcessAgenda()" << endl;
+  TCM_ProcessAgenda ( TRUE, 3000 );
+  cerr << "Starting TCM_ProcessAgenda() a second time." << endl;
+  TCM_ProcessAgenda ( TRUE, 3000 );
+  cerr << "Ending TCM_ProcessAgenda()." << endl;
+}

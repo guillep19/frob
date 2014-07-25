@@ -1,0 +1,93 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Persistent Goal A()
+{
+  cout << "Goal A: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) ) << endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Goal A: ", FALSE);
+  FLUSHALL();
+
+  SPAWN B();
+  E();
+}
+
+Persistent Goal B()
+{
+  cout << "Goal B: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) ) << endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Goal B: ", FALSE);
+  FLUSHALL();
+
+  SPAWN C( TDL_REF(THIS) );
+  POSTPONE;
+}
+
+Resume B()
+{
+  cout << "Resume B: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) ) <<endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Resume B: ", FALSE);
+  FLUSHALL();
+
+  SPAWN D();
+  E();
+}
+
+Persistent Goal C(TCM_Task_Tree_Ref theTaskRef )
+{
+  cout << "Goal C: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) ) << endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Goal C: ", FALSE);
+  FLUSHALL();
+
+  TDL_RESUME_B ( theTaskRef );
+}
+
+Persistent Goal D()
+{
+  cout << "Goal D: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) ) << endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Goal D: ", FALSE);
+  FLUSHALL();
+
+  F();
+  SPAWN F() with WAIT;
+  SPAWN F();
+  TCM_DisplayTree ( stderr, TCM_RootNode() );
+}
+
+Persistent Goal E()
+{
+  cout << "Goal E: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) ) << endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Goal E: ", FALSE);
+  FLUSHALL();
+}
+
+Persistent Goal F()
+{
+  cout << "Goal F: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) ) << endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Goal F: ", FALSE);
+  FLUSHALL();
+}
+
+int
+main( int argc, char * argv[] )
+{
+  MARKUSED(argv);
+  // TDL_Initialize( argc < 2, argc < 3 );
+  TDL_Initialize( argc >= 3, argc >= 2 );
+  A();
+}

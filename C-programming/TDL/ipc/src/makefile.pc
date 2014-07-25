@@ -1,0 +1,453 @@
+
+# -----------------------------------------------------------------
+# IPC Makefile for PC platforms
+# -----------------------------------------------------------------
+# Copyright (c) 2008, Carnegie Mellon University
+#     This software is distributed under the terms of the 
+#     Simplified BSD License (see ipc/LICENSE.TXT)
+
+# OS/2 Specific
+# -------------
+
+!ifdef OS2
+
+CC = icc
+LB = ilib /nologo
+
+LBENDCHAR = ;
+LKENDCHAR = 
+
+OS = os2
+OBJDIR = objs\$(OS)
+BINDIR = ..\bin\$(OS)
+LIBDIR = ..\lib\$(OS)
+
+SYSLIBS = so32dll.lib tcp32dll.lib
+
+EXEFLAG = /Fe
+OBJFLAG = /Fo 
+
+# STANDARD FLAGS
+CFLAGS  =  /G4 /O+ /Ss+ /Su4 /C /Gm+ /Q+ /Gs- /Sm+ /DOS2 \
+	   /Wall-pro-ret-cnd
+CFLAGS2 =  /B /STACK:50000
+
+# DEBUG FLAGS
+#CFLAGS = /Ti /G4 /O- /Ss+ /Su4 /C /Tx+ /Gs- /Q+  /DOS2 \
+#	  /D__DEBUG_ALLOC__ /Se /Gm+ /Sm+ /Wall-pro-ret-cnd 
+#CFLAGS2 = /Ti /B /STACK:50000 
+
+# 3T specific
+CFLAGS_IPC = /D_3T /DNMP_IPC /DLISP /DNEED_READV /DFORCE_32BIT_ENUM
+
+LKFLAGS = /nologo
+
+# End of OS/2 Specific
+
+# -----------------------------------------------------------------
+
+# WIN95 Specific
+# --------------
+
+!else
+!ifdef WIN95
+
+CC = cl
+LB = lib /nologo 
+
+LBENDCHAR = 
+LKENDCHAR = 
+
+OS = w95
+OBJDIR = objs\$(OS)
+BINDIR = ..\bin\$(OS)
+LIBDIR = ..\lib\$(OS)
+
+SYSLIBS = wsock32.lib
+
+EXEFLAG = /Fe 
+OBJFLAG = /Fo
+
+# STANDARD FLAGS
+CFLAGS  = /nologo /Zp4 /c /MT /W0 /G5 /Ox /D "NDEBUG" /D "WIN32" \
+	  /D "_WINDOWS" /D "_WIN95_MSC_" /D "NEED_READV"
+CFLAGS2 = /F50000
+
+# DEBUG FLAGS
+#CFLAGS  = /nologo /Zp4 /c /MT /W0 /G5 /Od /D "NDEBUG" /D "WIN32" \
+#	     /D "_WINDOWS" /D "_WIN95_MSC_" /D "NEED_READV" /YX 
+#CFLAGS2 = /Zi /F50000 
+
+# 3T specific
+CFLAGS_IPC = /D "_3T" /D "NMP_IPC" /D "LISP" /D "_WINSOCK_" \
+	     /D "FORCE_32BIT_ENUM" /D "PC_ALLEGRO"
+
+LKFLAGS = /link /nologo /subsystem:console /incremental:no /machine:I386
+
+# End of WIN95 specific
+
+# -----------------------------------------------------------------
+
+# WIN95 Specific for building a DLL
+# ---------------------------------
+
+!else
+!ifdef WIN95_DLL
+
+CC = cl
+LB = echo
+
+LBENDCHAR = 
+LKENDCHAR = 
+
+OS = w95
+OBJDIR = objs\$(OS)dll
+BINDIR = ..\bin\$(OS)
+LIBDIR = ..\lib\$(OS)
+
+SYSLIBS = wsock32.lib
+
+EXEFLAG = /Fe 
+OBJFLAG = /Fo
+
+#STANDARD FLAGS
+#CFLAGS  = /nologo /Zp4 /c /ML /W0 /G5 /Ox /D "NDEBUG" /D "WIN32" \
+#          /D "_WINDOWS" /D "_WIN95_MSC_" /D "NEED_READV" /LD
+#CFLAGS2 = /F50000
+
+# DEBUG FLAGS
+CFLAGS  = /nologo /Zp4 /c /ML /W0 /G5 /Od /D "NDEBUG" /D "WIN32" \
+	  /D "_WINDOWS" /D "_WIN95_MSC_" /D "NEED_READV" /YX /LD
+CFLAGS2 = /Zi /F50000 
+
+# 3T specific
+CFLAGS_IPC = /D "_3T" /D "NMP_IPC" /D "LISP" /D "_WINSOCK_" \
+	     /D "FORCE_32BIT_ENUM" /D "PC_ALLEGRO"
+
+LKFLAGS = /nologo /subsystem:console /incremental:no /machine:I386 \
+	 /DEF:"ipc.def" /IMPLIB:"..\lib\w95\IPCdll.lib" /DLL
+
+# End of WIN95 specific for building a DLL
+
+# -----------------------------------------------------------------
+
+# WINNT Specific
+# --------------
+
+!else
+!ifdef WINNT
+
+CC = cl
+LB = lib /nologo 
+
+LBENDCHAR = 
+LKENDCHAR = 
+
+OS = wnt
+OBJDIR = objs\$(OS)
+BINDIR = ..\bin\$(OS)
+LIBDIR = ..\lib\$(OS)
+
+SYSLIBS = wsock32.lib
+
+EXEFLAG   = /Fe
+OBJFLAG   = /Fo
+
+# STANDARD FLAGS
+CFLAGS  = /nologo /Zp4 /c /MT /W0 /G5 /Ox /D "NDEBUG" /D "WIN32" \
+	  /D "_WINDOWS" /D "_WIN95_MSC_" /D "NEED_READV"
+CFLAGS2 = /F50000
+
+# DEBUG FLAGS
+#CFLAGS  = /nologo /Zp4 /c /MT /W0 /G5 /Od /D "NDEBUG" /D "WIN32" \
+#	   /D "_WINDOWS" /D "_WIN95_MSC_" /D "NEED_READV" /YX 
+#CFLAGS2 = /Zi /F50000 
+
+# 3T specific
+CFLAGS_IPC = /D "_3T" /D "NMP_IPC" /D "LISP" /D "_WINSOCK_" \
+	     /D "FORCE_32BIT_ENUM"
+
+LKFLAGS = /nologo /link /subsystem:console /incremental:no /machine:I386
+
+# End of WINNT specific
+
+# -----------------------------------------------------------------
+ 
+# TurboC Compiler Specific
+# ------------------------
+ 
+!else
+!ifdef TURBOC
+ 
+CC = bcc32
+LB = Tlib /P64
+
+LBENDCHAR =
+LKENDCHAR = -lS:50000
+ 
+OS = turboC
+OBJDIR = objs\$(OS)
+BINDIR = ..\bin\$(OS)
+LIBDIR = ..\lib\$(OS)
+
+SYSLIBS = wsock32.lib
+
+EXEFLAG   = -e
+OBJFLAG   = -n
+ 
+# STANDARD FLAGS
+#CFLAGS = /nologo /c -R -v -vi -w-sus -w-par -w-rch -WM -WC \
+#         -w-aus -4 -N -K -w3 /I..\include\ -DWIN95
+CFLAGS = /nologo  /c -R -v -vi -w-sus -w-par -w-rch -a4 -WC \
+         -w-aus -4 -N -K -w3 /I..\include\ -DWIN95
+CFLAGS2 =
+ 
+# DEBUG FLAGS
+#CFLAGS2 = /F50000
+ 
+# 3T specific
+CFLAGS_IPC = -D_3T -DNMP_IPC -DLISP -D_WINSOCK_ -DFORCE_32BIT_ENUM \
+	     -DNEED_READV=1
+ 
+LKFLAGS = /nologo
+ 
+# End of TurboC compiler specific
+ 
+# -----------------------------------------------------------------
+
+!else
+
+!error No OS Type Specified, Try OS2=, WIN95=, WINNT=, or TURBOC= on the command line
+
+!endif   #TURBOC
+!endif   #WINNT
+!endif   #WIN95_DLL
+!endif   #WIN95
+!endif   #OS2
+
+# -----------------------------------------------------------------
+
+OBJS= $(OBJDIR)\behaviors.obj	$(OBJDIR)\centralIO.obj	\
+      $(OBJDIR)\com.obj		$(OBJDIR)\comModule.obj	\
+      $(OBJDIR)\comServer.obj	$(OBJDIR)\datamsg.obj	\
+      $(OBJDIR)\dispatch.obj	$(OBJDIR)\formatters.obj \
+      $(OBJDIR)\globalM.obj	$(OBJDIR)\globalMUtil.obj \
+      $(OBJDIR)\globalS.obj	$(OBJDIR)\globalVar.obj	\
+      $(OBJDIR)\hash.obj	$(OBJDIR)\idtable.obj	\
+      $(OBJDIR)\ipc.obj		$(OBJDIR)\ipcLisp.obj	\
+      $(OBJDIR)\key.obj		$(OBJDIR)\lex.obj	\
+      $(OBJDIR)\list.obj	$(OBJDIR)\logging.obj	\
+      $(OBJDIR)\marshall.obj	$(OBJDIR)\modLogging.obj \
+      $(OBJDIR)\modVar.obj	$(OBJDIR)\msgTap.obj	\
+      $(OBJDIR)\parseFmttrs.obj $(OBJDIR)\primFmttrs.obj\
+      $(OBJDIR)\printData.obj   $(OBJDIR)\queryResponse.obj \
+      $(OBJDIR)\recvMsg.obj	$(OBJDIR)\reg.obj	\
+      $(OBJDIR)\res.obj		$(OBJDIR)\resMod.obj	\
+      $(OBJDIR)\sendMsg.obj	$(OBJDIR)\strList.obj	\
+      $(OBJDIR)\tcModError.obj  $(OBJDIR)\tcaMem.obj	\
+      $(OBJDIR)\tcaRef.obj	$(OBJDIR)\tcerror.obj   \
+      $(OBJDIR)\timer.obj	$(OBJDIR)\wsocksrt.obj 
+
+HOBJS=	basics.h	\
+ 	behaviors.h	centralIO.h	\
+	centralMsg.h	\
+	com.h		comModule.h	\
+	comServer.h	datamsg.h	\
+	dispatch.h	formatters.h	\
+	globalM.h	\
+	globalS.h	globalVar.h	\
+	hash.h		idtable.h	\
+	ipc.h		\
+	ipcPriv.h	\
+	key.h		lex.h		\
+	libc.h		\
+	list.h		logging.h	\
+			modLogging.h	\
+	modVar.h	msgTap.h	\
+	parseFmttrs.h	primFmttrs.h	\
+	printData.h	\
+	recvMsg.h	reg.h		\
+	res.h		resMod.h	\
+	sendMsg.h	strList.h	\
+	tca.h		tcaInternal.h	\
+			tcaMem.h	\
+	tcaRef.h	tcerror.h	\
+	values.h
+ 
+# -----------------------------------------------------------------
+
+!ifdef WIN95_DLL
+a : install_dirs ipclib
+!else
+a : install_dirs ipclib sizetest server
+!endif
+
+# -----------------------------------------------------------------
+
+clean : 
+	erase $(OBJDIR)\*.obj
+
+# -----------------------------------------------------------------
+
+install_dirs : ipc.h
+	if ! [ -r objs ]; then mkdir objs; fi
+	if ! [ -r $(OBJDIR) ]; then mkdir $(OBJDIR); fi
+	if ! [ -r ../bin ]; then mkdir ../bin; fi
+	if ! [ -r $(BINDIR) ]; then mkdir $(BINDIR); fi
+	if ! [ -r ../lib ]; then mkdir ../lib; fi
+	if ! [ -r $(LIBDIR) ]; then mkdir $(LIBDIR); fi
+	if ! [ -r ../include ]; then mkdir ../include; fi
+	if ! [ -r ../include/ipc.h ]; then copy ipc.h ../include; fi
+
+# -----------------------------------------------------------------
+
+ipclib : $(OBJS)
+!ifdef WIN95_DLL
+	link /out:"$(LIBDIR)\IPC.dll" $(LKFLAGS) $(OBJS) $(SYSLIBS)
+	erase vc40.pch
+!else
+	$(LB) /out:$(LIBDIR)\IPC.lib $(OBJS) $(SYSLIBS) $(LBENDCHAR)
+!endif
+
+# -----------------------------------------------------------------
+
+sizetest : $(OBJDIR)\sizestes.obj $(LIBDIR)\IPC.lib
+	$(CC) $(CFLAGS2) $(EXEFLAG)$(BINDIR)\IPCsizetest.exe $(OBJDIR)\sizestes.obj $(LIBDIR)\IPC.lib $(SYSLIBS) $(LKENDCHAR)
+
+$(OBJDIR)\sizestes.obj : sizestes.c $(HOBJS)   
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ sizestes.c 
+
+# -----------------------------------------------------------------
+
+server : $(OBJDIR)\centralMain.obj $(LIBDIR)\IPC.lib
+	$(CC) $(CFLAGS2) $(EXEFLAG)$(BINDIR)\IPCserver.exe $(OBJDIR)\centralMain.obj $(LIBDIR)\IPC.lib $(SYSLIBS) $(LKENDCHAR)
+
+$(OBJDIR)\centralMain.obj : centralMain.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ centralMain.c
+
+# -----------------------------------------------------------------
+# Object files.
+# -----------------------------------------------------------------
+
+$(OBJDIR)\behaviors.obj : behaviors.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ behaviors.c
+
+$(OBJDIR)\centralIO.obj : centralIO.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ centralIO.c
+
+$(OBJDIR)\com.obj : com.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ com.c
+
+$(OBJDIR)\comModule.obj : comModule.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ comModule.c
+
+$(OBJDIR)\comServer.obj : comServer.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ comServer.c
+
+$(OBJDIR)\datamsg.obj : datamsg.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ datamsg.c
+
+$(OBJDIR)\dispatch.obj : dispatch.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ dispatch.c
+
+$(OBJDIR)\formatters.obj : formatters.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ formatters.c
+
+$(OBJDIR)\globalM.obj : globalM.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ globalM.c
+
+$(OBJDIR)\globalMUtil.obj : globalMUtil.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ globalMUtil.c
+
+$(OBJDIR)\globalS.obj : globalS.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ globalS.c
+
+$(OBJDIR)\globalVar.obj : globalVar.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ globalVar.c
+
+$(OBJDIR)\hash.obj : hash.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ hash.c
+
+$(OBJDIR)\idtable.obj : idtable.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ idtable.c
+
+$(OBJDIR)\ipc.obj : ipc.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ ipc.c
+
+$(OBJDIR)\ipcLisp.obj : ipcLisp.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ ipcLisp.c
+
+$(OBJDIR)\key.obj : key.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ key.c
+
+$(OBJDIR)\lex.obj : lex.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ lex.c
+
+$(OBJDIR)\list.obj : list.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ list.c
+
+$(OBJDIR)\logging.obj : logging.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ logging.c
+
+$(OBJDIR)\marshall.obj : marshall.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ marshall.c
+
+$(OBJDIR)\modLogging.obj : modLogging.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ modLogging.c
+
+$(OBJDIR)\modVar.obj : modVar.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ modVar.c
+
+$(OBJDIR)\msgTap.obj : msgTap.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ msgTap.c
+
+$(OBJDIR)\parseFmttrs.obj : parseFmttrs.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ parseFmttrs.c
+
+$(OBJDIR)\primFmttrs.obj : primFmttrs.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ primFmttrs.c
+
+$(OBJDIR)\printData.obj : printData.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ printData.c
+
+$(OBJDIR)\queryResponse.obj : queryResponse.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ queryResponse.c
+
+$(OBJDIR)\recvMsg.obj : recvMsg.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ recvMsg.c
+
+$(OBJDIR)\reg.obj : reg.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ reg.c
+
+$(OBJDIR)\res.obj : res.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ res.c
+
+$(OBJDIR)\resMod.obj : resMod.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ resMod.c
+
+$(OBJDIR)\sendMsg.obj : sendMsg.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ sendMsg.c
+
+$(OBJDIR)\strList.obj : strList.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ strList.c
+
+$(OBJDIR)\tcModError.obj : tcModError.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ tcModError.c
+
+$(OBJDIR)\tcaMem.obj : tcaMem.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ tcaMem.c
+
+$(OBJDIR)\tcaRef.obj : tcaRef.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ tcaRef.c
+
+$(OBJDIR)\tcerror.obj : tcerror.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ tcerror.c
+
+$(OBJDIR)\timer.obj : timer.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ timer.c
+
+$(OBJDIR)\wsocksrt.obj : wsocksrt.c $(HOBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_IPC) $(OBJFLAG)$@ wsocksrt.c
+
+# -----------------------------------------------------------------
+

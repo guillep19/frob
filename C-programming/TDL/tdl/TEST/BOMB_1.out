@@ -1,0 +1,195 @@
+Line:48:  Warning:  Use of "SELF" keyword is deprecated.  Assuming you meant to use "CHILD".
+Line:166:  Warning:  Use of "PARENT" keyword is deprecated.  Assuming you meant to use "THIS".
+Line:16:  Error:  Ambiguous reference for name "h". (Matches SPAWN at line 17 and SPAWN at line 18.)
+Line:16:  Error:  Ambiguous reference for name "h". (Matches SPAWN at line 17 and LABEL at line 18.)
+Line:23:  Error:  Ambiguous reference for name "i". (Matches LABEL at line 21 and SPAWN at line 22.)
+Line:23:  Error:  Ambiguous reference for name "i". (Matches SPAWN at line 21 and SPAWN at line 22.)
+Line:27:  Error:  Ambiguous reference for name "j". (Matches LABEL at line 25 and LABEL at line 26.)
+Line:30:  Error:  LABEL "k" duplicates LABEL at line 29.
+Line:33:  Error:  Ambiguous reference for name "L". (Matches SPAWN at line 32 and LABEL at line 33.)
+Line:33:  Error:  Ambiguous reference for name "L". (Matches LABEL at line 32 and LABEL at line 33.)
+Line:38:  Error:  WAIT constraint (line 38) conflicts with Future-Reference (line 38).
+Line:43:  Error:  WAIT constraint (line 41) conflicts with Future-Reference (line 43).
+Line:206:  Error:  LABEL "xx" is used in constraint at line 208, but does not refer to a SPAWN or WITH statement.
+Line:210:  Error:  WAIT constraint applied against Future-Reference 'x'.
+Line:215:  Error:  Constraint [DISABLE_FOR_TIME] applied against Task(s) ('x') that are already running.
+Line:43:  Error:  Unknown reference for name 'Z2'.
+Line:48:  Error:  Circular dependency detected.  Serial on CHILD.
+Line:55:  Error:  Circular dependency detected.  Serial on CHILD.
+Line:56:  Error:  Circular dependency detected.  Sequential on CHILD.
+Line:57:  Error:  Circular dependency detected.  Sequential on CHILD.
+Line:58:  Error:  Circular dependency detected.  Sequential on CHILD.
+Line:66:  Error:  Circular dependency detected.  Serial on CHILD.
+Line:68:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:69:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:70:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:71:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:73:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:74:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:75:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:76:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:78:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:79:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:81:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:85:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:88:  Error:  Circular dependency detected.  Serial on CHILD.
+Line:90:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:91:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:92:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:93:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:95:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:96:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:97:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:98:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:100:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:101:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:102:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:103:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:107:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:110:  Error:  Circular dependency detected.  Serial on CHILD.
+Line:112:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:113:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:114:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:115:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:117:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:118:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:119:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:120:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:122:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:123:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:124:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:125:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:129:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:130:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:132:  Error:  Circular dependency detected.  Serial on CHILD.
+Line:134:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:135:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:136:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:137:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:139:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:140:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:141:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:142:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:144:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:145:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:147:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:151:  Error:  Circular dependency detected.  Disable on CHILD.
+Line:156:  Error:  Circular dependency detected.  Serial on CHILD.
+Line:159:  Error:  Circular dependency detected.  Disable on THIS.
+Line:160:  Error:  Circular dependency detected.  Disable on THIS.
+Line:164:  Error:  Too many Iteration-Indexes for Constraint Reference.  (Reference is enclosed in 0 iteration loop(s) and there is (are) 1 array index(es) specified.)
+Line:164:  Warning:  Task Index is specified in octal.
+Line:166:  Error:  Circular dependency detected.  Serial on THIS.
+Line:168:  Error:  Circular dependency detected.  Sequential on THIS.
+Line:169:  Error:  Circular dependency detected.  Sequential on THIS.
+Line:171:  Warning:  Are you certain you want to Terminate on CHILD?
+Line:172:  Warning:  Are you certain you want to Terminate on THIS?
+Line:179:  Error:  Case or Default label is not contained by an immediate switch statement.
+Line:182:  Error:  Case or Default label is not contained by an immediate switch statement.
+Line:187:  Warning:  Break statement outside of any enclosing iteration or switch statement.
+Line:188:  Warning:  Continue statement outside of any enclosing iteration statement.
+Line:194:  Warning:  PARALLEL constraint in a SPAWN statement WITH clause is meaningless.
+Line:195:  Warning:  PARALLEL constraint in a SPAWN statement WITH clause is meaningless.
+Line:195:  Warning:  SERIAL constraint overrides PARALLEL constraint.
+Line:200:  Warning:  SEQUENTIAL constraint overrides PARALLEL constraint.
+Line:214:  Warning:  PARALLEL constraint in a CONSTRAINT STATEMENT is meaningless.
+Line:218:  Warning:  FAIL statement lacks an Exception.
+Line:224:  Warning:  Using ::_TDL_ENCLOSING_TASK for "THIS"
+Line:224:  Warning:  ::_TDL_ENCLOSING_TASK ["THIS"] Handling never runs.
+Line:225:  Warning:  Using TCM_LastChild ( ::_TDL_ENCLOSING_TASK ) for "PREVIOUS"
+Line:226:  Warning:  Using ::_TDL_ENCLOSING_TASK for "THIS"
+Line:226:  Warning:  ::_TDL_ENCLOSING_TASK ["THIS"] Handling never runs.
+Line:227:  Warning:  Using ::_TDL_ENCLOSING_TASK for "THIS"
+Line:227:  Warning:  ::_TDL_ENCLOSING_TASK ["THIS"] Handling never runs.
+Line:228:  Warning:  Using ::_TDL_ENCLOSING_TASK for "THIS"
+Line:228:  Error:  Circular dependency detected.  Disable on THIS.
+Line:237:  Error:  Constraint contains a Future-Reference on a WITH statement.  (This is currently unimplemented.)
+Line:238:  Error:  Constraint contains a Future-Reference on a WITH statement.  (This is currently unimplemented.)
+Line:239:  Error:  Constraint [SEQUENTIAL_EXPANSION] applied against Task(s) ('a') that are already running.
+Line:239:  Error:  Constraint contains a Future-Reference on a WITH statement.  (This is currently unimplemented.)
+Line:241:  Warning:  Constraint [EXCEPTION_HANDLER] applied against Task(s) ('a') that are already running.  (Results are unpredictable.)
+Line:248:  Error:  Constraint [SEQUENTIAL_EXPANSION] applied against Task(s) ('a') that are already running.
+Line:231:  Warning:  'MAXIMUM ACTIVATE 2' constraint IGNORED.  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 1'.
+Line:231:  Warning:  'MAXIMUM ACTIVATE 3' constraint IGNORED.  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 1'.
+Line:231:  Warning:  'MAXIMUM TRIGGER  2' constraint IGNORED.  Overriden by subsequent constraint 'MAXIMUM TRIGGER  1'.
+Line:231:  Warning:  'MAXIMUM TRIGGER  3' constraint IGNORED.  Overriden by subsequent constraint 'MAXIMUM TRIGGER  1'.
+Line:231:  Warning:  'PERIOD 9:8:7.6' constraint IGNORED.  Overriden by subsequent constraint 'PERIOD 1:2:3.4'.
+Line:231:  Warning:  'PERIOD   ( x + y )
+                             * ( z + w )' constraint IGNORED.  Overriden by subsequent constraint 'PERIOD 1:2:3.4'.
+Line:243:  Error:  Exception Handlers are not permitted in WITH statements.
+Line:253:  Error:  Constraint contains a Future-Reference on an Iteration-Set of Spawn Statements.  (This is currently unimplemented.)
+Line:254:  Error:  Constraint contains a Future-Reference on an Iteration-Set of With Statements.  (This is currently unimplemented.)
+Line:267:  Error:  Constraint contains a Future-Reference on an Iteration-Set of Spawn Statements.  (This is currently unimplemented.)
+Line:274:  Error:  Constraint [SEQUENTIAL_HANDLING] applied against Task(s) ('ffor') that are already running.
+Line:275:  Error:  Constraint [SEQUENTIAL_HANDLING] applied against Task(s) ('ffor') that are already running.
+Line:253:  Warning:  Using an Iteration-Set of References for Constraint Reference.  (Reference is enclosed in 1 iteration loop(s) and there is (are) 0 array index(es) specified.)
+Line:254:  Warning:  Using an Iteration-Set of References for Constraint Reference.  (Reference is enclosed in 1 iteration loop(s) and there is (are) 0 array index(es) specified.)
+Line:267:  Warning:  Using an Iteration-Set of References for Constraint Reference.  (Reference is enclosed in 1 iteration loop(s) and there is (are) 0 array index(es) specified.)
+Line:271:  Warning:  Using an Iteration-Set of References for Constraint Reference.  (Reference is enclosed in 1 iteration loop(s) and there is (are) 0 array index(es) specified.)
+Line:272:  Error:  Too many Iteration-Indexes for Constraint Reference.  (Reference is enclosed in 1 iteration loop(s) and there is (are) 2 array index(es) specified.)
+Line:274:  Warning:  Using an Iteration-Set of References for Constraint Statement Reference.  (Reference is enclosed in 1 iteration loop(s) and there is (are) 0 array index(es) specified.)
+Line:274:  Warning:  Using an Iteration-Set of References for Constraint Reference.  (Reference is enclosed in 1 iteration loop(s) and there is (are) 0 array index(es) specified.)
+Line:275:  Error:  Too many Iteration-Indexes for Constraint  Statement Reference.  (Reference is enclosed in 1 iteration loop(s) and there is (are) 2 array index(es) specified.)
+Line:275:  Error:  Too many Iteration-Indexes for Constraint Reference.  (Reference is enclosed in 1 iteration loop(s) and there is (are) 2 array index(es) specified.)
+Line:281:  Warning:  'MAXIMUM TRIGGER  24' constraint IGNORED.  Overriden by subsequent constraint 'MAXIMUM TRIGGER 22 '.
+Line:281:  Warning:  'MAXIMUM ACTIVATE 23' constraint IGNORED.  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 21'.
+Line:281:  Warning:  'PERIOD 0:0:2.2' constraint IGNORED.  Overriden by subsequent constraint 'PERIOD 0:0:2.1'.
+Line:285:  Warning:  'MAXIMUM TRIGGER  14' constraint IGNORED.  Overriden by subsequent constraint 'MAXIMUM TRIGGER  12  '.
+Line:285:  Warning:  'MAXIMUM ACTIVATE 13' constraint IGNORED.  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 11'.
+Line:285:  Warning:  'PERIOD 0:0:1.2' constraint IGNORED.  Overriden by subsequent constraint 'PERIOD 0:0:1.1'.
+Line:285:  Warning:  'MAXIMUM TRIGGER 22 ' constraint IGNORED [line 281].  Overriden by subsequent constraint 'MAXIMUM TRIGGER  12  '.
+Line:285:  Warning:  'MAXIMUM TRIGGER  24' constraint IGNORED [line 281].  Overriden by subsequent constraint 'MAXIMUM TRIGGER  12  '.
+Line:285:  Warning:  'MAXIMUM ACTIVATE 21' constraint IGNORED [line 281].  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 11'.
+Line:285:  Warning:  'MAXIMUM ACTIVATE 23' constraint IGNORED [line 281].  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 11'.
+Line:285:  Warning:  'PERIOD 0:0:2.1' constraint IGNORED [line 281].  Overriden by subsequent constraint 'PERIOD 0:0:1.1'.
+Line:285:  Warning:  'PERIOD 0:0:2.2' constraint IGNORED [line 281].  Overriden by subsequent constraint 'PERIOD 0:0:1.1'.
+Line:289:  Warning:  'MAXIMUM TRIGGER  4' constraint IGNORED.  Overriden by subsequent constraint 'MAXIMUM TRIGGER  2'.
+Line:289:  Warning:  'MAXIMUM ACTIVATE 3' constraint IGNORED.  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 1'.
+Line:289:  Warning:  'PERIOD 0:0:0.2' constraint IGNORED.  Overriden by subsequent constraint 'PERIOD 0:0:0.1'.
+Line:289:  Warning:  'MAXIMUM TRIGGER  12  ' constraint IGNORED [line 285].  Overriden by subsequent constraint 'MAXIMUM TRIGGER  2'.
+Line:289:  Warning:  'MAXIMUM TRIGGER  14' constraint IGNORED [line 285].  Overriden by subsequent constraint 'MAXIMUM TRIGGER  2'.
+Line:289:  Warning:  'MAXIMUM ACTIVATE 11' constraint IGNORED [line 285].  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 1'.
+Line:289:  Warning:  'MAXIMUM ACTIVATE 13' constraint IGNORED [line 285].  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 1'.
+Line:289:  Warning:  'PERIOD 0:0:1.1' constraint IGNORED [line 285].  Overriden by subsequent constraint 'PERIOD 0:0:0.1'.
+Line:289:  Warning:  'PERIOD 0:0:1.2' constraint IGNORED [line 285].  Overriden by subsequent constraint 'PERIOD 0:0:0.1'.
+Line:289:  Warning:  'MAXIMUM TRIGGER 22 ' constraint IGNORED [line 281].  Overriden by subsequent constraint 'MAXIMUM TRIGGER  2'.
+Line:289:  Warning:  'MAXIMUM TRIGGER  24' constraint IGNORED [line 281].  Overriden by subsequent constraint 'MAXIMUM TRIGGER  2'.
+Line:289:  Warning:  'MAXIMUM ACTIVATE 21' constraint IGNORED [line 281].  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 1'.
+Line:289:  Warning:  'MAXIMUM ACTIVATE 23' constraint IGNORED [line 281].  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 1'.
+Line:289:  Warning:  'PERIOD 0:0:2.1' constraint IGNORED [line 281].  Overriden by subsequent constraint 'PERIOD 0:0:0.1'.
+Line:289:  Warning:  'PERIOD 0:0:2.2' constraint IGNORED [line 281].  Overriden by subsequent constraint 'PERIOD 0:0:0.1'.
+Line:293:  Warning:  'MAXIMUM TRIGGER  14' constraint IGNORED [line 285].  Overriden by subsequent constraint 'MAXIMUM TRIGGER  12  ' [line 285].
+Line:293:  Warning:  'MAXIMUM ACTIVATE 13' constraint IGNORED [line 285].  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 11' [line 285].
+Line:293:  Warning:  'PERIOD 0:0:1.2' constraint IGNORED [line 285].  Overriden by subsequent constraint 'PERIOD 0:0:1.1' [line 285].
+Line:293:  Warning:  'MAXIMUM TRIGGER 22 ' constraint IGNORED [line 281].  Overriden by subsequent constraint 'MAXIMUM TRIGGER  12  ' [line 285].
+Line:293:  Warning:  'MAXIMUM TRIGGER  24' constraint IGNORED [line 281].  Overriden by subsequent constraint 'MAXIMUM TRIGGER  12  ' [line 285].
+Line:293:  Warning:  'MAXIMUM ACTIVATE 21' constraint IGNORED [line 281].  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 11' [line 285].
+Line:293:  Warning:  'MAXIMUM ACTIVATE 23' constraint IGNORED [line 281].  Overriden by subsequent constraint 'MAXIMUM ACTIVATE 11' [line 285].
+Line:293:  Warning:  'PERIOD 0:0:2.1' constraint IGNORED [line 281].  Overriden by subsequent constraint 'PERIOD 0:0:1.1' [line 285].
+Line:293:  Warning:  'PERIOD 0:0:2.2' constraint IGNORED [line 281].  Overriden by subsequent constraint 'PERIOD 0:0:1.1' [line 285].
+Line:301:  Warning:  Using an Iteration-Set of References for Constraint Statement Reference.  (Reference is enclosed in 1 iteration loop(s) and there is (are) 0 array index(es) specified.)
+Line:312:  Warning:  'PERIOD 0:0:0.7 ' constraint IGNORED [line 303].  Overriden by subsequent constraint 'PERIOD 0:0:0.2 '.
+Line:314:  Warning:  'PERIOD 0:0:0.2 ' constraint IGNORED [line 312].  Overriden by subsequent constraint 'PERIOD 0:0:0.1'.
+Line:314:  Warning:  'PERIOD 0:0:0.4' constraint IGNORED [line 310].  Overriden by subsequent constraint 'PERIOD 0:0:0.1'.
+Line:314:  Warning:  'PERIOD 0:0:0.3' constraint IGNORED [line 308].  Overriden by subsequent constraint 'PERIOD 0:0:0.1'.
+Line:314:  Warning:  'PERIOD 0:0:0.7 ' constraint IGNORED [line 303].  Overriden by subsequent constraint 'PERIOD 0:0:0.1'.
+Line:314:  Warning:  'PERIOD 0:0:0.8' constraint IGNORED [line 301].  Overriden by subsequent constraint 'PERIOD 0:0:0.1'.
+Line:322:  Warning:  'PERIOD 0:0:7 ' constraint IGNORED.  Overriden by subsequent constraint 'PERIOD 0:0:6' [line 326].
+Line:322:  Warning:  'PERIOD 0:0:5' constraint IGNORED [line 321].  Overriden by subsequent constraint 'PERIOD 0:0:6' [line 326].
+Line:324:  Warning:  'PERIOD 0:0:1' constraint IGNORED.  Overriden by subsequent constraint 'PERIOD 0:0:6' [line 326].
+Line:324:  Warning:  'PERIOD 0:0:7 ' constraint IGNORED [line 322].  Overriden by subsequent constraint 'PERIOD 0:0:6' [line 326].
+Line:324:  Warning:  'PERIOD 0:0:5' constraint IGNORED [line 321].  Overriden by subsequent constraint 'PERIOD 0:0:6' [line 326].
+Line:329:  Warning:  Using an Iteration-Set of References for Constraint Statement Reference.  (Reference is enclosed in 1 iteration loop(s) and there is (are) 0 array index(es) specified.)
+Line:332:  Warning:  'PERIOD 0:0:5' constraint IGNORED [line 329].  Overriden by subsequent constraints: 'PERIOD 0:0:7 ', 'PERIOD 0:0:6' [line 337].
+Line:334:  Warning:  'PERIOD 0:0:7 ' constraint IGNORED [line 332].  Overriden by subsequent constraints: 'PERIOD 0:0:1', 'PERIOD 0:0:6' [line 337].
+Line:334:  Warning:  'PERIOD 0:0:5' constraint IGNORED [line 329].  Overriden by subsequent constraints: 'PERIOD 0:0:1', 'PERIOD 0:0:6' [line 337].
+Line:340:  Warning:  Using an Iteration-Set of References for Constraint Statement Reference.  (Reference is enclosed in 1 iteration loop(s) and there is (are) 0 array index(es) specified.)
+Line:343:  Warning:  'PERIOD 0:0:5' constraint IGNORED [line 340].  Overriden by subsequent constraints: 'PERIOD 0:0:7 ', 'PERIOD 0:0:6' [line 348].
+Line:345:  Warning:  'PERIOD 0:0:5' constraint IGNORED [line 340].  Overriden by subsequent constraints: 'PERIOD 0:0:7 ' [line 343], 'PERIOD 0:0:6' [line 348].
+Line:358:  Warning:  'PERIOD 0:0:0.3' constraint IGNORED.  Overriden by subsequent constraint 'PERIOD 0:0:0.1 '.
+Line:360:  Warning:  'PERIOD 0:0:0.4' constraint IGNORED.  Overriden by subsequent constraint 'PERIOD 0:0:0.2'.
+Line:360:  Warning:  'PERIOD 0:0:0.1 ' constraint IGNORED [line 358].  Overriden by subsequent constraint 'PERIOD 0:0:0.2'.
+Line:360:  Warning:  'PERIOD 0:0:0.3' constraint IGNORED [line 358].  Overriden by subsequent constraint 'PERIOD 0:0:0.2'.
+Line:364:  Warning:  'PERIOD 0:0:0.1' constraint IGNORED [line 365].  Overriden by subsequent constraint 'PERIOD 0:0:0.2' [line 366].
+
+98 Errors and 92 Warnings found.

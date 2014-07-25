@@ -1,0 +1,26 @@
+Task Control Management x.y.z (MON-DAY-YEAR)
+Goal        foo-auto,wait {1}:        TCM {0} --> ON HOLD         (Inactive)
+Goal        foo-auto,wait {1}:  ON HOLD  --> TCM             (Sent)
+Test: (1) Foo ( 1 ):  testPersistent = 11
+Goal              printme {2}:        TCM {1} --> ON HOLD         (Inactive)
+_TDL_Serial ( Constrain=resumeFoo-0 , Ref=printme-0 [Ref_flags: RUNNING] )
+Constraint:  _TDL_Serial  (0x........)
+ ActualReferenceNode = 0x........   ("printme-0")
+
+Goal            resumeFoo {3}:        TCM {1} --> ON HOLD         (Inactive)
+Goal              printme {2}:  ON HOLD  --> TCM             (Sent)
+Test: [printme]:  foo test 1
+  Success         printme {2}:
+Goal            resumeFoo {3}:  ON HOLD  --> TCM             (Sent)
+Test: (2) resumeFoo ( 0x........ )
+Goal      printme-auto,wait {4}:        TCM {3} --> ON HOLD         (Inactive)
+Goal      printme-auto,wait {4}:  ON HOLD  --> TCM             (Sent)
+Test: [printme]:  Task resumeFoo: test 2
+  Success printme-auto,wait {4}:
+Test: (3) Resume foo ( 100 ):  testPersistent = 11
+Goal              printme {5}:        TCM {1} --> ON HOLD         (Inactive)
+Goal              printme {5}:  ON HOLD  --> TCM             (Sent)
+  Success   foo-auto,wait {1}:
+  Success       resumeFoo {3}:
+Test: [printme]:  foo resume test 3
+  Success         printme {5}:

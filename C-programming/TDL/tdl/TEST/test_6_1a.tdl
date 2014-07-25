@@ -1,0 +1,41 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal printme ( const char * theString, TCM_Task_Tree_Ref theTask )
+{
+  cerr << "Test:  [printme]:  \"" << theString << "\"";
+
+  if ( theTask . operator*() != NULL )
+  {
+    cerr << ":  \"" << TCM_NodeName(theTask) << "\"";
+/* Back in the "old" days, we needed to run SUCCESS on terminated tasks.
+ * Now'adays, you kids have it easy...
+ *
+ *    TDL_BIND ( theTask );
+ *    TDL_SUCCESS ( theTask );
+ */
+   }
+  cerr << endl;
+}
+
+
+Goal foo()
+  WITH ON TERMINATE SPAWN printme ("First  Task level on terminate",
+				   TDL_REF(THIS) ),
+       ON TERMINATE SPAWN printme ("Second Task level on terminate", NULL ),
+       ON TERMINATE SPAWN printme ("Third  Task level on terminate", NULL )
+{
+  cerr << "Test: foo" << endl;
+  POSTPONE;
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  SPAWN foo() WITH TERMINATE IN 0:0:1.0, WAIT;
+}

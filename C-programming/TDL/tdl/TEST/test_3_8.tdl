@@ -1,0 +1,78 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Monitor nonPollingMonitor1 ( int4 theIndex, const char * theString )
+  serial, maximum activate 1
+{
+  cout << "Test-NonPollingMonitor1:  [t=" << getNumberOfTriggers() 
+       << ", a=" << getNumberOfActivates() << "]   ( "
+       << theIndex << " , \"" << theString << "\" )" << endl;
+
+  trigger();
+}
+
+Monitor nonPollingMonitor2 ( int4 theIndex, const char * theString )
+  serial, maximum activate 2
+{
+  cout << "Test-NonPollingMonitor2:  [t=" << getNumberOfTriggers() 
+       << ", a=" << getNumberOfActivates() << "]   ( "
+       << theIndex << " , \"" << theString << "\" )" << endl;
+
+  trigger();
+}
+
+Goal bar()
+{
+  cout << "Test-bar:" << endl;
+}
+
+Goal run()
+{
+  int i = 0;
+
+	/* test expressions */
+  i += 1 * 1 / 1;
+  i -= 1 + 1 - 1;
+
+  b1: spawn bar() with terminate;
+
+  spawn nonPollingMonitor1 ( i++, "with activate" )
+    with activate;
+
+  spawn nonPollingMonitor1 ( i++, "with activate at b1 handling completed" )
+    with activate at b1 handling completed;
+  
+  spawn nonPollingMonitor1 ( i++, "with activate at 0:0:01.0" )
+    with activate at 0:0:01.0;
+
+  spawn nonPollingMonitor1 ( i++, "with activate in 0:0:2.3" )
+    with activate in 0:0:2.3;
+
+  spawn nonPollingMonitor1 ( i++,
+		       "with activate in 0:0:3.1 after b1 handling completed" )
+    with activate in 0:0:3.1 after b1 handling completed;
+
+  f: spawn nonPollingMonitor2 ( i++, "without a with clause" );
+
+  f activate;
+
+  b2: spawn bar();
+
+  b2 terminate;
+
+  f activate;
+
+  cout << "Test-TDL_REF(parent):  " << TDL_REF ( parent ) << endl;
+  cout << "Test-TDL_REF(b2):  "     << TDL_REF ( b2 )     << endl;
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  run();
+}
+

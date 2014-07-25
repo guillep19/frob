@@ -1,0 +1,65 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+/*
+ *  Returns:  	C: B
+ *		D: C B
+ *		E: D B
+ *		F: D B
+ *		G: B
+ *		H: G B
+ *		I: C D E F G H
+ */
+
+Goal B() { cerr << "Running:  B" << endl; }
+Goal C() { cerr << "Running:  C" << endl; }
+Goal D() { cerr << "Running:  D" << endl; }
+Goal E() { cerr << "Running:  E" << endl; }
+Goal F() { cerr << "Running:  F" << endl; }
+Goal G() { cerr << "Running:  G" << endl; }
+Goal H() { cerr << "Running:  H" << endl; }
+Goal I() { cerr << "Running:  I" << endl; }
+Goal J() { cerr << "Running:  J" << endl; }
+
+Goal A() EXPAND_FIRST
+{
+  with ( serial )
+  {
+
+    SPAWN B ( );
+
+    with ( PARALLEL )
+    {
+      with ( SERIAL )
+      {
+	SPAWN C ( );
+	SPAWN D ( );
+
+	with ( PARALLEL )
+	{
+	  SPAWN E ( );
+	  SPAWN F ( );
+	}
+      }
+
+      with ( SERIAL )
+      {
+	SPAWN G ( );
+	J(); /* Throw this is to prove that J is NOT constrained by SERIAL */ 
+	SPAWN H ( );
+      }
+    }
+
+    SPAWN I ( );
+  }
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  A();
+}

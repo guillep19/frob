@@ -1,0 +1,93 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+#define foo(X) \
+         bar(2/x)
+
+#define foo(X) \
+\
+         bar(2/x)
+
+#ifdef foo
+#define f1
+#elif defined ( baz )
+#define f2
+#else
+#define f3
+#endif /* foo */
+
+#ifndef foo
+#define f4
+#endif
+
+# line 12 "nofile"
+#ifdef ZERO
+#error foo
+#pragma foo
+#endif
+
+#if defined ( foo ) || defined ( bar )
+#define f5
+#endif
+
+#	if /*a*/ 0 /*b*/
+/*c*/
+ foo
+#define a
+              bar
+#endif /*#if 0*/
+
+
+Goal zoo()
+{
+#define foo_1(X) \
+         bar_1(2/x)
+
+#define foo_1(X) \
+\
+         bar_1(2/x)
+
+#ifdef foo_1
+#define f1_1
+#elif defined ( baz_1 )
+#define f2_1
+#else
+#define f3_1
+#endif /* foo_1 */
+
+#ifndef foo_1
+#define f4_1
+#endif
+
+# line 13 "nofile"
+#ifdef ZERO_1
+#error foo_1
+#pragma foo_1
+#endif
+
+#if defined ( foo_1 ) || defined ( bar_1 )
+#define f5_1
+#endif
+
+#	if /*a*/ 0 /*b*/
+/*c*/
+ foo
+#define a
+              bar
+#endif /*#if 0*/
+
+   cerr << "Test-1" << endl;
+#ifndef ZERO
+   cerr << "Test-2" << endl;
+#endif
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  zoo();
+}

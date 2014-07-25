@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Monitor foo ( const char * theID )
+expand first, delay expansion,
+sequential expansion, sequential execution, serial,
+maximum activate 5, maximum trigger 5, period 0:0:3.0
+{
+  cout << "Test-Monitor: foo ( " << theID << " )" << endl;
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  foo("one");
+}
+

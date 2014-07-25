@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal f ( int i )
+{
+  cerr << "test-f: " << i << endl;
+}
+
+Goal foo ()
+{
+  int i = 0;
+
+  f2 serial previous;
+
+  f1: spawn f ( i++ );
+
+  f3 serial previous;
+
+  f2: spawn f ( i++ );
+  f3: spawn f ( i++ );
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  foo();
+}

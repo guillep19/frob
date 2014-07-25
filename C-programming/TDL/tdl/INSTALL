@@ -1,0 +1,177 @@
+
+Recommended Environment & Flags (CSH shell):
+
+       (Required) Absolute path to top (master) directory that contains:
+        {tdl,tcm,ipc,threads}  (or, on older systems, {tcaV8,ipc,THREADS}.)
+   setenv BASE_ROOT_DIR  /....../
+
+       Alternatively, (instead of BASE_ROOT_DIR), you can specify:
+   setenv BASE_TCM_DIR /...../
+   setenv BASE_TDL_DIR /...../
+   setenv BASE_IPC_DIR /...../
+   setenv BASE_THREADS_DIR /...../
+
+       Or, alternatively, (instead of BASE_*_DIR), you can specify:
+   setenv TCM_INCLUDE_DIR          $(BASE_TCM_DIR)/include
+   setenv TCM_LIBRARY_DIR          $(BASE_TCM_DIR)/lib
+   setenv TDL_INCLUDE_DIR          $(BASE_TDL_DIR)/src
+   setenv TDL_LIBRARY_DIR          $(BASE_TDL_DIR)/lib/$(TDL_OS_DIR)
+   setenv IPC_INCLUDE_DIR          $(BASE_IPC_DIR)/include
+   setenv IPC_LIBRARY_DIR          $(BASE_IPC_DIR)/lib/Linux
+   setenv CXX_THREADS_INCLUDE_DIR  $(BASE_THREADS_DIR)
+   setenv CXX_THREADS_LIBRARY_DIR  $(BASE_THREADS_DIR)/lib/$(BASE_OS_DIR)
+
+
+       (Required) (For compilation and utilization TDLC.)
+   set path = ( ${JAVA}/bin  ${JAVACC}/bin  ${path} )
+
+
+       (Outdated)  CLASSPATH:
+     TDLC no longer requires the CLASSPATH to be set.
+     TDLC no longer utilizes the netscape IFC library.
+
+       (Optional) (Adding in tdl_x.jar file.)
+   setenv CLASSPATH ".:${BASE_TDL_DIR}/tdl_x.jar"
+       Or, if CLASSPATH already has a value:
+   setenv CLASSPATH ".:${CLASSPATH}:${BASE_TDL_DIR}/tdl_x.jar"
+   
+       (Optional) To disable system-dependent obj/lib subdirectories:
+   setenv TDL_USE_SINGLE_DIR 1
+
+       (Optional) To enable threaded/distributed support:
+       Note:  TDL will automatically detect and enable threading support
+              during compilation IF TCM was compiled with threading enabled.
+       Note:  Threading is not currently supported under Solaris, as Solaris 
+              lacks the necessary recursive-mutex capability.
+   setenv THREADED 1
+   setenv DISTRIBUTED 1
+
+       (Optional) For testing distributed Tasks.
+                  Used in ${TDL}/TEST and ${TCM}/tests.
+                  Now derived automatically from ${BASE_IPC_DIR}.
+       Note:  The exact path may change depending on your platform.
+       Note:  This value is exploited to execute central when running the
+              distributed regression tests in the ${TDL}/TEST directory.
+       Note:  If you haven't "setenv DISTRIBUTED 1", or compiled TCM with
+              DISTRIBUTE=1, and run the ${TDL}/TEST/Makefile with DISTRIBUTE=1,
+              this won't matter as the distributed regression tests will not be
+              run.
+   setenv CENTRAL_PATH ${BASE_ROOT_DIR}/ipc/bin/....../central
+
+
+Examples:
+
+Short version (Neither threading nor distributed tasks enabled):
+   setenv BASE_ROOT_DIR /............/
+   set path = ( /......../jdk117_v3/bin/  /.........../JavaCC/bin  $path )
+   alias tdlc ${BASE_ROOT_DIR}/tdl/tdlc
+
+Short version (Both threading and distributed tasks enabled):
+   setenv BASE_ROOT_DIR /............/
+   set path = ( /......../jdk117_v3/bin/  /.........../JavaCC/bin  $path )
+   alias tdlc ${BASE_ROOT_DIR}/tdl/tdlc
+   setenv THREADED 1
+   setenv DISTRIBUTED 1
+
+
+
+Compiling and building:
+
+  We assume you are using g++ under Linux, or Sun SparcWorks CC under Solaris.
+
+  We currently test the system under:
+
+   * Red Hat 6.2                   with g++ (egcs) version 2.91.66.
+   * Red Hat 7.1, CMU facilitized, with g++        version 3.0.1.
+   * Red Hat 7.2                   with g++        version 3.0.2.
+
+  At this time, we lack the resources (hardware and software) to continue
+testing under Solaris.  However, as a starting point for anyone working on
+that platform, we continue to list the techniques that were previously
+developed for Solaris.
+
+  If you are using g++ under Solaris, you will most likely wish to use the
+linux-g++ techniques.  Ideally with the "SHELL=/...../bash" bit.
+
+  In any event, GNU-Make is REQUIRED for compilation, and BASH is strongly
+recommended.
+
+  Compiling the system for both THREADING and DISTRIBUTED is encouraged.
+Using both THREADED and DISTRIBUTED tasks in the same program contraindicated
+on the grounds of insufficient testing.
+
+
+
+THREADS:
+  Linux-g++:  cd ${BASE_THREADS_DIR} ; make
+
+TCM:
+  Linux-g++:  cd ${BASE_TCM_DIR}/src ; make install
+  Solaris-CC: cd ${BASE_TCM_DIR}/src ; make install CXX=CC CPPFLAGS="-instances=global -w -g0 -O2 -I. -I../include" CCC='$(CXX)' CCFLAGS='$(CPPFLAGS)'"
+
+TCM with DISTRIBUTED Tasks enabled:
+  Linux-g++:  setenv DISTRIBUTED 1
+
+  Then either:
+                # Note:  This may fail on libtcaInterface.a -- Don't worry
+                #        about it.  That's normal.
+              cd ${BASE_TCM_DIR} ; make install
+
+        Or:
+
+                # Install the src header files in ${BASE_TCM_DIR}/include.
+                # (You can control-C/abort it once the headers are installed.)
+              cd ${BASE_TCM_DIR}/src ; make install
+
+                # Compile libipcInterface.a.
+                # Note:  This may fail on libtcaInterface.a -- Don't worry
+                #        about it.  That's normal.
+              cd ${BASE_TCM_DIR}/commInterface ; make install  
+
+                # Compile libtcm.a.
+              cd ${BASE_TCM_DIR}/src ; make clean ; make install
+
+TDL:
+  Linux-g++:  cd ${BASE_TDL_DIR} ; make
+  Solaris-CC: cd ${BASE_TDL_DIR} ; make CXX=CC CXX_STD_FLAGS="-instances=global -w -g0 -O2"
+
+Regression Testing TDL:
+  Linux-g++:  cd ${BASE_TDL_DIR}/TEST ; make
+  Solaris-CC: cd ${BASE_TDL_DIR}/TEST ; make SHELL=/usr/local/bin/bash CXX=CC CXX_STD_FLAGS="-instances=global -w -g0 -O2"
+
+  "0 0 0" after each filename indicates that everything worked correctly for
+  that test.  Non-zero numbers indicate that there was a difference found
+  between what was generated, and what was expected.  THIS DOES NOT NECESSARILY
+  INDICATE A PROBLEM, as realtime race conditions and other phenomena can
+  create a false-positive.  To facilitate analyzing such cases, there are two
+  alternative makefile targets: "diff" and "quickdiff".  "diff" will show ALL
+  of the differences found.  "quickdiff" excludes certain commonly occurring
+  (unimportant) differences along with certain messages that are generated by
+  the "diff" program itself, allowing one to focus on the important
+  discrepancies.
+
+  Addendum:  Diff now, by default, filters out the CENTRAL IPC messages.
+  They are not relevant to the tests, and frequently change their ordering
+  around due to race conditions.  If you wish to diff the CENTRAL messages,
+  you need to say "make diff 'TDL_CHECK_CENTRAL=1'".
+
+  Addendum:  There is now a third choice:  simplediff (sdiff/sd) and
+  simplequickdiff (sqd).  These targets produce a diff/quickdiff result
+  only for those files that have differences, skipping over files that
+  are still identical.  (Thus removing the "clutter".)
+
+TDL .jar file:
+  Linux-g++:  cd ${BASE_TDL_DIR} ; make jar
+  Solaris-CC: cd ${BASE_TDL_DIR} ; make jar SHELL=/usr/local/bin/bash
+
+Invoking TDLC:
+  There is a "tdlc" BASH script located at "${BASE_TDL_DIR}/tdlc".
+  "tdlc foo.tdl" will create foo.C, foo.H, and an executable "foo".
+  Invoking "tdlc" without any arguments provides usage information.
+
+  For users of TCSH, we recommend you create an alias:
+    alias tdlc ${BASE_ROOT_DIR}/tdl/tdlc
+
+Copyright (c) 2008, Carnegie Mellon University
+    This software is distributed under the terms of the 
+    Simplified BSD License (see tdl/LICENSE.TXT)

@@ -1,0 +1,111 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+/* Test exception handlers */
+
+#define perr(X,Y)      cerr << "test-" << (X) << " ( " << (Y) << " )" << endl
+#define perr4(X,Y,Z,W) cerr << "test-" << (X) << " ( " << (Y) << " ) ==> " << (Z) << " - " << (W) << endl
+
+
+exception hardwareFailure ( const char * theMessage );
+exception engineFailure   ( const char * theMessage, int theEngine )
+  : hardwareFailure ( theMessage );
+exception engineOnFire    ( const char * theMessage, int theEngine )
+  : engineFailure ( theMessage, theEngine );
+
+
+exception handler hardwareFailureHandler ( const char * theString )
+  handles hardwareFailure
+{
+  perr4 ( "hardwareFailureHandler",    theString,
+	  hardwareFailure.theMessage,
+	  TDL_FAIL_DATA_ARG( (const TCM_Task_Tree_Ref &) TDL_REF(PARENT),
+			     hardwareFailure,
+			     theMessage ) );
+}
+
+exception handler engineFailureHandler ( const char * theString )
+  handles engineFailure
+{
+  perr4 ( "engineFailureHandler",    theString,
+	  engineFailure.theMessage,  engineFailure.theEngine );
+
+  /* BYPASS; -- This has been removed from the TDL language. */
+  FAIL;  /* Should behave as BYPASS in an exception handler */
+}
+
+exception handler engineOnFireHandler ( const char * theString )
+  handles engineOnFire
+{
+  perr4 ( "engineOnFireHandler",    theString,
+	  engineOnFire.theMessage,  engineOnFire.theEngine );
+
+  FAIL; /* Should behave as BYPASS in an exception handler */
+}
+
+
+Goal f1 ( int i ) exception handler hardwareFailureHandler ( "f1" )
+{
+  perr ( "f1", i );
+  spawn f2 ( ++i ) with wait;
+  i += 10;
+  spawn f5 ( ++i ) with wait;
+  i += 10;
+  spawn f7 ( ++i ) with wait;
+}
+
+Goal f2 ( int i ) exception handler engineFailureHandler ( "f2" )
+{
+  perr ( "f2", i );
+  spawn f3 ( ++i ) with wait;
+  spawn f4 ( ++i ) with wait;
+}
+
+Goal f3 ( int i ) exception handler engineOnFireHandler ( "f3" )
+{
+  perr ( "f3", i );
+  fail engineOnFire ( "f3-engineOnFire",
+		      i );
+}
+
+Goal f4 ( int i )
+{
+  perr ( "f4", i );
+  fail engineFailure ( "f4-engineFailure", i );
+}
+
+Goal f5 ( int i )
+{
+  perr ( "f5", i );
+  spawn f6 ( ++i ) with wait;
+}
+
+Goal f6 ( int i )
+{
+  perr ( "f6", i );
+  fail hardwareFailure ( "f6-hardwareFailure" );
+}
+
+Goal f7 ( int i )
+{
+  perr ( "f7", i );
+  spawn f8 ( ++i ) with wait;
+}
+
+Goal f8 ( int i )
+{
+  perr ( "f8", i );
+  fail engineOnFire ( "f8-engineOnFire", i );
+}
+
+
+
+int
+main()
+{
+  TCM_Initialize();
+  f1(1);
+}

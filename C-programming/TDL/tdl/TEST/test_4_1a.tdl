@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Exception testException ( int theExceptionValue );
+
+Exception Handler testExceptionHandler ( int theHandlerValue )
+  Handles testException
+{
+  cerr << "[testExceptionHandler] theHandlerValue = "
+       << theHandlerValue << endl
+       << "[testExceptionHandler] testException.theExceptionValue = "
+       << testException.theExceptionValue << endl;
+}
+
+Goal foo ( int theFooValue )
+  Exception Handler testExceptionHandler ( theFooValue += 2 )
+{
+  cerr << "[foo] theFooValue = " << theFooValue << endl;
+  FAIL testException ( 10 );
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  foo ( 2 );
+}

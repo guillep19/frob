@@ -1,0 +1,36 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Command x()  delay expansion
+{
+}
+
+Command z()  expand first
+{
+}
+
+Goal foo()
+{
+  int i;
+
+  spawn x();
+
+  spawn z();
+
+  spawn z() with sequential expansion x;
+  spawn z() with sequential execution x;
+
+  with ( disable expansion until x planning completed )
+  {
+    spawn z();
+
+    with ( serial x )
+    {
+      spawn z();
+      spawn z() with disable execution until x handling active;
+    }
+  }
+}

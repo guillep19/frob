@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal f ( int i, const char * theString )
+{
+  cerr << "test-f: " << i << " - " << theString << endl;
+}
+
+Goal foo ()
+{
+  int i = 0;
+
+  f disable for 0:0:1.2;
+  f1 serial previous;
+  f1 terminate in 0:1:2.09 after self handling enabled;
+
+  f1: SPAWN f ( i++, "unconstrained" );
+
+  f1 wait;
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  foo();
+}

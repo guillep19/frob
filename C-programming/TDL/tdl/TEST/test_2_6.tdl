@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal f1( int count, const char * string )
+{
+  cerr << "test-f1: " << count << string << endl;
+}
+
+
+Goal foo()
+{
+  spawn f1 ( 0, "- terminate at 23:59:59.9")
+    with           terminate at 23:59:59.9, wait;
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  cerr << endl << "test1:  " << (TCM_RootNode().operator*()) << endl << endl;
+  foo();
+}

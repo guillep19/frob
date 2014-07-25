@@ -1,0 +1,76 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+/*
+ * Notes:
+ * f0 disable_for -- should detect time delay!
+ * f1 S(NULL) SH f-0
+ * f2 S (NULL)
+ * f3 SE NULL, S f2, SH f1
+ * f4 SE f3, S f2, SH f1
+ * f5 SE f4, S f2, SH f1
+ * f6 S f3,f4,f5
+ * f7 SE f2
+ * f8 SH f2,f3,f4,f5,f6
+ *
+ */
+
+Goal f ( int i )
+{
+  cerr << "test-f: " << i << endl;
+}
+
+Goal foo ()
+{
+  int i = 0;
+
+	/* This should be a NO-OP */
+  f1 serial previous;
+
+	/* The lack of previous should NOT kill this constraint */
+  f0: spawn f ( i++ )
+	with disable for 0:0:10.0 after previous handling completed;
+
+
+	/* previous should be f0 */
+  f1 sequential handling previous;
+  f1: spawn f ( i++ );
+
+	/* All the spawns in w2 should be SH on f1 */
+  w2 sequential handling previous;
+
+  with ( serial )
+  {
+    f2: spawn f ( i++ );
+
+    w2: with ( sequential expansion )
+    {
+	/* previous should be f2 */
+      f7 sequential execution previous;
+
+      f3: spawn f ( i++ );
+      f4: spawn f ( i++ );
+      f5: spawn f ( i++ );
+    }
+
+    f6: spawn f ( i++ );
+  }
+
+	/* previous should resolve to entire with-do construct */
+  f8 sequential handling previous;
+
+
+  f7: spawn f ( i++ );
+  f8: spawn f ( i++ );
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  foo();
+}

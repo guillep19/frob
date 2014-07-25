@@ -1,0 +1,661 @@
+TDLC NEWS
+
+version 1.5.3
+ * Released under simplified BSD open source license
+ * Support for distributed exceptions
+ * Correctly handle exceptions that have no associated data
+ * Updated to work under g++ 4.x compilers
+
+version 1.4.0-Alpha-PR2:
+ * Bugfix: Certain identifier tokens (command, goal, etc) can now once again
+     be used as variable names inside functions.
+ * Bugfix: Parser will now accept "FIRST" as a valid identifier.
+     ("FIRST" was previously considered a TDL reserved word.
+      Which conflicted with its utilization in the STL.) 
+ * Software ported to gcc/g++ 3.2.3.  iostreams.h warnings disabled.
+     New cout/cerr/stdout/stderr flushing race conditions in TESTs fixed.
+
+version 1.4.0-Alpha-PR1:
+ * Initial cut of tasks inside classes via delayed allocation.
+ * Bugfix: SpawnAndWait now uses correct Allocate function name.
+ * Bugfix: Resume comment now prints properly in Header files.
+ * Bugfix:  Functional Invocation now handles defaulted arguments correctly.
+ * Declaring Tasks inside a (), [], or {} is now considered a parse error.
+
+version 1.3.6A:
+ * Removed "delete void*".  Replaced with free/malloc.
+ * Fixed race conditions in threading tests to accommodate slower machines.
+
+version 1.3.6:
+  * Removed "Task Control Management" version issues from TEST/*.out.sed files.
+  * Bugfix: Core leak during distributed (ON-AGENT) create-action.
+  * Bugfix: Ambiguous Overloading in generated functions.
+  * Added new Distributed Overloading test.
+  * Fixed Distributed Overloading.
+  * Added support for new alternative directory hierarchy:
+      ${BASE_ROOT_DIR}/{tdl,tcm,threads,ipc}
+  * Added TDL_DO_NOT_ABORT_ON_TDLC_NOT_FOUND_ERROR option to TEST Makefile.
+  * Added Threading/Distributed labels to TEST makefile output.
+      (Disable with "make TDL_DISABLE_TESTING_LABELS=1".)
+  * Fixed test output issues.
+  * Bugfix: Use of ## between two strings.
+  * Added source-file & line numbers to overloading-check messages.
+  * Added Static and Dynamic checks for DISTRIBUTED/NON-DISTRIBUTED mixed
+     overloading.  (E.g.: Using the wrong allocation function, etc.)
+
+version 1.3.5:
+  * Added 11 new tests in "${TDL}/TEST".
+  * Make now does a 'cleanall' on the current directory and all
+      subdirectories by default when compiling the world or src.
+      (Which resolves dependency partial-compilation issues.)
+      This feature can be disabled by setting TDL_SKIP_CLEAN_ON_MAKE.
+  * Runtime detection of TDL_RESUME_...() against an incorrect (mis-matched)
+      TCM_Task_Tree_Ref (from a Goal/Command/Monitor/Exception Handler
+      other than the one that that Resume is bound to) has been added.
+      Use TDL::setAbortOnActionTaskMismatch(FALSE) to avoid invoking
+      exit(-1) upon such detection.
+  * TCM/TDL now tracks the current Task for each Thread.  Tasks spawned
+      in functions are attached as children of the current task.
+      This works in Resume tasks as well as Goal/Command/Monitor/Handler.
+  * Static compile-time (where possible) and dynamic run-time detection of
+      mis-matched overloaded Tasks (E.g. Goal/Command) has been added.
+  * TDL now supports Task-name overloading.  Such overloading is supported
+      for Goals, Commands, Monitors, Exception Handlers, and Resume tasks. 
+      (Exception Tasks may not be overloaded.)   All overloaded tasks
+      sharing the same name must be of the same type.  (With the obvious
+      exception of Resume.) E.g:
+        VALID:   "Goal foo(){}    Goal    foo(int i){}"
+        INVALID: "Goal foo(){}    Command foo(int i){}"
+      THREADED and PERSISTENT may be freely mixed among the overloaded
+      tasks.  But if one is DISTRIBUTED, they must all be DISTRIBUTED.
+  * Task-Level constraints have been relocated from the generated
+      _TDL_Allocate_...() function to the generated _TDL_CreateAction_foo()
+      function.  New Set_Monitor_<foo> functions have been added to TDL's
+      internal code to facilitate this transition.
+  * The internal Task Registry has been updated to permit 1-N mappings
+       from Task-Names to Tasks.
+  * The TDL_ARG and TDL_TASK_ARG macros have been updated to accommodate the 
+      new Unique-Identifier's for Tasks.  TDL_CLASS_NAME has been added.
+  * Unique-Identifier generation has been enhanced.  This removes a
+      potential generation race condition, and facilitates overloading.
+      Task unique identifiers include the filename (with non [A-Za-z0-9_]
+      characters replaced with '_') and the occurrence number of that
+      task-name declaration in the file, starting from 0.
+  * Bugfix: Exception handler task-level maximum activates.
+  * Bugfix: "FAIL;" now performs bypass in resume'd exception handlers.
+  * Bugfix: Erroneous error message when "TDL_REF(parent)" appeared in a
+      string literal.
+
+
+version 1.3.4:
+  * Removed dependency on Netscape's IFC library, and corresponding (outdated,
+      unmaintained) VDT code.  (Including GRAPH, GUI, & PLANS subdirectories.)
+  * Parser will now accept certain reserved keywords, typically tokens found
+      outside of tasks, as valid identifiers (<ID>) inside TDL Tasks.
+      [E.g: "Name", "Task", "Goal", "Command", "Monitor", "Exception",
+            "Handler", "Resume", "Handles", "Distributed", and "Threaded".]
+  * Added NAME constraint.
+  * Added simplediff (sd/sdiff) and simplequickdiff (sqd) to TEST/Makefile.
+      (Only diffs files that have differences.  Removes "clutter".)
+  * Task Functional invocation:  Now function rather than #define macro.
+      Also, now child of TCM_RootNode() rather than where invoked.
+  * Distributed nodes now use same instance-name for both local and remote.
+      (No more "-distributed,remote" names.)
+  * Extended use of TCM_PURE_VIRTUAL_METHOD vs =0 for pure virtual methods.
+
+
+version 1.3.3:
+  * Installation instructions moved to INSTALL file.
+  * Ported to RH7.1 / RH7.2 under g++3.
+      - Changed #include <sys/time.h> to #include <time.h>.
+      - Altered to work with new iostreams library issues.
+      - Added flush statements to TESTs to synchronize results.
+      - Converted 0x0 to (nil) in TESTs to synchronize results.
+  * Updated to work with TCM 2.7.1 (Jul-10-02)
+      - Converted dependencies on "const char *" to "STRING".
+      - Added instance/task names.
+  * Updated to work with IPC 3.7.3 (June-25-02)
+  * Added TCM_PURE_VIRTUAL_METHOD, a macro to simplify declaring pure-virtual
+    methods.
+  * Added NULL_CHAR macro.  Converted "char(NULL)" to NULL_CHAR to satisfy
+      memory-leak checking software.
+  * Changed the TEST/Makefile to ignore central messages for testing/diffs.
+      Use "make TDL_CHECK_CENTRAL=1" to check the central messages.
+      (TEST/Makefile will now also automaticly regenerate the .sorted files
+       each time they are needed.)
+  * Removed the pre-existing ban on implicit templating.
+      Use -DTDL_NO_IMPLICIT_TEMPLATES to re-enable.
+      (TEST/Makefile never has (and currently does NOT) support this option.)
+  * Added message when compiling TDLParser that the warnings are normal.
+  * Added TESTs.
+  * Fixed existing TESTs to work with changes.
+      (Labels in functions mean we need a TCM_Task_Tree_Ref.
+       No need for TCM_Success on Postponed tasks.)
+  * Bugfix: Labels on spawns outside of tasks are now printed as code.
+  * Added support for TDL_REF_IN for labels attached to on-terminate-spawns,
+      outside of tasks in functions/methods only.
+  * Added TDL_REF_IN constraint, which can also be accessed via labels.
+      Requires a TCM_Task_Tree_Ref value.  May *ONLY* be used outside Tasks.
+  * Added PARENT constraint.  (It takes a TCM_Task_Tree_Ref value.)
+  * Bugfix: .H files #endif ifdefstring are now commented out.
+  * Added patch to tdlc bash script to disable TDL->C++ translation
+      if the .C file is newer than its corresponding .tdl file.
+  * Added javaclean/javacleanall make targets to only remove .class files.
+  * src binary test programs are no longer compiled by default.
+      Use 'make bins' to manually make them.
+  * Bugfix: WAIT constraint now reordered to *ALWAYS* be last.
+  * Bugfix: if ( booltest ) spawn foo() -- now works without {} outside tasks.
+  * Bugfix: added MARKUSED macros to generated functions to disable
+      unnecessary "variable not used" compiler warnings.
+  * Bugfix: Auto-commented out comments now nest properly. 
+  * Added automatic string-concatenation code to make the output more readable.
+      (Now writes "abc" instead of "a""b""c".)
+  * All Distributed Typedefs/Structs/Enums are now treated as 'Extern "H" {}'
+      (They show up in the header files, not the source files, by default.)
+  * Limitation:  ON-AGENT may only be used inside of Tasks.  Added Test.
+  * Converted to using IPC-xdrgen-type format macro (#define) names.
+  * Parser now handles string-constants consisting of multiple "" and <ID>.
+  * Bugfix:  Referential Transparency in _TDL_DistributedRegistryEntry class.
+  * Added Distributed #ifndef #error prove-macro-exists code.
+  * Fixed Distributed Typedefs, Distributed Structs, Distributed Enums,
+     and Distributed Typedefs with Structs/Enums.
+
+
+version 1.3.2A:
+  * Updated NEWS file.
+  * Fixed TESTs to correspond to new TCM version for "developmental" release.
+  * Repaired TEST/test_2_5.tdl.  (Task must no longer be persistent.)
+
+
+version 1.3.2:
+  * Created "tdlc" bash script to simplify using TDL.
+  * TEST Makefile -- added quickdiff to filter out IPC server messages.
+  * TEST Makefile performs regression test by default.
+  * Added BASE_ROOT_DIR to Makefiles for convenience.
+  * TEST Makefile now checks for TDLC being available.
+  * Makefiles now require ifc111.jar in the CLASSPATH.  Though Rest of
+    CLASSPATH will now be automatically set up properly...
+  * TEST Makefile now sorts the IPC "server" output.
+  * TDL/src no longer depends on DISTRIBUTED=1 being set.
+  * Makefile can now determine THREADED value automagically from libtcm.a.
+  * Constraints now handle NULL tag-tasks properly.
+  * Established Exception-Handler Ordering.
+  * Fixed Test Makefile to sed-remove the hostname from sed test results.
+  * Makefiles adapted to use appropriate THREADS lib/obj subdirectories.
+
+
+version 1.3.1:
+  * Added THREADED Task-qualifier.
+     (This is *NOT* a constraint!  It acts like DISTRIBUTED/PERSISTENT.)
+  * Exceptions and Exception Handlers will no longer parse as DISTRIBUTED.
+     (Since these Tasks are PROHIBITED from being DISTRIBUTED.)
+  * TEST/Makefile now sorts the distributed-tests output before diff'ing.
+  * Bugfix: TEST/Makefile no longer deletes "PRECIOUS" files.
+  * Re-introduced the "LINE:" -> "filename:" patch.
+  * Bugfix: ON-Agent constrained Tasks used as the reference Task
+     in constraint-statements.  Added additional "default" constraint
+     search path & tests.
+  * Bugfix: Constraint-Statement's no longer blocked before final on-agent.
+  * Bugfix: ON-AGENT-constraint and WITH statement.
+  * Added safety checks for applying on-agent constraint after task allocated.
+  * Regression testing expanded. (-1/-2/-3/-4/-5/-6 now tested, etc.)
+  * Bugfix:  TDLC options -3/-4 and distributed registrations.
+  * Bugfix:  Distributed Tasks with no arguments now works.  Test added.
+     Also auto-format's (no FORMAT constraint required.)
+  * Global TDLC.DEBUG_ENABLED flag added to resolve issues with releasing
+     still alpha / uncompleted code.
+  * Bugfix:  Renamed TEST/test-1.4.x.1.* to test-1.3.x.1.*.
+  * Minor changes addressing future compatibility issues with Distributed Task
+     Registration. (Potential static variable initialization race conditions.)
+  * Minor bugfixes with TDL_Initialize().
+
+
+version 1.3.0:
+  * Added first-generation (yes it's still quite buggy) Distributed Tasks.
+       -- Only tested for "SPAWN foo(args necessary) with on Agent".
+	  Other formats still untested.
+  * Added TDL_Initialize() replacement for TCM_Initialize().
+  * Added TDL_ForkChildren() to support Distributed regression tests.
+  * Removed Trey's changes for "LINE:" -> "filename:". They will be
+    reintroduced later on.
+  * Merged in changes to Makefile's.  Main (non-TEST) directories now support
+    obj and lib subdirectories, as appropriate.  Everything is reconfigurable
+    through environmental or make-command-line argument options.
+  * Fixed TEST/Makefile:  *.exe once again depends on the basic libs.
+
+  * Bugfix:  TDL_IS_STARTED() macro now checks STARTED, not COMPLETED.
+  * Tweak:  stdtypes.H:  HAS_STATUS now defined after enum status_t
+            for compatibility with [TCM] commInterface.h.
+  * Added optional DISTRIBUTED and PERSISTENT keywords before Task-type
+      inside definitions.
+  * Disallowed PERSISTENT EXCEPTION / EXCEPTION HANDLER Tasks.
+  * Tweak:  TEST/Makefile now generates .exe files.  Resolves problem
+      with certain versions of make.
+  * Tweak:  TEST/Makefile now runs the quicktest by default.
+  * Added FORMAT task-level constraint.
+  * Added 'extern "H" { ... }' to export code into header file.
+  * Internal bugfix, DataDestinationAbstractBaseClass:
+      indentToCurrentColumn() after addIndent() bug fixed.
+  * Internal:  javac will now be invoked to use 32 megs of RAM, rather than the
+      default 16 megs of RAM.  Reason:  Ran out of memory during compilation.
+
+
+
+version 1.2.1:
+  * Bugfix:  defaulted argument for exception handler.
+
+version 1.2.0:
+                  *** ALERT ***
+  * ALL time-expressions in constraints are now specified in SECONDS.
+      (They used to be specified in milli-seconds!)
+                  *** ALERT ***
+  * Constraint (non-expression) absolute/relavate time values must be
+      specified in full:  Hours : Minutes : Seconds [ . FractionsOfASecond ]
+      (Previously, you could hours/minutes/seconds were optional.)
+                  *** ALERT ***
+  * TDL NO longer needs to access include files from TCM/src.
+      The include files in TCM/include are now sufficient for TDL.
+
+  * Modified to support SUN's CC under Solaris.
+  * TCM/TDL adapted to use 64-bit ints for MSecs to resolve time-wrapping bug
+      that occurred every 7 weeks.
+  * TDL now works with the TCM/include directory.  One no longer needs to
+      specify the TCM/src directory instead of the TCM/include directory.
+  * A RESUME task on an EXCEPTION Task now generates an error.
+      (EXCEPTION Task's, unlike EXCEPTION HANDLER Tasks, have no code.
+       Therefore such RESUME Tasks are pointless, and considered an error.)
+  * "extern resume" declarations are now legal.
+  * RESUME now generates a function interface, rather than the macro &
+      class-scoped static function that was used before.
+  * Added '-4' option to TDLC. (TDLC -4C === TDLC -2H, TDLC -2C;  -4H === -3H.)
+  * Bugfix:  Must now answer 'y' or 'Y' to TDLC overwrite question.
+  * 'TDLC -3' header files no longer include #using statements.
+      Instead, the source (.C) files contain the translated #using statements.
+  * "external Resume" is now considered an error.
+  * #line fix:  Conststraint-tag-array-index expressions.
+  * Bugfix:  Constraint-statement array indexes on THIS are no longer allowed.
+  * Removed generated '.resetCachedLookup()' as it's now done automatically
+      in _TDL_HandleManager::operator[](const char *)const.
+  * #line fix:  MAXIMUM TRIGGER & MAXIMUM ACTIVATE numeric argument.
+  * MAXIMUM TRIGGER & MAXIMUM ACTIVATE constraints can now accept
+      expressions for their numeric argument.
+  * TDL_REF(THIS) can now be used in task-level constraints.  (It returns a
+      (const TCM_Task_Tree_Ref &) through the _TDL_TrivialHandleManager class.)
+  * Added trivial RTTI methods to generated Task classes.
+  * Bugfix:  Extra newlines when #line macro's are disabled
+      in DataSpawnTask:generateTask. (Utilized in Exception inheritance).
+  * Fixed #line macro's on generated function arguments for:
+      create-action, create-exception, and create-exception-handler.
+  * Migrated _TDL_MaximumActivates to _TDL_BaseHandler base class.
+  * Fixed TDLC -A newline bug.
+  * Warnings are reported when constrain overriding is detected.   (Handles
+      Iteration and Constraint-Statements applied to SPAWN's and WITH's.)
+  * Overriding Constraints PERIOD, MAXIMUM ACTIVATE, & MAXIMUM TRIGGER can now
+      be applied to tasks in SPAWN/WITH statements.
+  * Re-Vamped TDL/TCM interface for Monitors & Exceptions.
+      (Substantially modified generated code for Monitors/Exceptions.)
+  * Simplified sed code in TEST/Makefile.  Fixed g++/$(CXX) in TEST/Makefile.
+  * CXX_ALLOCATE_FUNCTION now comments its default argument in source (.C).
+      (Sun SparcWorks can handle the same argument being given multiple times.)
+  * Assorted minor changes to libtdl for Sun SparcWorks compatibility.
+  * TDLC -So now includes any specified directories in the trailer #include<>.
+      Ie: TDLC -2Syo tdlc/foo generates tdlc/foo.C and tdlc/foo.H, and
+          tdlc/foo.C #includes <tdlc/foo.H>.
+  * Added operator[] and operator() to _TDL_TDLStatment.H for use with TDL_REF
+      and arrays.  Ie: TDL_BIND ( * TDL_REF(foo)[1][2](3), aTask ).
+  * TDL_BIND will now override previous TDL_BIND's for use in iteration loops.
+      (Multiple TDL_BIND's will override with the latest value.  TDL_BIND args
+       may *NOT* use iteration arguments.  That is considered an error.)
+  * Bugfix:  TDL_TASK_INSTANCE_OF() now matches Monitor ACT's
+       and spawn-with-wait macro invocations.
+  * Added TDL_TASK_ARG, TDL_TASK_IS_STARTED, etc to tdl.H.
+  * Added timeToDouble() and getHasTimeBeenReached() to stdtypes.H
+  * Added minor functional abilities to _TDL_Dlist/_TDL_Slist classes.
+      (emptyAllElementsInList(), getNodeAtIndex(), prependNode().)
+  * Bugfix:  Added #undef macro to macro kludge.
+
+
+version 1.1.1:
+  * Code outside of Tasks now generates correct #line macros.
+  * Code generated for iteration statements now generates correct #line macros.
+  * Bugfix:  Spawns inside While() and Do-While() iteration loops are fixed.
+  * #line fix:  Time expressions in constraints.
+  * #line fix:  Task arguments in: Exception and On-Terminate constraints,
+                                   FAIL, exception task inheritance,
+                                   Spawn statements (internal/external),
+                                   and generated _TDL_SpawnAndWait_...(...).
+  * Bugfix:  Persistent initialization when there are no Task arguments.
+  * #line fix:  Persistent initialization.
+  * Cleanup:  Excessive indentation of arguments during generation for:
+      Exception and On-Terminate constraints, FAIL, exception task inheritance,
+      and Spawn statements (internal/external).
+  * Bugfix:  "TDLC -So" now always generates both a .C and .H file.
+  * Kludge: Macros (#define, #ifdef, etc.) are now treated as comments.
+            This provides a somewhat broken implementation as macros in the
+	    middle of TDL statements (SPAWN,WITH,etc) may be commented out.
+            Also, the '#' and '##' macros remain unimplemented inside Tasks.
+            (#define'd macros can be used to work around this limitation.)
+  * Kludge: #if0 is special-cased to include everything up to the next #endif.
+            (Note:  #if0's may no longer be nested inside one another.
+             This is a known shortcoming of our implementation.)
+  * Bugfix: Leading comments were throwing #line numbers off for Task Decls.
+  * Added getTimeOfDay() and getTimeDifference() to stdtypes.H
+
+
+version 1.1.0:
+  * 'ACTIVATE' and 'TERMINATE' constraints now invoke their TCM commands
+       immediately (without any delay).  ACTIVATE/TERMINATE IN 0:0:0.0
+       continues to achieve a brief (asynchronous) delay in processing.
+  * Kludge:  'ACTIVATE' (immediately) now performs "ACTIVATE AFTER HANDLING
+      ACTIVE" to avoid race conditions in TCM.
+  * Added TDL_IS_COMPLETED and TDL_TASK_IS_COMPLETED macros to tdl.H.
+  * Added TDL_INSTANCE_OF  and TDL_TASK_INSTANCE_OF  macros to tdl.H.
+  * Added ON TERMINATE [SPAWN] constraint.  (SPAWN keyword is optional.)
+      Note:  This constraint is prohibitied inside WITH Statements.
+  * Added optional WITH keyword before Task-level (definition) constraints.
+  * CreateAction now uses "_TDL_ENCLOSING_TASK" instead of
+      "_TDL_TaskToConfigure" as its argument name.  (For consistency.)
+  * ParseException's should now print the correct line number.
+  * Bugfix:  Comments before numeric argument to maximum activate
+      or maximum trigger.
+  * Added task-level (definition) PERSISTENT declaration clause.
+  * "SELF"   keyword has been depreciated.  "CHILD" supersedes it.
+  * "PARENT" keyword has been depreciated.  "THIS"  supersedes it.
+       (SELF and PARENT continue to function for backward compatibility.
+        But their use now generates a warning...)
+  * Spawns outside of tasks (external nodes) are now inserted under the node
+      specified by the global variable ::_TDL_ENCLOSING_TASK (which points
+      to TCM_RootNode()).  Similarly, PREVIOUS constraints outside of tasks
+      (external constraints) now use "TCM_LastChild ( ::_TDL_ENCLOSING_TASK )".
+  * Added Resume functionality (to resume a POSTPONE'd Task).
+  * Added TDL_RESUME_* macros, to facilitate invoking a RESUME Task.
+  * Improved TEST/Makefile to flag non-zero diffs.
+  * Bugfix:  Nested switch-statements-containing-spawns destruction-if-unused.
+  * Bugfix:  Parsing fluff for TDL_BIND().
+  * Bugfix:  Leading comments & {Exception Tasks, FAIL exceptions,
+	       exception handler constraints, on terminate constraints}.
+  * First cut at introducing #line macros.  (Still needs work.)
+
+
+version 1.0.2:
+  * Bugfix:  Constraint-Statements on PARENT.
+  * Bugfix:  _TDL_TDLStatement RTTI casting.
+  * Added TDL_BIND Statement to TDL.
+
+version 1.0.1:
+  * Tweaked _TDL_InterfaceToTCM.H's _TDL_translateSecondsToMSecs()
+      to resolve compiler bug.  ('*&' fix to force stack utilization.)
+  * Bugfix: _TDL_TDLStatement::operator const TCM_Task_Tree_Ref &()
+      now creates non-iteration topmost tree nodes when necessary.
+  * Bugfix: Parser was choosing cast-expressions instead of unary-expressions.
+  * Negative iteration-indexes down to -9000 will no longer break anything.
+  * Added 15-line limitation for Parse-Exceptions to TDLC.
+
+version 1.0.0
+  * Added TDL iteration.
+  * Fixed bug with more indexes than iteration levels.
+  * Fixed bug with iteration groups sets.
+  * Added iteration-indexes to constraint debugging-print-statements.
+  * Added error-checking for future-reference spawn/with arrays-sets.
+  * Added errors/warnings about too many/few iteration indexes.
+  * Bugfix:  Now allows expressions for array indexes.
+  * Added '[.]' for current array index syntax.
+  * Bugfix: Iteration-set future-ref inside iteration loop.
+  * Bugfix: Constraints applied multiple times for iteration trees.
+  * Bugfix: Unused iteration leaves are now properly destroyed.
+
+version 0.4.5
+  * Fixed generation bug that occurred when using 'FAIL' without an Exception.
+  * Added TDL_BaseException so folks can handle (catch) the Base Exception.
+  * Added ABS macro to stdtypes.h
+
+version 0.4.4
+  * Moved exception-handler creation from _TDL_Allocate_ to _TDL_CreateAction_
+      generated functions to support the passing of Task arguments into
+      the exception handler.
+  * Fixed bug where Monitors were ignoring "exception handler" task-level
+      constraints.
+
+version 0.4.3
+  * Added TDL_FAIL_DATA_ARG macro.
+  * Extended TEST's to test TDL_FAIL_DATA_ARG.
+  * Fixed bug in TDL_ARG and TDL_FAIL macros.
+  * Added 'diff' target to TEST's Makefile.
+
+version 0.4.2
+
+  * Modified Makefiles to support TCM_INCLUDE_DIR and TCM_LIBRARY_DIR
+      environment variables.  (As well as TDL_INCLUDE_DIR & TDL_LIBRARY_DIR
+      for the TEST/Makefile.)
+  * Added debugging/testing switches to g++ compilations.
+  * Renamed _TDL_StringEqual to StringEqual
+  * Added NewString string-duplication method to stdtypes.H
+  * Added FLOATING_POINT_EQUIVALENT, RADIANS_TO_DEGREES,
+      and DEGREES_TO_RADIANS macros to stdtypes.H
+  * Added #include<strstream.h> and #include<math.h> into tdl.H.
+  * Added MARKUSED(X) to tdl.H.  (User-version of _TDL_MARKUSED(X).)
+  * Added TDL_TaskData_Ref, TDL_TaskData, TDL_TASKDATA, TDL_ARG, TDL_SUCCESS,
+      and TDL_FAIL to tdl.H to support TDL Task-manipulation in functions
+      after a Task has been POSTPONED.
+  * Modified TEST/*.tdl to support new TCM revision (1.2.14)
+
+version 0.4.1
+
+  * Modified to work with egcs (Red Hat 5.1) / g++ 2.8.1
+  * Modified to work with JavaCC 0.8.pre2
+  * Exception Handler constraints are now required to be preceded by the
+      keyword(s) "[Exception] Handler".  (Ie: Handler is now required.
+      Previously it was "[[Exception] Handler]", which led to problems with
+      "classFoo aFoo ( args )" matching "TaskName exceptionTask ( args )".)
+  * Added 'jar' target to tdl Makefile.
+
+
+version 0.4.0
+
+  * Compatible with TCM version 1.2.8 (Jul-14-98)
+  * Bugfix:  "if ( ) ; else if ( ) spawn aTask();"  now works correctly.
+  * Only extern tasks can have task-type "Task".
+  * Exceptions and Exception Handlers are now implemented.
+  * Exceptions can have inheritance.
+  * Added Exception Handler "constraint clause".
+  * "FAIL;" now issues a warning about missing the exception name,
+      and defaults to _TDL_BaseException...  Unless it occurs inside an
+      Exception Handler, in which case it behaves just like TCM_Bypass().
+  * For EXCEPTION Tasks *ONLY*, 'TDLC -2' and 'TDLC -3' are identical.
+      (The class information is available in the header file.)
+  * Task arguments are redeclared on the stack when the Task is invoked.
+      (Prevents args modified and Task re-invoked bug.  And warns about
+       unused Task arguments as a side effect.)
+  * Compiler warnings about unused TDLC-generated variables have been removed.
+  * Labels inside Tasks before spawn & with-do statements are now commented
+    out, avoiding that annoying -Wall error about labels defined but not used.
+  * _TDL_MARKUSED() now replaces (void) casts in the libtdl.a C++ code
+      and auto-generated code.
+  * Bugfix:  Tasks invoked as a function are now children of the current
+             taskTree, rather than always being attached to the RootNode.
+  * Bugfix:  TDL_REF(PARENT) in tasks that contain no spawns/withs now works.
+             (A "_TDL_HandleManager _TDL_SpawnedTasks..." is created.)
+  * _TDL_Constraint::VERBOSE has been replaced with TDL::setReportingLevel(),
+      TDL::addReportingLevel(), TDL::removeReportingLevel and the
+      TDL::REPORTING_LEVELS enumerated type.  (Which can now be set through
+      the compile-time flag -D_TDL_REPORTING_LEVEL=....)
+      Saying "TDL::setReportingLevel ( TDL::NO_REPORTING );" will stop all 
+      the TDL-generated messages.  (See the file "tdldef.H".)
+  * TDL now uses a log stream -- See TDL::setLogStream() in "tdldef.H".
+      (Typically, you will pass in cerr, cout, or a file name.)
+  * Compile-Time arguments:  -D_TDL_DEBUG and
+      -D_TDL_CONSTRAINT_VERBOSE=_TDL_Constraint::VERBOSE_FULL have been
+      removed.  They are replaced by TDL::setReportingLevel().
+  * Compile-Time arguments:  -D_TDL_ABSOLUTE_TIME_STARTS_AT_MIDNIGHT
+      is now the default.  There is now a new compile-time argument:
+      -D_TDL_ABSOLUTE_TIME_GOES_FROM_NOW_UNTIL_24_HOURS_FROM_NOW.
+  * Timezones should now work properly for non-US timezones...
+  * Bugfix: timezoneOffset not used under SUNOS.
+  * Improved error messages for using TRIGGER in a non-monitor task.
+  * Restricted getNumberOfTriggers() & getNumberOfActivates() to Monitors only.
+  * TDL_REF, getNumberOfTriggers(), and getNumberOfActivates are no longer
+      case sensitive.  Also, TDLREF is valid.
+  * Added (Defaulted) Maximum Activates, Maximum Triggers, MSecs, Activation,
+      and Initial Wait Constraints to Monitor's CreateAction function.
+      (Accessable as additional arguments to the SPAWN command.
+       Ie:  spawn monitorFoo ( ..., MSecs, ... ); )
+  * Added (Defaulted) Maximum Activates to Exception Handlers, in much the
+      same was as the Monitor additions.  Accessible through SPAWN ...
+  * Changed TCM/TDL to use string-matcher functions rather than a
+      string-matcher virtual method.  (The function won't go away when the
+      object is deleted!)
+  * Constraint absolute/relative times can now be expressions that evaluate
+      to MSecs.  Borderline expression will trigger an ambiguous parsing error.
+  * Added "Maximum Activates <int>" constraint to Exception Handlers.
+  * Removed "DO" keyword from the with-do statment.
+      It's now just "WITH ( ...constraints...)  { }"
+  * Monitor set-max-triggers is now handled as part of _TDL_CreateAction_...()
+      rather than in _TDL_Allocate_...()
+  * Exception Handler constraints are no longer permitted in WITH statements.
+  * Added warnings when MAXIMIM ACTIVATE, MAXIMUM TRIGGER, and PERIOD
+      constraints are duplicated.
+  * BugFix:  Ignoring constraints that contain an AFTER PREVIOUS clause
+             when PREVIOUS is null.
+  * BugFix:  Constraint statement on PREVIOUS not resolving properly.
+  * BugFix:  Constraint statement on WITH statement with PREVIOUS.
+  * BugFix:  Not printing label-ambiguity error for "spawn f(); f:spawn f();"
+  * Added Error message that Future Refs on With Statements are unimplemented.
+      (Ie: "spawn f() with serial w; w: with ( ... ) { ... }")
+
+
+
+version 0.3.0
+
+ * Added NEWS file.
+ * Error/Warning reporting syntax has changed.  It's now parse-able by
+   the gnu-emacs 19.34 'compile' package.
+ * You can now specify "void" for the arguments of a Task
+     Ie: Goal foo ( void )
+ * DataConstraint.generate() handles Cxx subset properly (internal bugfix).
+ * Added DataConstraintStatement:  <task-id> <constraint> ;
+ * Reports errors/warnings on:
+     With-Reference is a label on a non-spawn / non-with-do statement.
+     DataConstraintStatement constraint is wait on a future reference.
+     DataConstraintStatement constraint is not {wait,terminate,activate,
+       parallel} and on a past reference (that's presumably already running).
+ * Parser initialization in proper token-manager state code has been removed.
+   (Token manager now handles its state correctly internally, fixing certain
+    parsing bugs relating to constraint numeric values.)
+ * Double-checking & error/warning reporting at runtime when constraining
+   running or non-running tasks (based on the constraint type).
+ * Monitors are added in.  Monitor task-level constraints include:
+     EXPAND FIRST, DELAY EXPANSION, SEQUENTIAL EXPANSION,
+     SEQUENTIAL EXECUTION, SERIAL, MAXIMUM ACTIVATE, MAXIMUM TRIGGER,
+     and PERIOD with multi-task constraints occuring between successive
+     invocations of the monitor.
+ * Added Activate constraint set:
+     Activate at <event>
+     Activate at <absolute-time>
+     Activate in <relative-time>
+     Activate in <relative-time> after <event>
+       (Caveat:  AFTER clause not yet supported by TCM.)
+ * Added trivial Activate and Terminate constraints. Ie: "monitorFoo activate;"
+    (Translates to "activate/terminate in 0:0:0.0".)
+ * Added getNumberOfTriggers() and getNumberOfActivates() macros
+     for use inside Monitors.
+ * Added Trigger(), as an expressionable function ONLY INSIDE MONITORS.
+ * Added TDL_REF ( parent ).
+ * Added Warning:  Activate on Self/Parent
+ * Added Warning:  Terminate/Activate "in rel-time ... after" on Self/Parent.
+ * Added '-a' flag to TDLC to translate TDL to SMART (analyzer) format.
+     [ Usage: TDLC -aA "main <main-task-name>" -o <output-file>  <tdl-file> ]
+ * Bugfix:  Reference that encloses an empty with-do statement.
+ * Bugfix:  Constraint-Statement target is a future with-do statement.
+ * Bugfix:  Noting Task-Insertion bug.
+ * Bugfix:  #using is translated in the header file, and stripped from the
+            source file for [TDLC -3] class declaration in code..
+ * Bugfix:  #using no longer adds a '.H' if the filename does not end in '.tdl'
+            (But #using does still tranlate "file.tdl" to "file.H".)
+ * Bugfix:  Missing whitespace after #using is adding back in.
+ * Bugfix:  Heading-comment under TDLC HTML generation is now a comment.
+ * Bugfix:  Constraint-Statements now handle PREVIOUS constraints correctly.
+            (PREVIOUS resolves to the SPAWN/WITH-DO statement immediately
+             prior to the Constraint-Statement.)
+ * Bugfix:  Absolute-time, with -D_TDL_ABSOLUTE_TIME_STARTS_AT_MIDNIGHT,
+            no longer wraps to the next day when time = midnight - n hours.
+ * ./TEST/Makefile target "qt" now compiles the BOMB_1.tdl file
+   and regression-tests the error/warning messages.
+
+
+
+version 0.2.2b
+
+ * Conditionals now work correctly with regard to spawns.
+ * References to destroyed spawns (spawns that do not occur due to
+   conditionals) are now handled correctly.  This includes references
+   to labeled with-do statements that are empty, or are never invoked.
+   See tdl/TEST/test_3_3.tdl
+ * Absolute time works correctly.  (Until the time value wraps, about
+   once every two months.  See tdl/src/test_time.C.)
+ * A TDL spawned task's 'const TCM_Task_Tree_Ref &' may be accessed
+   through the TDL_REF() macro.  (It returns an object that can
+   auto-promote to a 'const TCM_Task_Tree_Ref &', and which can be
+   passed directly into TCM routines.)  Do not use quotes with this
+   macro.  Just say:  TDL_REF ( foo )
+ * no-op [empty] handlemanagers are not created.
+ * Version numbers now exist. (Currently at version 0.2.2b, to pick a
+   random number.)
+ * Generated files now start with a commented header block, detailing
+   how the file was generated, the TDLC version, etc...
+ * SetAction is now CreateAction.
+ * Task level constraints are now implemented.
+    (Though there's still a bug with EXPAND_FIRST.)
+ * Various parsing bugs have been fixed. ( single/double quotes can
+   now be in a double/single quote string without backslashes, whitespace
+   & comments between double-quote strings is considered to be one double
+   quote string.  Ie:   "foo 'a' bar" /*test*/ "baz"   is one string.
+ * Error & Warning reporting has been implemented.  This is not meant
+   to be all-inclusive.  Rather, common problems that are expected to
+   occur frequently are checked for, and reported.  If they are
+   considered to be serious, TDLC terminates with an error.
+   This "feature" can be disabled with the -Q switch to TDLC, which
+   will kill the non-essential checking.  (Some errors will kill you
+   on g++ compiles, some during runtime, and some prevent TDLC from
+   running.  Checking for the first two can be disabled with -Q.)
+ *  Checks for "continue" outside iteration loops.
+ *  Checks for "break" outside switch or iteration loops.
+ *  Checks for case/default labels that are not first-order children of
+    switch statements.
+ *  Checks for Future-References & WAIT constraints.
+     (This can not be disabled with -Q for efficiency reasons.)
+ *  Checks for ambiguous labels/spawn names.
+ *  Checks for duplicated labels.
+ *  Checks for unknown references.
+ *  Checks for conflicting PARALLEL/SERIAL/SEQUENTIAL constraints.
+ *  Checks for nonsensical constraints.  (Ie: SERIAL SELF)
+ *  Checks for spawn in iteration loop.  [To be removed later on.]
+ *  Warns about using previous & parent in functions outside of Tasks.
+ *  Warns about constraining on Parent handling in functions outside of Tasks.
+ *  Warns about using parallel as a constraint on a SPAWN statement.
+ *  Constraint time values (absolute or relative) can no longer be
+    specified in octal.  They are now always interpreted as decimal or
+    hex (with a leading 0x).  This also fixes the bug where you could not
+    specify a time that started with a zero and contained an 8 or a 9.
+    Ie, this is now legal:  08:09:08.098    And 012 will be interpreted
+    as a 12 and NOT a 10 (octal 12 = decimal 10).
+
+
+    There is now a new directory tdl/TEST, with a stand-alone makefile
+  for performing regression-tests.  If you use it, you need to redefine
+  the makefile variables TCM_DIR & TDL_DIR, as they are set for my home
+  system.  The recommended target for tdl/TEST/Makefile is 'make qt'.
+  Note:  Some non-determinism is present in the TDL/TCM system based
+  upon system load and cpu utilization.  Small nonsensical differences
+  in output during regression testing should be expected.
+  Note:  libtdl.a prints object addresses as part of it's debugging
+  mechanism.  tdl/TEST/Makefile uses 'sed' to remove these differences
+  for the purposes of regression testing.
+
+    The program tdl/TEST/BOMB_1.tdl is never compiled by the makefile.
+  It is not supposed to compile.  It tests the warning/error generation
+  system.
+
+
+Copyright (c) 2008, Carnegie Mellon University
+    This software is distributed under the terms of the 
+    Simplified BSD License (see tdl/LICENSE.TXT)

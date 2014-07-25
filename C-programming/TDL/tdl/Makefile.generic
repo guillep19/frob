@@ -1,0 +1,498 @@
+# Copyright (c) 2008, Carnegie Mellon University
+#     This software is distributed under the terms of the 
+#     Simplified BSD License (see tdl/LICENSE.TXT)
+
+#
+# These can be globally enabled/disabled here.
+# (Note: TEST/Makefile is independent of this Makefile!)
+#
+
+# DISTRIBUTED must be set in the enviornment if it is to be used.
+#
+# As of this point in time, DISTRIBUTED is no longer necessary for any of
+# the files in ${BASE_TDL_DIR}/src...  The DISTRIBUTED legacy-code remains
+# in this Makefile solely as a potential example to others...
+# (DISTRIBUTED is necessary for some of the files in ${BASE_TDL_DIR}/TEST, but
+#  ${BASE_TDL_DIR}/TEST/Makefile is completely independent of this Makefile!)
+export DISTRIBUTED
+
+### IF THREADED is already set in the environment, it will override the value
+### that is dynamically determined for it from the libtcm.a file down below .
+
+
+#
+# This can be set to simplify things...
+#
+ifndef BASE_ROOT_DIR
+    # Guess a random value here instead of using $(error),
+    # since BASE_ROOT_DIR may never get used down below.
+  BASE_ROOT_DIR = $(HOME)/work
+  export BASE_ROOT_DIR
+endif
+
+#
+# Or these can be set to simplify things...
+#
+ifndef BASE_TCM_DIR
+  BASE_TCM_DIR = $(BASE_ROOT_DIR)/$(shell if [ ! -d $(BASE_ROOT_DIR)/tcm -a -d  $(BASE_ROOT_DIR)/tcaV8/tcm ]; then echo "tcaV8/tcm"; else echo "tcm"; fi)
+  export BASE_TCM_DIR
+endif
+
+ifndef BASE_TDL_DIR
+  BASE_TDL_DIR = $(BASE_ROOT_DIR)/$(shell if [ ! -d $(BASE_ROOT_DIR)/tdl -a -d  $(BASE_ROOT_DIR)/tcaV8/tdl ]; then echo "tcaV8/tdl"; else echo "tdl"; fi)
+  export BASE_TDL_DIR
+endif
+
+ifndef BASE_IPC_DIR
+  BASE_IPC_DIR = $(BASE_ROOT_DIR)/ipc
+  export BASE_IPC_DIR
+endif
+
+ifndef BASE_THREADS_DIR
+  BASE_THREADS_DIR = $(BASE_ROOT_DIR)/$(shell if [ ! -d $(BASE_ROOT_DIR)/threads -a -d $(BASE_ROOT_DIR)/THREADS ]; then echo "THREADS"; else echo "threads"; fi)
+  export BASE_THREADS_DIR
+endif
+
+#
+# Provide some really basic error checking
+#
+ifeq ($(shell if [ ! -d $(BASE_TCM_DIR) ]; then echo "1"; else echo "0"; fi),1)
+  $(warning "Error:  Unable to locate TCM directory [$(BASE_TCM_DIR)].")
+  $(warning "Error:  Please setenv BASE_TCM_DIR or BASE_ROOT_DIR appropriately.")
+  $(error )
+endif
+ifeq ($(shell if [ ! -d $(BASE_TDL_DIR) ]; then echo "1"; else echo "0"; fi),1)
+  $(warning "Error:  Unable to locate TDL directory [$(BASE_TDL_DIR)].")
+  $(warning "Error:  Please setenv BASE_TDL_DIR or BASE_ROOT_DIR appropriately.")
+  $(error )
+endif
+#
+# Don't test BASE_IPC_DIR or BASE_THREADS_DIR, as they may not get used...
+#
+
+
+
+#
+# Determine the OS/System/Release library subdirectory.
+#
+ifndef BASE_OS_SYSTEM
+  BASE_OS_SYSTEM = $(shell uname -s)
+  export BASE_OS_SYSTEM
+endif
+
+ifndef BASE_OS_RELEASE
+  BASE_OS_RELEASE = $(shell uname -r|tr '-' '.'|awk -F. '{print $$1 "." $$2}')
+  export BASE_OS_RELEASE
+endif
+
+ifndef BASE_OS_DIR
+  BASE_OS_DIR     = $(BASE_OS_SYSTEM)-$(BASE_OS_RELEASE)
+  export BASE_OS_DIR
+endif
+
+#
+# If TDL_USE_SINGLE_DIR is defined, we will (by default) place all object
+# in a single directory, and all the library files in a single directory.
+#
+# If it is NOT defined, we will (by default) place all object/library
+# files in their own OS-specific subdirectories.
+#
+# Naturally, anything and everything can be overriden with the right setenv's.
+#
+ifdef TDL_USE_SINGLE_DIR
+
+  ifndef TDL_OS_DIR
+    TDL_OS_DIR = 
+    export TDL_OS_DIR
+  endif
+
+  ifndef TDL_OBJECT_DIR
+    TDL_OBJECT_DIR = obj
+      # Export TDL_OBJECT_DIR:  There is no GLOBAL object directory.
+      # Each subdirectory gets its own private object directory.
+    export TDL_OBJECT_DIR
+  endif
+
+else
+
+  ifndef TDL_OS_DIR
+    TDL_OS_DIR = $(BASE_OS_DIR)
+    export TDL_OS_DIR
+  endif
+
+  ifndef TDL_OBJECT_DIR
+    TDL_OBJECT_DIR = obj/$(TDL_OS_DIR)
+      # Export TDL_OBJECT_DIR:  There is no GLOBAL object directory.
+      # Each subdirectory gets its own private object directory.
+    export TDL_OBJECT_DIR
+  endif
+
+endif
+
+
+#
+# Users should either setenv the above BASE directories appropriately,
+# or they should set these directly.
+#  (Note: setenv'ed values will override these values...)
+#
+ifndef TCM_INCLUDE_DIR
+  TCM_INCLUDE_DIR = $(BASE_TCM_DIR)/include
+  export TCM_INCLUDE_DIR
+endif
+
+ifndef TCM_LIBRARY_DIR
+  TCM_LIBRARY_DIR = $(BASE_TCM_DIR)/lib
+  export TCM_LIBRARY_DIR
+endif
+
+ifndef TDL_INCLUDE_DIR
+  TDL_INCLUDE_DIR = $(BASE_TDL_DIR)/src
+  #Do NOT Export:  Needs to be reset if/when BASE_TDL_DIR changes.
+endif
+
+ifndef TDL_LIBRARY_DIR
+  TDL_LIBRARY_DIR = $(BASE_TDL_DIR)/lib/$(TDL_OS_DIR)
+  #Do NOT Export:  Needs to be reset if/when BASE_TDL_DIR changes.
+endif
+
+ifndef IPC_INCLUDE_DIR
+  IPC_INCLUDE_DIR = $(BASE_IPC_DIR)/include
+  export IPC_INCLUDE_DIR
+endif
+
+ifndef IPC_LIBRARY_DIR
+  IPC_LIBRARY_DIR = $(BASE_IPC_DIR)/lib/$(BASE_OS_DIR)
+  export IPC_LIBRARY_DIR
+endif
+
+  # This is *NOT* actually used here.
+  # (Though 'make echoraw-CENTRAL_PATH' could prove useful.)
+  # It is extracted from the environment by tdldef.C's runCentral() at runtime.
+ifndef CENTRAL_PATH
+  CENTRAL_PATH = $(BASE_IPC_DIR)/bin/$(BASE_OS_DIR)/central
+  export CENTRAL_PATH
+endif
+
+
+ifndef CXX_THREADS_INCLUDE_DIR
+  CXX_THREADS_INCLUDE_DIR = $(BASE_THREADS_DIR)
+  export CXX_THREADS_INCLUDE_DIR
+endif
+
+ifndef CXX_THREADS_LIBRARY_DIR
+  ifdef THREADS_USE_SINGLE_DIR
+    CXX_THREADS_LIBRARY_DIR = $(BASE_THREADS_DIR)/lib/
+  else
+    CXX_THREADS_LIBRARY_DIR = $(BASE_THREADS_DIR)/lib/$(BASE_OS_DIR)
+  endif
+  export CXX_THREADS_LIBRARY_DIR
+endif
+
+
+
+#
+# Makefiles that include this makefile should define some (or all) of these:
+#    SUBDIRS
+#    JJ_FILES
+#    SRC_FILES
+#    EXTRA_SRC_FILES
+#    EXTRA_BINARY_FILES
+#    EXTRA_RM_FILES
+#    JAVACC_FLAGS
+#    JAVAC_FLAGS
+#    EXTRA_SRC_MAKE_FILES
+#    EXTRA_RCS_FLAGS
+#    EXTRA_CO_FLAGS
+#    EXTRA_CI_FLAGS
+#
+#    CXX_INCLUDE_FILES
+#    CXX_SOURCE_FILES
+#    CXX_TARGET_LIBRARY
+#    CXX_BINARIES
+#
+#    FILE -- for newfile target (RCS)
+#    COMMENT -- for CI target.
+
+#
+# Other options for compilation may also be defined (or redefined)
+# in derived Makefiles, on the command line, or through the environment.
+# Such options include:
+#    TCM_INCLUDE_DIR
+#    TCM_LIBRARY_DIR
+#    IPC_INCLUDE_DIR
+#    IPC_LIBRARY_DIR
+#    CXX_THREADS_INCLUDE_DIR
+#    CXX_THREADS_LIBRARY_DIR
+#    CXX_FLAGS
+#    CXX_INCLUDES
+#    etc...
+
+
+# Either javacc needs to be in the path, or one can put JavaCC.zip in
+# the CLASSPATH, and setenv JAVACC 'java COM.sun.labs.javacc.Main'.
+ifndef JAVACC
+            JAVACC = javacc
+endif
+              JAVA = java
+             JAVAC = javac
+               CXX = g++
+                RM = rm -f
+# Be very wary of folks setenv'ing stuff and removing the wrong directories!
+             RMDIR = rm -ri
+             MKDIR = mkdir -p
+                CP = cp
+                WC = wc
+          DEV_NULL = /dev/null
+              FIND = find
+             XARGS = xargs
+              GREP = grep
+           STRINGS = strings
+               CVS = cvs
+                AR = ar
+            RANLIB = ranlib
+
+          CVS_UPDATE = update
+             CVS_ADD = add
+          CVS_COMMIT = commit
+          CVS_COMMENT= -m "$(COMMENT)"
+    BINARY_CVS_FLAGS = -kb -m "$(BINARY_FILE_COMMENT)"
+ BINARY_FILE_COMMENT = Binary File
+             COMMENT = 
+
+
+
+# We are actually running out of memory during compilation.  Wow.
+# So, default max memory was 16megs.  We will now raise it to be 32megs.
+# Documentation is at:
+#   http://java.sun.com/products/jdk/1.1/docs/tooldocs/solaris/java.html
+#   http://java.sun.com/products/jdk/1.1/docs/tooldocs/solaris/javac.html
+   JAVAC_FLAGS_INTERNAL  = -J-mx32m
+   JAVACC_FLAGS_INTERNAL = 
+
+
+
+#
+# IF THREADED is already set in the environment, that value OVERRIDES this!
+# Otherwise, dynamically determine the value of THREADED from libtcm.a.
+#
+ifndef THREADED
+  ifneq "0" "$(strip $(shell $(STRINGS) $(TCM_LIBRARY_DIR)/libtcm.a | $(GREP) TCM_SetIsThreadedTask | $(WC) -l ) )"
+     THREADED = 1
+     export THREADED
+  endif
+endif
+
+
+
+
+
+
+ifndef DEBUG_CXX_FLAGS
+     DEBUG_CXX_FLAGS =
+endif
+              CFLAGS =
+           CXX_FLAGS =
+CXX_OBJECT_ONLY_FLAG = -c
+CXX_BINARY_NAME_FLAG = -o
+       CXX_STD_FLAGS = $(DISTRIBUTED_CXX_FLAGS) $(THREADED_CXX_FLAGS)  \
+                       -Wall -W -Wswitch -Wuninitialized -Wparentheses \
+                       -O2 $(CFLAGS)
+
+ifdef TDL_NO_IMPLICIT_TEMPLATES 
+       CXX_STD_FLAGS += -fno-implicit-templates 
+endif
+
+ifndef NODEBUG
+       CXX_STD_FLAGS += -g
+endif
+
+    CXX_INCLUDE_DIRS = -I.
+    CXX_LIBRARY_DIRS = -L.
+       CXX_LIBRARIES = -ltdl -ltcm                                     \
+                       $(DISTRIBUTED_LIBRARIES) $(THREADED_LIBRARIES)
+
+CXX_TDL_INCLUDE_DIRS = -I$(TDL_INCLUDE_DIR)
+CXX_TDL_LIBRARY_DIRS = -L$(TDL_LIBRARY_DIR)
+
+CXX_TCM_INCLUDE_DIRS = -I$(TCM_INCLUDE_DIR)
+CXX_TCM_LIBRARY_DIRS = -L$(TCM_LIBRARY_DIR)
+
+CXX_DISTRIBUTED_INCLUDE_DIRS = 
+CXX_DISTRIBUTED_LIBRARY_DIRS = 
+
+ifdef DISTRIBUTED
+        DISTRIBUTED_LIBRARIES = -lipcInterface -lipc
+#CXX_DISTRIBUTED_INCLUDE_DIRS = -I$(IPC_INCLUDE_DIR)
+ CXX_DISTRIBUTED_LIBRARY_DIRS = -L$(IPC_LIBRARY_DIR)
+endif
+
+CXX_THREADED_INCLUDE_DIRS =
+CXX_THREADED_LIBRARY_DIRS =
+
+ifdef THREADED
+           THREADED_LIBRARIES = -lcxxThreads -lpthread
+#   CXX_THREADED_INCLUDE_DIRS = -I$(CXX_THREADS_INCLUDE_DIR)
+    CXX_THREADED_LIBRARY_DIRS = -L$(CXX_THREADS_LIBRARY_DIR)
+endif
+
+            AR_FLAGS = rv
+
+       SRC_MAKEFILES = Makefile $(EXTRA_SRC_MAKE_FILES)
+        JJ_OBJ_FILES = $(JJ_FILES:.jj=.java)
+           OBJ_FILES = $(JJ_OBJ_FILES:.java=.class) $(SRC_FILES:.java=.class)
+
+       CXX_OBJ_FILES = $(CXX_SOURCE_FILES:%.C=$(TDL_OBJECT_DIR)/%.o)
+ CXX_TARGET_BINARIES = $(CXX_EXECUTABLES:.C=)
+
+       ALL_SRC_FILES = $(SRC_MAKEFILES) $(JJ_FILES) $(SRC_FILES) \
+                       $(EXTRA_SRC_FILES)  \
+                       $(CXX_INCLUDE_FILES) $(CXX_SOURCE_FILES) \
+                       $(CXX_EXECUTABLES)
+
+
+%.java : %.jj
+	@$(call EXTRA_JAVACC_FUNCTION)
+	$(JAVACC) $(JAVACC_FLAGS_INTERNAL) $(JAVACC_FLAGS) $< $(JAVACC_FILTER)
+
+%.class : %.java
+	$(JAVAC) $(JAVAC_FLAGS_INTERNAL) $(JAVAC_FLAGS) $<
+
+
+###
+### ___CXX* Vars are a hack to get compiles to all occur as one line apiece,
+### stripping the embedded \-newlines out...
+###
+ ___CXX_OBJ_COMPILATION_ARGS =  $(CXX_OBJECT_ONLY_FLAG) $(CXX_STD_FLAGS)    \
+                                $(CXX_FLAGS) $(DEBUG_CXX_FLAGS)             \
+                                $(CXX_INCLUDE_DIRS)                         \
+                                $(CXX_TDL_INCLUDE_DIRS)                     \
+                                $(CXX_TCM_INCLUDE_DIRS)                     \
+                                $(CXX_DISTRIBUTED_INCLUDE_DIRS)             \
+                                $(CXX_THREADED_INCLUDE_DIRS)
+
+$(TDL_OBJECT_DIR)/%.o : %.C
+	@if [ ! -d $(TDL_OBJECT_DIR) ]; then $(MKDIR) $(TDL_OBJECT_DIR); fi
+	$(CXX) $< $(___CXX_OBJ_COMPILATION_ARGS) -o $@
+	@echo " "
+
+
+###
+### ___CXX* Vars are a hack to get compiles to all occur as one line apiece,
+### stripping the embedded \-newlines out...
+###
+ ___CXX_BIN_COMP_ARGS_1 = $(CXX_STD_FLAGS) $(CXX_FLAGS) $(DEBUG_CXX_FLAGS) \
+                          $(CXX_BINARY_NAME_FLAG)
+ ___CXX_BIN_COMP_ARGS_2 = $(CXX_INCLUDE_DIRS) $(CXX_LIBRARY_DIRS)         \
+                          $(CXX_TDL_INCLUDE_DIRS) $(CXX_TDL_LIBRARY_DIRS) \
+                          $(CXX_TCM_INCLUDE_DIRS) $(CXX_TCM_LIBRARY_DIRS) \
+                          $(CXX_DISTRIBUTED_INCLUDE_DIRS)                 \
+                          $(CXX_DISTRIBUTED_LIBRARY_DIRS)                 \
+                          $(CXX_THREADED_INCLUDE_DIRS)                    \
+                          $(CXX_THREADED_LIBRARY_DIRS)                    \
+                          $(CXX_LIBRARIES)
+
+% : %.C $(CXX_OBJ_FILES)
+	$(CXX) $(___CXX_BIN_COMP_ARGS_1) $@ $< $(___CXX_BIN_COMP_ARGS_2)
+
+%-subdirs:
+	$(foreach DIR, $(SUBDIRS), $(MAKE) -C $(DIR) BASE_TDL_DIR=$(BASE_TDL_DIR)/$(DIR)/.. $* ; echo " ";)
+
+
+### Enable conditonal-cleaning for the appropriate subdirectories.
+### (PARSER compiles most of the stuff in DATA, no sense erasing that
+###  work and doing it twice.)
+ifdef DIRECTORY_NEEDS_CLEANING
+  ifndef TDL_SKIP_CLEAN_ON_MAKE
+    conditionalClean = cleanall
+  endif
+endif
+
+all:  $(conditionalClean) all-local all-subdirs
+
+install: all
+
+all-local: $(JJ_OBJ_FILES)  $(OBJ_FILES) \
+           $(CXX_OBJ_FILES) $(CXX_TARGET_LIBRARY)
+
+bin bins:  bin-local bin-subdirs
+bin-local: all-local $(CXX_TARGET_BINARIES)
+
+
+$(CXX_TARGET_LIBRARY):  $(CXX_OBJ_FILES)
+	@if [ ! -d $(TDL_LIBRARY_DIR) ]; then $(MKDIR) $(TDL_LIBRARY_DIR); fi
+	$(RM) $(CXX_TARGET_LIBRARY)
+	$(AR) $(AR_FLAGS) $(CXX_TARGET_LIBRARY) $(CXX_OBJ_FILES)
+	$(RANLIB)         $(CXX_TARGET_LIBRARY)
+
+
+cleanall: clean clean-subdirs 
+clean:
+	$(RM) $(OBJ_FILES) $(JJ_OBJ_FILES)  \
+              $(CXX_OBJ_FILES) $(CXX_TARGET_LIBRARY) $(CXX_TARGET_BINARIES) \
+              $(RM_FILES)
+
+javacleanall: javaclean-subdirs
+javaclean:
+	$(RM) $(filter %.class,$(OBJ_FILES)) $(filter %.class,$(RM_FILES))
+
+
+reallycleanall: reallyclean-subdirs
+reallyclean: clean
+	$(RM) $(wildcard #*)  $(wildcard *~)
+	$(RMDIR) $(TDL_LIBRARY_DIR) $(TDL_OBJECT_DIR)
+
+wcall:   wc-subdirs
+testall: test-subdirs
+
+echoSrcFiles:
+	@echo $(ALL_SRC_FILES)
+
+wc:
+	$(WC) $(ALL_SRC_FILES) < $(DEV_NULL)
+
+
+NeedFile:
+ifndef FILE
+	@echo 'Error:  File=aFile missing or empty on make command line.'
+	exit 1
+endif
+ifeq ($(FILE),)
+	@echo 'Error:  File=aFile missing or empty on make command line.'
+	exit 1
+endif
+
+
+
+newfile: NeedFile
+	$(CVS) $(CVS_ADD)                   $(FILE)
+	$(CVS) $(CVS_COMMIT) $(CVS_COMMENT) $(FILE)
+
+newbinaryfile: NeedFile
+	$(CVS) $(CVS_ADD)    $(BINARY_CVS_FLAGS)                $(FILE)
+	$(CVS) $(CVS_COMMIT)                     $(CVS_COMMENT) $(FILE)
+
+test:
+	echo $(COMMENT) $(CLASSPATH)
+
+echo-%:
+	@echo $* == "\"$($*)\""
+
+echoraw-%:
+	@echo "$($*)"
+
+#Needed by 'tdlc' bash-script.
+printVariablesBash:
+	@echo "#1#"  $(CLASSPATH)                \
+              "#2#"  $(JAVA)                     \
+              "#3#"  $(CXX)                      \
+              "#4#"  $(TCM_INCLUDE_DIR)          \
+              "#5#"  $(TCM_LIBRARY_DIR)          \
+              "#6#"  $(TDL_INCLUDE_DIR)          \
+              "#7#"  $(TDL_LIBRARY_DIR)          \
+              "#8#"  $(IPC_INCLUDE_DIR)          \
+              "#9#"  $(IPC_LIBRARY_DIR)          \
+              "#10#" $(CXX_THREADS_INCLUDE_DIR)  \
+              "#11#" $(CXX_THREADS_LIBRARY_DIR)  \
+              "#12#" $(THREADED)                 \
+              "#13#"
+

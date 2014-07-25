@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Monitor aMonitor (int i)
+  WITH MAXIMUM ACTIVATE 5, PERIOD 0:0:1.0
+{
+  cerr << "Test(" << i << "):  " << getNumberOfActivates() << ":  aMonitor {"
+       << TCM_GetMonitorMaximumActivations    ( TDL_REF(THIS) ) << ", "
+       << TCM_GetMonitorMaximumTriggers       ( TDL_REF(THIS) ) << ", "
+       << TCM_GetMonitorActivationConstraints ( TDL_REF(THIS) ) << ", "
+       << TCM_GetMonitorPeriod                ( TDL_REF(THIS) ) << ", "
+       << TCM_GetMonitorInitialWait           ( TDL_REF(THIS) ) << ")" << endl;
+
+  TDL_BIND ( TCM_Parent(TDL_REF(THIS)), realMonitor );
+  realMonitor terminate;
+}
+
+Goal test()
+{
+  spawn aMonitor(0);
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  test();
+}
+

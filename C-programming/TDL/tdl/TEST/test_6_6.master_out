@@ -1,0 +1,6 @@
+Task Control Management 2.7.4 (Jan-29-02)
+Goal        zoo-auto,wait {1}:        TCM {0} --> ON HOLD         (Inactive)
+Goal        zoo-auto,wait {1}:  ON HOLD  --> TCM             (Sent)
+Test-1
+Test-2
+  Success   zoo-auto,wait {1}:

@@ -1,0 +1,41 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal B()
+{
+  cerr << "Running B" << endl;
+}
+
+Goal C()
+{
+  cerr << "Running C" << endl;
+}
+
+Goal A1()
+{
+  cerr << "Running A1" << endl; 
+  spawn C() with terminate at 23:00:00.00;
+  spawn B() with wait;
+}
+
+Goal A2()
+{
+  cerr << "Running A2" << endl; 
+  WITH ( SERIAL )
+  {
+    spawn C() with terminate at 23:00:00.00;
+    spawn B() with wait;
+  }
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  A1();
+  A2();
+}
+

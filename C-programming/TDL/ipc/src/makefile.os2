@@ -1,0 +1,233 @@
+# Copyright (c) 2008, Carnegie Mellon University
+#     This software is distributed under the terms of the 
+#     Simplified BSD License (see ipc/LICENSE.TXT)
+CC = icc
+
+LB = ilib /nologo
+
+CFLAGS_IPC = -DNMP_IPC -DLISP -DDOS_FILE_NAMES -DFORCE_32BIT_ENUM -DNEED_READV
+
+#ifeq ($(MMAKE_TARGET_LISP_TYPE),acl-4.2)
+#          CFLAGS+=-DALLEGRO -I$(MMAKE_TARGET_LISP_INC)
+#endif
+#ifeq ($(MMAKE_TARGET_LISP_TYPE),acl-4.3)
+#          CFLAGS+=-DALLEGRO -I$(MMAKE_TARGET_LISP_INC)
+#endif
+#ifeq ($(MMAKE_TARGET_LISP_TYPE),hcl-3.2)
+#          CFLAGS+=-DLISPWORKS -I$(MMAKE_TARGET_LISP_INC)
+#endif
+
+#STANDARD FLAGS
+CFLAGS = /G4 /O+ /Ss+ /C /Gm+ /Q+ /Gs- /Sm+ /DOS2 /Wall-pro-ret-cnd
+CFLAGS_NOOPT = /G4 /O- /Ss+ /C /Gm+ /Q+ /Gs- /Sm+ /DOS2 /Wall-pro-ret-cnd
+CFLAGS_OPT = /G4 /O+ /Ss+ /C /Gm+ /Q+ /Gs- /Sm+ /DOS2 /Wall-pro-ret-cnd
+CFLAGS2 =  /B/STACK:50000
+
+# DEBUG FLAGS
+#CFLAGS = /Ti /G4 /O- /Ss+ /C /Tx+ /Gs- /Q+  /DOS2 /D__DEBUG_ALLOC__ /Se /Gm+ /Sm+ /Wall-pro-ret-cnd
+#CFLAGS_NOOPT = /Ti /G4 /O- /Ss+ /C /Tx+ /Gs- /Q+ /DOS2 /D__DEBUG_ALLOC__ /Se /Gm+ /Sm+ /Wall-pro-ret-cnd
+#CFLAGS_OPT = /Ti /G4 /O+ /Ss+ /C /Tx+ /Gs- /Q+ /DOS2 /D__DEBUG_ALLOC__ /Se /Gm+ /Sm+ /Wall-pro-ret-cnd
+#CFLAGS2 = /Ti /B/STACK:50000 
+
+LFLAGS = /nologo
+
+WOBJS= ipc.obj queryRes.obj marshall.obj timer.obj globalVa.obj 
+WOBJS2= list.obj behavior.obj tcModErr.obj modLoggi.obj modVar.obj resMod.obj 
+WOBJS3= datamsg.obj formatte.obj hash.obj idtable.obj key.obj printDat.obj ipcLisp.obj
+WOBJS4= primFmtt.obj reg.obj sendMsg.obj tcaMem.obj tcaRef.obj 
+WOBJS5= comModul.obj com.obj globalM.obj globalMU.obj strList.obj parseFmt.obj lex.obj 
+
+SERVOBJS = comServe.obj dispatch.obj recvMsg.obj res.obj tcerror.obj logging.obj msgTap.obj globalS.obj centralI.obj
+
+HOBJS=ipc.h centralM.h
+HOBJS2=basics.h behavior.h centralI.h centralM.h com.h comModul.h comServe.h datamsg.h 
+HOBJS3=dispatch.h formatte.h globalM.h globalS.h globalVa.h hash.h idtable.h ipc.h ipcPriv.h 
+HOBJS4=key.h lex.h libc.h list.h logging.h modLoggi.h modVar.h msgTap.h parseFmt.h primFmtt.h 
+HOBJS5=printDat.h recvMsg.h reg.h res.h resMod.h sendMsg.h strList.h tca.h tcaInter.h tcaMem.h 
+HOBJS6=tcaRef.h tcerror.h
+
+
+CLIB= ipc.lib
+
+a :  centralm.exe ipctest.exe
+
+ipctest.exe :  ipctest.obj makefile $(SERVOBJS) $(WOBJS) $(WOBJS2) $(WOBJS3) $(WOBJS4) $(WOBJS5) $(CLIB) 
+ $(CC) $(CFLAGS2)  ipctest $(CLIB) so32dll.lib tcp32dll.lib 
+
+ipctest.obj : ipctest.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) ipctest.c
+
+centralM.exe :  centralM.obj makefile $(SERVOBJS) $(WOBJS) $(WOBJS2) $(WOBJS3) $(WOBJS4) $(WOBJS5) $(CLIB) 
+ $(CC) $(CFLAGS2)  centralM $(CLIB) so32dll.lib tcp32dll.lib 
+
+centralM.obj : centralM.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) centralM.c
+
+ipc.obj : ipc.c $(HOBJS) $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) ipc.c
+ $(LB) ipc -+ipc;
+
+behavior.obj : behavior.c  $(HOBJS) $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) behavior.c
+ $(LB) ipc -+behavior;
+
+queryRes.obj : queryRes.c  $(HOBJS) $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)   
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) queryRes.c
+ $(LB) ipc -+queryRes;
+
+marshall.obj : marshall.c  $(HOBJS) $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) marshall.c
+ $(LB) ipc -+marshall;
+
+timer.obj : timer.c  $(HOBJS) $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) timer.c
+ $(LB) ipc -+timer;
+
+list.obj : list.c  $(HOBJS) $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) list.c
+ $(LB) ipc -+list;
+
+tcModErr.obj : tcModErr.c  $(HOBJS) $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)   
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) tcModErr.c
+ $(LB) ipc -+tcModErr;
+
+modLoggi.obj : modLoggi.c   $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) modLoggi.c
+ $(LB) ipc -+modLoggi;
+
+modVar.obj : modVar.c   $(HOBJS) $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) modVar.c
+ $(LB) ipc -+modVar;
+
+resMod.obj : resMod.c   $(HOBJS) $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) resMod.c
+ $(LB) ipc -+resMod;
+
+datamsg.obj : datamsg.c   $(HOBJS) $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) datamsg.c
+ $(LB) ipc -+datamsg;
+
+formatte.obj : formatte.c $(HOBJS)   $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) formatte.c
+ $(LB) ipc -+formatte;
+
+hash.obj : hash.c   $(HOBJS) $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) hash.c
+ $(LB) ipc -+hash;
+
+idtable.obj : idtable.c $(HOBJS)   $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)    
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) idtable.c
+ $(LB)  ipc -+idtable;
+
+key.obj : key.c $(HOBJS)   $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)    
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) key.c
+ $(LB)  ipc -+key;
+
+printDat.obj : printDat.c $(HOBJS)   $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) printDat.c
+ $(LB)  ipc -+printDat;
+
+ipcLisp.obj : ipcLisp.c $(HOBJS)   $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)    
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) ipcLisp.c
+ $(LB)  ipc -+ipcLisp;
+
+primFmtt.obj : primFmtt.c  $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) primFmtt.c
+ $(LB)  ipc -+primFmtt;
+
+reg.obj : reg.c  $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) reg.c
+ $(LB)  ipc -+reg;
+
+sendMsg.obj : sendMsg.c  $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) sendMsg.c
+ $(LB)  ipc -+sendMsg;
+
+tcaMem.obj : tcaMem.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)       
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) tcaMem.c
+ $(LB)  ipc -+tcaMem;
+
+tcaRef.obj : tcaRef.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) tcaRef.c
+ $(LB)  ipc -+tcaRef;
+
+comModul.obj : comModul.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) comModul.c
+ $(LB)  ipc -+comModul;
+
+com.obj : com.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) com.c
+ $(LB)  ipc -+com;
+
+globalM.obj : globalM.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) globalM.c
+ $(LB)  ipc -+globalM;
+
+globalMU.obj : globalMU.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) globalMU.c
+ $(LB)  ipc -+globalMU;
+
+strList.obj : strList.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) strList.c
+ $(LB)  ipc -+strList;
+
+parseFmt.obj : parseFmt.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) parseFmt.c
+ $(LB)  ipc -+parseFmt;
+
+lex.obj : lex.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) lex.c
+ $(LB)  ipc -+lex;
+
+globalVa.obj : globalVa.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) globalVa.c
+ $(LB)  ipc -+globalVa;
+
+ipcRetrieve.obj : ipcRetrieve.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) ipcRetrieve.c
+ $(LB)  ipc -+ipcRetrieve;
+
+
+
+# Server Stuff
+
+comServe.obj : comServe.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) comServe.c
+ $(LB)  ipc -+comServe;
+
+dispatch.obj : dispatch.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) dispatch.c
+ $(LB)  ipc -+dispatch;
+
+recvMsg.obj : recvMsg.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) recvMsg.c
+ $(LB)  ipc -+recvMsg;
+
+res.obj : res.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) res.c
+ $(LB)  ipc -+res;
+
+msgTap.obj : msgTap.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) msgTap.c
+ $(LB)  ipc -+msgTap;
+
+globalS.obj : globalS.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) globalS.c
+ $(LB)  ipc -+globalS;
+
+tcerror.obj : tcerror.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) tcerror.c
+ $(LB)  ipc -+tcerror;
+
+logging.obj : logging.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) logging.c
+ $(LB)  ipc -+logging;
+
+centralI.obj : centralI.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) centralI.c
+ $(LB)  ipc -+centralI;
+
+central.obj : central.c $(HOBJS)  $(HOBJS2) $(HOBJS3) $(HOBJS4) $(HOBJS5) $(HOBJS6)      
+ $(CC) $(CFLAGS) $(CFLAGS_IPC) central.c
+ $(LB)  ipc -+central;
+

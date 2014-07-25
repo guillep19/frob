@@ -1,0 +1,41 @@
+Task Control Management x.y.z (MON-DAY-YEAR)
+Goal        foo-auto,wait {1}:        TCM {0} --> ON HOLD         (Inactive)
+Goal        foo-auto,wait {1}:  ON HOLD  --> TCM             (Sent)
+[_TDL_TreeNodeBranch::getPreviousChild]  TDL_DEBUG:  Returning Previous of:  "NULL"
+[_TDL_Constraint::findPrevious]  TDL_DEBUG:  [With-Do]   No previous nodes for available for "f-0" Constraint:
+   Constraint:  _TDL_Serial  (0x........)
+    ActualReferenceNode = 0x........   ("PREVIOUS")
+
+Goal                    f {2}:        TCM {1} --> ON HOLD         (Inactive)
+[_TDL_TreeNodeBranch::getPreviousChild]  TDL_DEBUG:  Returning Previous of:  "f-0"
+_TDL_Serial ( Constrain=f-2 , Ref=f-0 [Ref_flags: RUNNING] )
+Constraint:  _TDL_Serial  (0x........)
+ ActualReferenceNode = 0x........   ("PREVIOUS")
+
+Goal                    f {3}:        TCM {1} --> ON HOLD         (Inactive)
+_TDL_TerminateAtEvent ( Constrain=f-3 , Ref=f-0 [Ref_flags: RUNNING] , RefInterval=HANDLING_INTERVAL , RefState=COMPLETED_STATE )
+Constraint:  _TDL_TerminateAtEvent  (0x........)
+ referenceInterval = Handling Interval
+ referenceState = Completed State
+ ActualReferenceNode = 0x........   ("WithDo-0")
+
+_TDL_TerminateAtEvent ( Constrain=f-3 , Ref=f-2 [Ref_flags: RUNNING] , RefInterval=HANDLING_INTERVAL , RefState=COMPLETED_STATE )
+Constraint:  _TDL_TerminateAtEvent  (0x........)
+ referenceInterval = Handling Interval
+ referenceState = Completed State
+ ActualReferenceNode = 0x........   ("WithDo-0")
+
+Goal                    f {4}:        TCM {1} --> ON HOLD         (Inactive)
+_TDL_Wait ( Constrain=f-3 )
+Constraint:  _TDL_Wait  (0x........)
+
+Goal                    f {2}:  ON HOLD  --> TCM             (Sent)
+Goal                    f {4}:  ON HOLD  --> TCM             (Sent)
+test-f:  one
+  Success               f {2}:
+Goal                    f {3}:  ON HOLD  --> TCM             (Sent)
+Will Terminate f {4} when all references to it are released
+Terminated f {4}
+  Success   foo-auto,wait {1}:
+test-f:  three
+  Success               f {3}:

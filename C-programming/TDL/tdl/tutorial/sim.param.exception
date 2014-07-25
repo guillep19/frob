@@ -1,0 +1,53 @@
+# All units are in inches
+# environment   name		pixels-per-given-unit
+environment	Wean_Hero_Lab		1.0
+
+# room  xl      xh      yl      yh
+room    5.0     480     1       480
+room    0.0     480     485     500
+
+# door  xl      xh      yl      yh      open/close
+door    130.0   178     480     485     open
+
+# obst  rect    stat    xl      xh      yl      yh      
+obst    rect    0       50      95      95     105
+
+# obst  circle  stat    x       y       diameter
+obst	circle	0	220     200     8.0
+
+# obst  rect    stat    xl      xh      yl      yh      
+obst    rect    0      205     210     230     280
+
+# obst  rect    stat    xl      xh      yl      yh      
+obst    rect    0      210     250     275     280
+
+# Robot's initial x, y, heading.  Radius of robot.  And hero_stepsize
+# robot init_x  init_y  head-degree  radius
+robot	150.0	100.0	0	     10.0
+
+# Take n-readings (over 360 deg).  Each reading consists of mSamples
+# in a cone of cone-degrees.  Max dist = dist.  displayMode 1 = robot
+# centered, 0 = world centered.
+# sensors     n-reading mSample dist    cone(degrees)  displayMode
+sensors	      24	4	127.5	15.0		0
+
+# sensor_noise_level p  ->  reading = real + p * [-1,1]
+# sensor_noise_level 0.7
+sensor_noise_level 0
+
+# forward_noise_level p  ->  real forward = asked forward + p * [-1,1]
+# forward_noise_level 0.05
+forward_noise_level 0
+
+# turning_noise_level p  ->  real turn = asked turn in degrees + p * [-1,1]
+# turning_noise_level 5
+turning_noise_level 0
+
+# time_scale msec   Each simulated second is this many CPU timer milliseconds
+time_scale 1000
+
+# time_increment sec    Maximum time between simulation updates
+time_increment 0.1
+
+# refresh_rate n   Graphical screen refresh occurs every n simulation steps
+refresh_rate 1

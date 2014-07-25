@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal f ( const char * theString )
+{
+  cerr << "test-f:  " << theString << endl;
+}
+
+
+Goal foo ( )
+{
+  w: with ( serial )
+  {
+    spawn f ( "one" );
+    with ( sequential handling )
+    {
+      if ( 0 )
+	spawn f ( "two" );
+    }
+    spawn f ( "three" );
+  }
+
+  spawn f ( "four" )
+    with terminate at w handling completed, wait;
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  foo();
+}

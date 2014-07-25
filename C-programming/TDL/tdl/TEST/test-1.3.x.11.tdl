@@ -1,0 +1,135 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+#define SERVER_AGENT "ServerAgent"
+#define CLIENT_AGENT "ClientAgent"
+
+distributed typedef struct FOO
+{
+  int4                                  a;
+  struct BAR   { double c;         }    b;
+  enum CHARLIE { ZERO, A, B, C, D  }    d;
+  enum DELTA   { X=1, Y=2, Z=1+2+2 }    e;
+
+  int2                               *  f;
+  unsigned long  int                    g [ 2 ];
+  signed   short int                 *  h [ 2 ];
+  int                                   i [ 1 ] [ 1 ];
+  long                               *  j [ 1 ] [ 1 ];
+  struct ECHO {
+    enum FOXTROT { A0, A1, A2, A3 }  * k, l [ 2 ];
+                                   } * m, n [ 2 ];
+} FOO_TYPE;
+
+void printFoo ( const FOO & aFoo )
+{
+  cout << "TEST foo:(a=" << aFoo.a
+       << ", b.c=" << aFoo.b.c
+       << ", d=" << int4(aFoo.d)
+       << ", e=" << int4(aFoo.e)
+       << ", f=" << aFoo.f << "(" << *(aFoo.f) << ")"
+       << ", g[0,1]=" << aFoo.g[0] << "," << aFoo.g[1]
+       << ", h[0,1]=" << aFoo.h[0] << "(" << *(aFoo.h[0]) << ")"
+           << "," << aFoo.h[1] << "(" << *(aFoo.h[1]) << ")"
+       << ", i[0][0]=" << aFoo.i[0][0]
+       << ", j[0][0]=" << aFoo.j[0][0] << "(" << *(aFoo.j[0][0]) << ")"
+
+       << ", m=" << aFoo.m
+       << ", *m.k=" << (*(aFoo.m)).k
+       << ", *m.*k=" << int4(*((*(aFoo.m)).k))
+       << ", *m.l[0,1]=" << int4((*(aFoo.m)).l[0])
+           << "," << int4((*(aFoo.m)).l[1])
+
+       << ", n[0].k=" << aFoo.n[0].k
+       << ", n[0].*k=" << int4(*(aFoo.n[0].k))
+       << ", n[0].l[0,1]=" << int4(aFoo.n[0].l[0])
+           << "," << int4(aFoo.n[0].l[1])
+
+       << ", n[1].k=" << aFoo.n[1].k
+       << ", n[1].*k=" << int4(*(aFoo.n[1].k))
+       << ", n[1].l[0,1]=" << int4(aFoo.n[1].l[0])
+           << "," << int4(aFoo.n[1].l[1])
+
+       << ")\n" << flush;
+}
+
+distributed goal serverFoo( FOO aFoo )
+{
+  printFoo ( aFoo );
+}
+
+goal clientTest()
+{
+  FOO_TYPE bFoo;
+  bFoo.a   = -1;
+  bFoo.b.c = -2.3;
+  bFoo.d   = FOO::D;
+  bFoo.e   = FOO::Z;
+
+  bFoo.f    = new int2;  *(bFoo.f) = 6;
+  bFoo.g[0] = 7;
+  bFoo.g[1] = 8;
+  bFoo.h[0] = new signed short int;  *(bFoo.h[0]) = 9;
+  bFoo.h[1] = new signed short int;  *(bFoo.h[1]) = 10;
+  bFoo.i[0][0] = 11;
+  bFoo.j[0][0] = new long;  *(bFoo.j[0][0]) = 12;
+
+  bFoo.m = new FOO::ECHO;
+  (*(bFoo.m)).k = new FOO::ECHO::FOXTROT;
+
+  *((*(bFoo.m)).k) = FOO::ECHO::A0;
+  (*(bFoo.m)).l[0] = FOO::ECHO::A1;
+  (*(bFoo.m)).l[1] = FOO::ECHO::A2;
+
+  bFoo.n[0].k = new FOO::ECHO::FOXTROT;
+  *(bFoo.n[0].k) = FOO::ECHO::A3;
+  bFoo.n[0].l[0] = FOO::ECHO::A2;
+  bFoo.n[0].l[1] = FOO::ECHO::A1;
+
+  bFoo.n[1].k = new FOO::ECHO::FOXTROT;
+  *(bFoo.n[1].k) = FOO::ECHO::A2;
+  bFoo.n[1].l[0] = FOO::ECHO::A1;
+  bFoo.n[1].l[1] = FOO::ECHO::A0;
+
+  cout << "test:  " << FOO_IPC_FORMAT << endl << flush;
+  printFoo ( bFoo );
+  spawn serverFoo(bFoo) with on SERVER_AGENT;
+}
+
+
+void
+clientSide( u_int4 theProcessIndex )
+{
+  MARKUSED ( theProcessIndex );
+  cout << "clientSide/stdout\n" << flush;
+  cerr << "clientSide/stderr\n";
+  TDL_Initialize ( FALSE, CLIENT_AGENT );
+  sleep(2);
+  clientTest();
+  sleep(1);
+  cout << "clientSide ending.\n";
+}
+
+void
+serverSide ( u_int4 theProcessIndex )
+{
+  MARKUSED ( theProcessIndex );
+  cout << "serverSide/stdout\n" << flush;
+  cerr << "serverSide/stderr\n";
+  TDL_Initialize ( SERVER_AGENT, FALSE );
+  sleep(1);
+  TCM_ProcessAgenda(TRUE, 4000);
+  cout << "serverSide ending.\n";
+}
+
+
+int
+main ( int argc, char * argv[] )
+{
+  TDL_ForkChildren ( serverSide, clientSide, 5000, 999,
+		     TO_BOOLEAN ( argc > 1 ) );
+}
+

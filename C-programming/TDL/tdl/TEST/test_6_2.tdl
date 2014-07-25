@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Monitor foo ( int i = 0 )
+  WITH persistent int count = 0, serial, period 0:0:1.0, maximum activate 5
+{
+  cerr << "Test:  Monitor foo [ triggers = " << getNumberOfTriggers() 
+       << ", activates = " <<  getNumberOfActivates()
+       << " ]  ( ++i = " << (++i) << " ):  ++count = " << (++count) << endl;
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  foo(0);
+}
+

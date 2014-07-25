@@ -1,0 +1,55 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+#define SERVER_AGENT "ServerAgent"
+#define CLIENT_AGENT "ClientAgent"
+
+distributed goal foo()
+{
+  cout << "TEST foo: ()\n" << flush;
+}
+
+goal test()
+{
+  if ( 1 )
+    foo on SERVER_AGENT;
+  spawn foo();
+}
+
+
+void
+clientSide( u_int4 theProcessIndex )
+{
+  MARKUSED ( theProcessIndex );
+  cout << "clientSide/stdout\n" << flush;
+  cerr << "clientSide/stderr\n";
+  TDL_Initialize ( FALSE, CLIENT_AGENT );
+  sleep(2);
+  test();
+  sleep(1);
+  cout << "clientSide ending.\n";
+}
+
+void
+serverSide ( u_int4 theProcessIndex )
+{
+  MARKUSED ( theProcessIndex );
+  cout << "serverSide/stdout\n" << flush;
+  cerr << "serverSide/stderr\n";
+  TDL_Initialize ( SERVER_AGENT, FALSE );
+  sleep(1);
+  TCM_ProcessAgenda(TRUE, 4000);
+  cout << "serverSide ending.\n";
+}
+
+
+int
+main ( int argc, char * argv[] )
+{
+  TDL_ForkChildren ( serverSide, clientSide, 5000, 999,
+		     TO_BOOLEAN ( argc > 1 ) );
+}
+

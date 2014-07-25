@@ -1,0 +1,75 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+#define ptest(X) cerr << "Test:  " # X " = " << (((X) == TRUE) ? "TRUE" : "FALSE" )  << endl;
+
+Goal testGoal()
+{
+  cerr << "Test:" << endl << "Test:  testGoal" << endl;
+  ptest ( TDL_TASK_IS_STARTED   ( TDL_REF(THIS) ) );
+  ptest ( TDL_TASK_IS_COMPLETED ( TDL_REF(THIS) ) );
+  ptest ( TDL_TASK_INSTANCE_OF  ( TDL_REF(THIS), testGoal    ) );
+  ptest ( TDL_TASK_INSTANCE_OF  ( TDL_REF(THIS), testMonitor ) );
+  ptest ( TDL_TASK_INSTANCE_OF  ( TDL_REF(THIS), test        ) );
+  cerr << endl;
+}
+
+Monitor testMonitor() maximum activate 2
+{
+  cerr << "Test:" << endl << "Test:  testMonitor" << endl;
+  ptest ( TDL_TASK_IS_STARTED   ( TDL_REF(THIS) ) );
+  ptest ( TDL_TASK_IS_COMPLETED ( TDL_REF(THIS) ) );
+  ptest ( TDL_TASK_INSTANCE_OF  ( TDL_REF(THIS), testGoal    ) );
+  ptest ( TDL_TASK_INSTANCE_OF  ( TDL_REF(THIS), testMonitor ) );
+  ptest ( TDL_TASK_INSTANCE_OF  ( TDL_REF(THIS), test        ) );
+  ptest ( TDL_TASK_INSTANCE_OF  ( TDL_REF(THIS), ACT-testMonitor ) );
+
+  cerr << "Test:  " << TCM_NodeName ( TDL_REF(THIS) ) << endl;
+  cerr << endl;
+}
+
+
+Goal test()
+{
+  spawn testGoal();
+
+  spawn testMonitor();
+  testMonitor activate;
+  testMonitor activate;
+
+
+  cerr << "Test:  test" << endl;
+  ptest ( TDL_TASK_INSTANCE_OF ( TDL_REF(THIS), testGoal    ) );
+  ptest ( TDL_TASK_INSTANCE_OF ( TDL_REF(THIS), testMonitor ) );
+  ptest ( TDL_TASK_INSTANCE_OF ( TDL_REF(THIS), test        ) );
+  ptest ( TDL::checkForTaskInstanceOf ( TCM_NodeName ( TDL_REF(THIS) ),
+					"test-auto,wait" ) );
+
+  ptest ( TDL_IS_STARTED       ( testGoal ) );
+  ptest ( TDL_IS_COMPLETED     ( testGoal ) );
+  ptest ( TDL_INSTANCE_OF      ( testGoal,  testGoal    ) );
+  ptest ( TDL_INSTANCE_OF      ( testGoal,  testMonitor ) );
+  ptest ( TDL_INSTANCE_OF      ( testGoal,  test        ) );
+
+  ptest ( TDL_IS_STARTED       ( testMonitor ) );
+  ptest ( TDL_IS_COMPLETED     ( testMonitor ) );
+  ptest ( TDL_INSTANCE_OF      ( testMonitor,  testGoal    ) );
+  ptest ( TDL_INSTANCE_OF      ( testMonitor,  testMonitor ) );
+  ptest ( TDL_INSTANCE_OF      ( testMonitor,  test        ) );
+
+  cerr << "Test:  " << TCM_NodeName ( TDL_REF(THIS) ) << endl;
+  cerr << endl;
+
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  test();
+}
+

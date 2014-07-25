@@ -1,0 +1,5 @@
+Task Control Management 2.7.4 (Jan-29-02)
+Goal      foo-outsideTask {1}:        TCM {0} --> ON HOLD         (Inactive)
+Goal      foo-outsideTask {1}:  ON HOLD  --> TCM             (Sent)
+test-f1: 
+  Success foo-outsideTask {1}:

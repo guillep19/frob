@@ -1,0 +1,76 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal fgoal()
+{
+  cout << "fgoal:  " << TCM_NodeClassString(TDL_REF(THIS)) << endl;
+}
+
+Command fcommand()
+{
+  cout << "fcommand:  "  << TCM_NodeClassString(TDL_REF(THIS)) << endl;
+}
+
+Monitor fmonitor() with maximum activate 1, period 0.1
+{
+  cout << "fmonitor:  "  << TCM_NodeClassString(TDL_REF(THIS)) << endl;
+}
+
+Exception fex();
+Exception handler fexh() handles fex
+{
+  cout << "fexh:  " << TCM_NodeClassString(TDL_REF(THIS)) << endl;
+}
+
+Goal fg() with exception handler fexh()
+{
+  FAIL fex();
+}
+
+Goal run()
+{
+  with ( serial )
+  {
+    spawn fgoal();
+    spawn fcommand();
+    spawn fmonitor();
+    spawn fg();
+  }
+}
+
+
+TDL_TaskData_Ref  taskDataRef;
+TCM_Task_Tree_Ref taskRef;
+
+Goal postponedTask (int i)
+{
+  MARKUSED(i);
+  taskDataRef = TDL_TASKDATA();
+  taskRef     = TDL_REF ( THIS );
+  POSTPONE;
+}
+
+int
+main( int argc, char * argv[] )
+{
+  MARKUSED(argv);
+  // TDL_Initialize( argc < 2, argc < 3 );
+  TDL_Initialize( argc >= 3, argc >= 2 );
+  run();
+
+	/* Being postponed, this task *should* deadlock us, which *should*
+	 * be detected by TCM, which should pop us back out...
+	 */
+  postponedTask(5);
+  cout << endl
+       << "main:  TDL_ARG: "
+       << TDL_ARG (  taskDataRef, postponedTask, test_1_3_5_16_tdl, 0, i )
+       << endl
+       << "main:  TDL_TASK_ARG: "
+       << TDL_TASK_ARG ( taskRef, postponedTask, test_1_3_5_16_tdl, 0, i )
+       << endl;
+}
+

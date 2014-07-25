@@ -1,0 +1,72 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal f1( int i = -1, int j = -2 )
+{
+  cerr << "test:  f1 ( " << i << " , " << j << ")" << endl;
+}
+
+Goal f2( int i = -1 )
+{
+  cerr << "test:  f2 ( " << i << ")" << endl;
+}
+
+Goal f3( int i = -1 )
+{
+  cerr << "test:  f3 ( " << i << ")" << endl;
+}
+
+Goal f4( int i = -1 )
+{
+  cerr << "test:  f4 ( " << i << ")" << endl;
+}
+
+Goal foo()
+{
+  cerr << endl << "test 1" << endl;
+
+  if ( 0 )
+    for ( int i=0; i<2; i++ )
+      for ( int j=0; j<2; j++ )
+	w2: WITH ( EXPAND FIRST ) z: SPAWN f1(i, j);
+
+  cerr << endl << "test 2" << endl;
+
+  SPAWN f2(1) WITH  SEQUENTIAL HANDLING  z;
+  SPAWN f2(2) WITH  SEQUENTIAL EXPANSION z[0];
+  SPAWN f2(3) WITH  SEQUENTIAL EXECUTION z[0][0];
+
+
+  cerr << endl << "test 3" << endl;
+
+  for ( int i=0; i<2; i++ )
+  {
+    if ( i > 0 )
+      WITH ( SERIAL )
+      {
+	for ( int j=0; j<2; j++ )
+	  y: SPAWN f1(i, j);
+      }
+  }
+
+  cerr << endl << "test 4" << endl;
+
+  SPAWN f2(4) WITH  SEQUENTIAL HANDLING y;
+  SPAWN f2(5) WITH  SEQUENTIAL EXPANSION y[0];
+  SPAWN f2(6) WITH  SEQUENTIAL EXECUTION y[1];
+  SPAWN f2(7) WITH  SERIAL y[0][0];
+  SPAWN f2(8) WITH  SERIAL y[1][1];
+
+  cerr << endl << "test 5" << endl;
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  foo();
+}
+

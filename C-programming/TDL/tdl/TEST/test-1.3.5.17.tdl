@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Exception ourException();
+Exception Handler ourExceptionHandler(const char * theLocation)
+  handles ourException, maximum activate 2
+{
+  FLUSHALL();
+  cout << "[ourExceptionHandler]:  " << theLocation << endl;
+  FLUSHALL();
+}
+
+Goal A() with exception handler ourExceptionHandler ( "Goal-A" )
+{
+  FLUSHALL();
+  cout << "Goal A\n";
+  FLUSHALL();
+  with ( serial )
+  {
+    spawn B() with exception handler ourExceptionHandler ( "Goal-A&B", 1 );
+    spawn B();
+  }
+}
+
+Goal B() with exception handler ourExceptionHandler ( "Goal-B" )
+{
+  FLUSHALL();
+  cout << "Goal B\n";
+  FLUSHALL();
+  with ( serial )
+  {
+    spawn C();
+    spawn C();
+    spawn C();
+    spawn C();
+  }
+}
+
+Goal C()
+{
+  FLUSHALL();
+  cout << "Goal C\n";
+  FLUSHALL();
+  FAIL ourException();
+}
+
+
+
+int
+main( int argc, char * argv[] )
+{
+  MARKUSED(argv);
+  // TDL_Initialize( argc < 2, argc < 3 );
+  TDL_Initialize( argc >= 3, argc >= 2 );
+  A();
+}

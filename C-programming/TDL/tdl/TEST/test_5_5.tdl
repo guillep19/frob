@@ -1,0 +1,107 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal f1( int i = -1, int j = -2 )
+{
+  cerr << "test:  f1 ( " << i << " , " << j << ")" << endl;
+}
+
+Goal f2( int i = -1 )
+{
+  cerr << "test:  f2 ( " << i << ")" << endl;
+}
+
+Goal f3( int i = -1 )
+{
+  cerr << "test:  f3 ( " << i << ")" << endl;
+}
+
+Goal f4( int i = -1 )
+{
+  cerr << "test:  f4 ( " << i << ")" << endl;
+}
+
+Goal f5( int i = -1 )
+{
+  cerr << "test:  f5 ( " << i << ")" << endl;
+}
+
+Goal foo()
+{
+  int i,j;
+
+  cerr << endl << "test 1" << endl;
+
+  switch ( 3 )
+  {
+    case 1:
+      for ( i=0; i<2; i++ )
+	for ( j=0; j<2; j++ )
+	  a: SPAWN f1 ( i,j );
+      break;
+
+    case 3:
+      SPAWN f2 ( 1 ) WITH SERIAL a;
+      break;
+  }
+
+  cerr << endl << "test 2" << endl;
+
+  for ( i=0; i<2; i++ )
+  {
+    switch ( 3 )
+    {
+      case 1:
+	for ( j=0; j<2; j++ )
+	  b: SPAWN f1 ( i,j );
+	break;
+
+      case 3:
+	SPAWN f2 ( 2 ) WITH SERIAL b[.];
+	break;
+    }
+  }
+
+  cerr << endl << "test 3" << endl;
+
+  for ( i=0; i<2; i++ )
+  {
+    switch ( 1 )
+    {
+      case 1:
+	for ( j=0; j<2; j++ )
+	  c: SPAWN f1 ( i,j );
+	break;
+
+      case 3:
+	break;
+    }
+  }
+
+  cerr << endl << "test 4" << endl;
+
+  SPAWN f3 ( 1 ) WITH SEQUENTIAL HANDLING  a;
+  SPAWN f3 ( 2 ) WITH SEQUENTIAL EXPANSION a[0];
+  SPAWN f3 ( 3 ) WITH SEQUENTIAL EXECUTION a[0][0];
+
+  SPAWN f4 ( 1 ) WITH SEQUENTIAL HANDLING  b;
+  SPAWN f4 ( 2 ) WITH SEQUENTIAL EXPANSION b[0];
+  SPAWN f4 ( 3 ) WITH SEQUENTIAL EXECUTION b[0][0];
+
+  SPAWN f5 ( 1 ) WITH SEQUENTIAL HANDLING  c;
+  SPAWN f5 ( 2 ) WITH SEQUENTIAL EXPANSION c[0];
+  SPAWN f5 ( 3 ) WITH SEQUENTIAL EXECUTION c[0][0];
+
+  cerr << endl << "test 5" << endl;
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  foo();
+}
+

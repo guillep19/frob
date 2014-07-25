@@ -1,0 +1,71 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal f1( int i = -1, int j = -2 )
+{
+  cerr << "test:  f1 ( " << i << " , " << j << ")" << endl;
+}
+
+Goal f2( int i = -1 )
+{
+  cerr << "test:  f2 ( " << i << ")" << endl;
+}
+
+Goal f3( int i = -1 )
+{
+  cerr << "test:  f3 ( " << i << ")" << endl;
+}
+
+Goal f4( int i = -1 )
+{
+  cerr << "test:  f4 ( " << i << ")" << endl;
+}
+
+Goal foo()
+{
+  for ( int a=0; a<2; a++ )
+    SPAWN f2();
+
+  w1[0][0] SEQUENTIAL HANDLING  f2[1];
+  w1[0]    SEQUENTIAL EXPANSION f2[0];
+  w1       SEQUENTIAL EXECUTION f2;
+
+  for ( int i=0; i<2; i++ )
+    for ( int j=0; j<2; j++ )
+      w1: WITH ( EXPAND FIRST ) /* PREVIOUS here would be meaningless! */
+      {
+	a: SPAWN f1(i,    j   ) WITH SERIAL f2[.];
+	b: SPAWN f1(i+10, j+10) WITH SERIAL  a[i][j];
+      }
+
+  WITH ( SEQUENTIAL HANDLING w1[0][0] )
+  {
+    SPAWN f3();
+  }
+
+  WITH ( SEQUENTIAL EXPANSION w1[0] )
+  {
+    SPAWN f3();
+  }
+
+  WITH ( SEQUENTIAL EXECUTION w1 )
+  {
+    SPAWN f3();
+  }
+
+  SPAWN f4() WITH SEQUENTIAL HANDLING  w1[0][0];
+  SPAWN f4() WITH SEQUENTIAL EXPANSION w1[0];
+  SPAWN f4() WITH SEQUENTIAL EXECUTION w1;
+
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  foo();
+}
+

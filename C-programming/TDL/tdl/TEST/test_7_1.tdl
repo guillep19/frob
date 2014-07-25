@@ -1,0 +1,55 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Monitor a() { cerr << "Test:  a" << endl; }
+Monitor b() { cerr << "Test:  b" << endl; }
+Monitor c() { cerr << "Test:  c" << endl; }
+
+
+Goal test()
+{
+  int                i;
+  TCM_Task_Tree_Ref  tasks[3];
+
+  SPAWN a() with terminate in 0:0:2.0;
+  SPAWN b() with terminate in 0:0:3.0;
+  SPAWN c() with terminate in 0:0:4.0;
+
+  tasks[0] = TDL_REF(a);
+  tasks[1] = TDL_REF(b);
+  tasks[2] = TDL_REF(c);
+
+
+  for ( i=0;  i<3;  i++ )
+  {
+	/* Note:  Use 'aTask' as 'task' is a reserved keyword. */
+    TDL_BIND ( tasks[i], aTask );
+    aTask activate;
+  }
+
+  for ( i=0;  i<3;  i++ )
+  {
+	/* Note:  Use 'aTask' as 'task' is a reserved keyword. */
+    TDL_BIND ( tasks[i], aTask );
+    aTask activate;
+  }
+
+  for ( i=0;  i<2;  i++ )
+  {
+	/* Note:  Use 'aTask' as 'task' is a reserved keyword. */
+    TDL_BIND ( tasks[i],   aTask );
+    TDL_BIND ( tasks[i+1], aTask_next );
+    aTask_next activate at aTask completed;
+  }
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  test();
+}

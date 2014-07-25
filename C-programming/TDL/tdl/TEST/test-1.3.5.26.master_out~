@@ -1,0 +1,140 @@
+Root Node transitioning from Unplanned to Planning
+Root Node transitioning from Unachieved to Achieving
+Task Control Management 2.8.0 (Oct-23-03)
+Goal      TaskA-auto,wait {1}:        TCM {0} --> ON HOLD         (Inactive)
+TaskA-auto,wait transitioning from Unplanned to Planning
+TaskA-auto,wait transitioning from Unhandled to Handling
+Goal      TaskA-auto,wait {1}:  ON HOLD  --> TCM             (Sent)
+TaskA-auto,wait transitioning from Unachieved to Achieving
+TaskA
+Goal                TaskB {2}:        TCM {1} --> ON HOLD         (Inactive)
+Goal                TaskC {3}:        TCM {1} --> ON HOLD         (Inactive)
+TaskB transitioning from Unplanned to Planning
+TaskB transitioning from Unhandled to Handling
+Goal                TaskB {2}:  ON HOLD  --> TCM             (Sent)
+TaskB transitioning from Unachieved to Achieving
+TaskA-auto,wait transitioning from Handling to Handled
+  Success TaskA-auto,wait {1}:
+TaskB
+TaskE1 transitioning from Unplanned to Planning
+TaskE1 transitioning from Planning to Planned
+Command            TaskE1 {4}:        TCM {2} --> ON HOLD         (Inactive)
+TaskE2 transitioning from Unplanned to Planning
+TaskE2 transitioning from Planning to Planned
+Command            TaskE2 {5}:        TCM {2} --> ON HOLD         (Inactive)
+TaskE1 transitioning from Unachieved to Achieving
+TaskE1 transitioning from Unhandled to Handling
+Command            TaskE1 {4}:  ON HOLD  --> TCM             (Sent)
+TaskB transitioning from Planning to Planned
+TaskB transitioning from Handling to Handled
+  Success           TaskB {2}:
+TaskE1
+Raising exception "ourException2" from TaskE1
+Goal        ourException2 {6}:        TCM {4} --> ON HOLD         (Inactive)
+ourException2 transitioning from Unplanned to Planning
+ourException2 transitioning from Unhandled to Handling
+Goal        ourException2 {6}:  ON HOLD  --> TCM             (Sent)
+ourException2 transitioning from Unachieved to Achieving
+TaskE1 transitioning from Handling to Handled
+  Failure          TaskE1 {4}:
+Excep1Hnd: E1 failed
+Raising exception "ourException2" from ourException2
+Goal        ourException2 {7}:        TCM {6} --> ON HOLD         (Inactive)
+ourException2 transitioning from Unplanned to Planning
+ourException2 transitioning from Unhandled to Handling
+Goal        ourException2 {7}:  ON HOLD  --> TCM             (Sent)
+ourException2 transitioning from Unachieved to Achieving
+ourException2 transitioning from Handling to Handled
+  Failure   ourException2 {6}:
+Excep2Hnd: E1 failed 1
+Raising exception "ourException" from ourException2
+Goal         ourException {8}:        TCM {7} --> ON HOLD         (Inactive)
+ourException transitioning from Unplanned to Planning
+ourException transitioning from Unhandled to Handling
+Goal         ourException {8}:  ON HOLD  --> TCM             (Sent)
+ourException transitioning from Unachieved to Achieving
+ourException2 transitioning from Handling to Handled
+  Failure   ourException2 {7}:
+Excep3Hnd: E1 failed
+ourException transitioning from Achieving to Achieved
+ourException transitioning from Planning to Planned
+ourException transitioning from Handling to Handled
+  Success    ourException {8}:
+Cleaning up ourException
+ourException2 transitioning from Planning to Planned
+ourException2 transitioning from Achieving to Achieved
+Deleting exception ourException
+Deleting ourException
+ourException2 transitioning from Planning to Planned
+Cleaning up ourException2
+ourException2 transitioning from Achieving to Achieved
+Deleting exception ourException2
+Deleting ourException2
+Cleaning up ourException2
+TaskE1 transitioning from Achieving to Achieved
+Deleting exception ourException2
+Deleting ourException2
+Cleaning up TaskE1
+Deleting Action
+TaskE2 transitioning from Unachieved to Achieving
+TaskE2 transitioning from Unhandled to Handling
+Command            TaskE2 {5}:  ON HOLD  --> TCM             (Sent)
+Deleting TaskE1
+TaskE2
+TaskE2 transitioning from Achieving to Achieved
+TaskE2 transitioning from Handling to Handled
+  Success          TaskE2 {5}:
+Cleaning up TaskE2
+Deleting Action
+TaskB transitioning from Achieving to Achieved
+Deleting TaskE2
+Cleaning up TaskB
+Deleting Action
+Deleting Action
+TaskC transitioning from Unachieved to Achieving
+TaskC transitioning from Unplanned to Planning
+TaskC transitioning from Unhandled to Handling
+Goal                TaskC {3}:  ON HOLD  --> TCM             (Sent)
+Deleting TaskB
+TaskE3 transitioning from Unplanned to Planning
+TaskE3 transitioning from Planning to Planned
+Command            TaskE3 {9}:        TCM {3} --> ON HOLD         (Inactive)
+TaskC
+TaskE3 transitioning from Unachieved to Achieving
+TaskE3 transitioning from Unhandled to Handling
+Command            TaskE3 {9}:  ON HOLD  --> TCM             (Sent)
+TaskC transitioning from Planning to Planned
+TaskC transitioning from Handling to Handled
+  Success           TaskC {3}:
+TaskA-auto,wait transitioning from Planning to Planned
+TaskE3
+Raising exception "ourException" from TaskE3
+Goal         ourException {10}:        TCM {9} --> ON HOLD         (Inactive)
+ourException transitioning from Unplanned to Planning
+ourException transitioning from Unhandled to Handling
+Goal         ourException {10}:  ON HOLD  --> TCM             (Sent)
+ourException transitioning from Unachieved to Achieving
+TaskE3 transitioning from Handling to Handled
+  Failure          TaskE3 {9}:
+Excep3Hnd: E3 failed
+ourException transitioning from Achieving to Achieved
+ourException transitioning from Planning to Planned
+ourException transitioning from Handling to Handled
+  Success    ourException {10}:
+Cleaning up ourException
+TaskE3 transitioning from Achieving to Achieved
+Deleting exception ourException
+Deleting ourException
+Cleaning up TaskE3
+Deleting Action
+TaskC transitioning from Achieving to Achieved
+Deleting TaskE3
+Cleaning up TaskC
+Deleting Action
+TaskA-auto,wait transitioning from Achieving to Achieved
+Deleting TaskC
+Cleaning up TaskA-auto,wait
+Deleting Action
+Deleting Action
+Deleting Action
+Deleting TaskA-auto,wait

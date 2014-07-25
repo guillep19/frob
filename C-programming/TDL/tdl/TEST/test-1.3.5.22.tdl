@@ -1,0 +1,193 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+extern "H" {
+enum A { Ae };
+enum B { Be };
+enum C { Ce };
+
+enum D { De };
+enum E { Ee };
+enum F { Fe };
+
+enum G { Ge };
+enum H { He };
+enum I { Ie };
+
+enum J { Je };
+enum K { Ke };
+enum L { Le };
+}
+
+Exception bar();
+
+
+Resume foo(A i)
+{
+  MARKUSED(i);
+  cout << "Resume foo(A)\n";  FLUSHALL();  
+  TDL_RESUME_foo(TDL_REF(THIS), B(0));
+  POSTPONE;
+}
+Resume foo(B i)
+{
+  MARKUSED(i);
+  cout << "Resume foo(B)\n";  FLUSHALL();  
+  TDL_RESUME_foo(TDL_REF(THIS), C(0));
+  POSTPONE;
+}
+Resume foo(C i)
+{
+  MARKUSED(i);
+  cout << "Resume foo(C)\n";  FLUSHALL();  
+  TDL_RESUME_foo(TDL_REF(THIS), D(0));
+  POSTPONE;
+}
+
+
+Exception Handler foo() handles bar
+{
+  cout << "foo()\n";  FLUSHALL();
+  spawn resumefooA(TDL_REF(THIS));
+  POSTPONE;
+}
+
+Goal resumefooA(TCM_Task_Tree_Ref theTaskTreeRef)
+{
+  cout << "Goal resumeFooA()\n";  FLUSHALL();
+  TDL_RESUME_foo(theTaskTreeRef, A(0));
+}
+
+
+
+Resume foo(D i)
+{
+  MARKUSED(i);
+  cout << "Resume foo(D)\n";  FLUSHALL();  
+  TDL_RESUME_foo(TDL_REF(THIS), E(0));
+  POSTPONE;
+}
+Resume foo(E i)
+{
+  MARKUSED(i);
+  cout << "Resume foo(E)\n";  FLUSHALL();  
+  TDL_RESUME_foo(TDL_REF(THIS), F(0));
+  POSTPONE;
+}
+Resume foo(F i)
+{
+  MARKUSED(i);
+  cout << "Resume foo(F)\n";  FLUSHALL();  
+  FAIL;
+}
+
+
+
+Exception Handler foo(int j) handles bar
+{
+  MARKUSED(j);
+  cout << "foo(int)\n";  FLUSHALL();
+  spawn resumefooG(TDL_REF(THIS));
+  POSTPONE;
+}
+
+Goal resumefooG(TCM_Task_Tree_Ref theTaskTreeRef)
+{
+  cout << "Goal resumeFooG()\n";  FLUSHALL();
+  TDL_RESUME_foo(theTaskTreeRef, G(0));
+}
+
+
+Resume foo(G i)
+{
+  MARKUSED(i);
+  cout << "Resume foo(G)\n";  FLUSHALL();  
+  TDL_RESUME_foo(TDL_REF(THIS), H(0));
+  POSTPONE;
+}
+Resume foo(H i)
+{
+  MARKUSED(i);
+  cout << "Resume foo(H)\n";  FLUSHALL();  
+  TDL_RESUME_foo(TDL_REF(THIS), I(0));
+  POSTPONE;
+}
+Resume foo(I i)
+{
+  MARKUSED(i);
+  cout << "Resume foo(I)\n";  FLUSHALL();  
+  FAIL;
+}
+
+
+
+Exception Handler foo(double j) handles bar
+{
+  MARKUSED(j);
+  cout << "foo(double)\n"; FLUSHALL();
+  spawn resumefooJ(TDL_REF(THIS));
+  POSTPONE;
+}
+
+Goal resumefooJ(TCM_Task_Tree_Ref theTaskTreeRef)
+{
+  cout << "Goal resumeFooA()\n";  FLUSHALL();
+  TDL_RESUME_foo(theTaskTreeRef, J(0));
+}
+
+
+
+Resume foo(J i)
+{
+  MARKUSED(i);
+  cout << "Resume foo(J)\n";  FLUSHALL();  
+  TDL_RESUME_foo(TDL_REF(THIS), K(0));
+  POSTPONE;
+}
+Resume foo(K i)
+{
+  MARKUSED(i);
+  cout << "Resume foo(K)\n";  FLUSHALL();  
+  TDL_RESUME_foo(TDL_REF(THIS), L(0));
+  POSTPONE;
+}
+Resume foo(L i)
+{
+  MARKUSED(i);
+  cout << "Resume foo(L)\n";  FLUSHALL();  
+
+	/* This RESUME *WILL* create a run-time warning that we are seriously
+	 * snafu'ing everything.  It's much worse than it looks:  Not only
+	 * do we snafu local variables and persistent variables, but via
+	 * internal casting, we also re-cast the virtual pointer lookup table
+	 * for the class.  God help us...
+	 */
+  TDL::setAbortOnActionTaskMismatch(FALSE); /* Don't exit when we snafu. */
+				  /* Otherwise the TEST Makefile aborts. */
+  TDL_RESUME_foo(TDL_REF(THIS), F(0)); /* Snafu everything... */
+  POSTPONE;
+}
+
+
+
+Goal run() with Exception Handler foo(double(1)),
+                Exception Handler foo(int(1)),
+                Exception Handler foo()
+{
+  FLUSHALL();
+  cout << "run()\n";
+  FLUSHALL();
+  FAIL bar();
+}
+
+int
+main( int argc, char * argv[] )
+{
+  MARKUSED(argv);
+  // TDL_Initialize( argc < 2, argc < 3 );
+  TDL_Initialize( argc >= 3, argc >= 2 );
+  run();
+}

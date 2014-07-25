@@ -1,0 +1,62 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal printme ( const char * theString, const char * theIndent )
+{
+  cout << "Test: " << theIndent << "[printme]:  " << theString << endl;
+}
+
+Exception testException ( int4 theExceptionInt );
+
+Exception Handler fooExceptionHandler ( int4 theHandlerInt )
+  with PERSISTENT int4 testPersistent = 0,
+  handles testException
+{
+  testPersistent++;
+  cout << "Test: (1) fooExceptionHandler:  theHandlerInt = "
+       << (theHandlerInt++)
+       << ",  theExceptionInt = " << (testException.theExceptionInt++)
+       << ",  testPersistent = " << testPersistent << endl;
+  SPAWN printme ( "foo test 1", " " );
+  SPAWN resumeFooExceptionHandler ( TDL_REF(THIS) ) with serial printme;
+  POSTPONE;
+}
+
+Goal resumeFooExceptionHandler ( TCM_Task_Tree_Ref  thePostponedTask )
+{
+  cout << "Test:   (2) resumeFooExceptionHandler ( "
+       << thePostponedTask.operator*() << " )" << endl;
+  printme ( "Task resumeFooExceptionHandler: test 2", "   " );
+//  TDL_RESUME_fooExceptionHandler ( thePostponedTask , 300 );
+  void (*f)(const TCM_Task_Tree_Ref &,int4) = TDL_RESUME_fooExceptionHandler;
+  (*f)(thePostponedTask, 300);
+}
+
+Resume fooExceptionHandler ( int4 theResumeInt )
+{
+  testPersistent++;
+  cout << "Test:     (3) Resume fooExceptionHandler ( " << (theResumeInt++)
+       << " ):  theHandlerInt = " << (theHandlerInt++)
+       << ",  theExceptionInt = " << (testException.theExceptionInt++)
+       << ",   testPersistent = " << testPersistent << endl;
+  SPAWN printme ( "foo resume test 3", "     " );
+}
+
+
+Goal test() with exception handler fooExceptionHandler ( 100 )
+{
+  cout << "Test:  Running test().  Failing with testException(200)" << endl;
+  FAIL testException ( 200 );
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  test();
+}
+

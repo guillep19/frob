@@ -1,0 +1,354 @@
+/*****************************************************************************
+ * PROJECT: TDL Tutorial
+ *
+ * (c) Copyright 2001 Reid Simmons. All rights reserved.
+ * (c) Copyright 1994 Richard Goodwin and Reid Simmons. All rights reserved.
+ *
+ * FILE: exceptions.tdl
+ *
+ * DESCRIPTION:	TDL module that illustrates use of exception handlers.
+ *
+ *		In addition to including all the goals and commands that
+ *		are implemented in taskTreesConcPlan.tdl,
+ *              this file also implements the "GuardedMoveExceptionHandler",
+ *		which handles the "GuardedMove_Failure" exception issued
+ *  	        by the GuardedMove command.  
+ *
+ *  		It uses a very simple recovery strategy: turn left or right 90
+ *  		degrees, move a distance to the side, continue the rest of the
+ *  		original commanded distance, and then turn back to the original
+ *  		goal.  If one of the detour moves encounters an obstacle, the
+ *  		exception handler can be invoked recursively.
+ *  		VERY SIMPLE: ALMOST DEFINITELY WILL BREAK IN COMPLEX 
+ *  		SITUATIONS, BUT SUITABLE TO DEMONSTRATE EXCEPTION HANDLING.
+ *
+ *		This is a stand-alone module.  It takes the following
+ *		command-line options: exceptions <numSides> <length> <range>,
+ *		where "numSides" is an integer greater than 2, and "length"
+ *		is a positive real.  The "stopRange" argument is passed
+ *		to the guarded move command, and indicates the range at 
+ *		which to stop before objects.
+ *
+ *		If the command line options are not given, the defaults
+ *		are used (numSides=3, length=100.0 cms, stopRange = 25.0 cms).
+ *
+ *		To run this example (on Linux):
+ *		  1. ipc/bin/Linux/central -lmdsi
+ *		  2. simulator/simulator sim.param.exception
+ *		  3. ./exceptions 5 120
+ *              The "sim.param.exception" is a different environment that is
+ *		made to illustrate how the exception handler works.  
+ *		The "5 120" tells the robot to go in a pentagon.  You can try
+ *		other shapes and sizes -- not all of them do the "right" thing,
+ *		though, due to the simplicity of the recovery strategy used.
+ *
+ * $Source: /afs/cs.cmu.edu/project/TCA/Master/tcaV8/tutorial/simulator/exceptions.tdl,v $ 
+ * $Revision: 1.6 $
+ * $Date: 1996/08/05 16:10:22 $
+ * $Author: rich $
+ *
+ * REVISION HISTORY:
+ *
+ * $Log: exceptions.tdl,v $
+ *****************************************************************************/
+
+#include "simCommands.h"
+#include "simMessages.h"
+#include "exceptions.h"
+
+/* Defaults used for the command line options */
+#define NUMSIDES_DEFAULT 3
+#define LENGTH_DEFAULT   100.0 /* cms */
+#define RANGE_DEFAULT     30.0 /* cms */
+#define ROBOT_RADIUS      30.0
+#define DETOUR_DISTANCE  (2*ROBOT_RADIUS)
+
+/*-------------------------- Exceptions that can arise ----------------------*/
+
+Exception Malformed_Shape();
+Exception GuardedMove_Failure(CMS distanceLeft);
+
+/*-------------------------- Turn Command ---------------------------*/
+
+static void turnCmdHandler (MSG_INSTANCE ipcRef, void *data, void *clientData)
+{
+  TCM_Task_Tree_Ref *tdlRefPtr = (TCM_Task_Tree_Ref *)clientData;
+  
+  if (!isSuccess(ipcRef)) {
+    FAILURE_TYPE failure;
+    IPC_unmarshallData(IPC_msgInstanceFormatter(ipcRef), data, &failure,
+		       sizeof(failure));
+    cerr << "WARNING: Unhandled turn failure: " << failure.failure << endl;
+    IPC_freeDataElements(IPC_msgInstanceFormatter(ipcRef), &failure);
+  }
+  TDL_RESUME_Turn(*tdlRefPtr);
+  IPC_freeByteArray(data);
+  delete tdlRefPtr;
+}
+
+Command Turn (DEGREES angle)
+{
+  cout << "Turn of " << angle << endl;
+  sendSimCommand(TURN_COMMAND, &angle, turnCmdHandler, TDL_REF(THIS));
+  POSTPONE;
+}
+Resume Turn (void)
+{
+  cout << "Turn completed" << endl;
+}
+
+/*----------------------- Guarded Move Command ------------------------*/
+
+static void guardedMoveCmdHandler (MSG_INSTANCE ipcRef, void *data,
+				   void *clientData)
+{
+  TCM_Task_Tree_Ref *tdlRefPtr = (TCM_Task_Tree_Ref *)clientData;
+  CMS distanceLeft = 0.0;
+  
+  if (!isSuccess(ipcRef)) {
+    FAILURE_TYPE failure;
+    IPC_unmarshallData(IPC_msgInstanceFormatter(ipcRef), data, &failure,
+		       sizeof(failure));
+    if (!strcmp(failure.failure, GUARDED_MOVE_FAILURE)) {
+      IPC_unmarshallData(IPC_parseFormat(failure.dataFormat),
+			 failure.failureData.content,
+			 &distanceLeft, sizeof(distanceLeft));
+    } else {
+      cerr << "WARNING: Unhandled guarded move failure: " << failure.failure
+	   << endl;
+    }
+    IPC_freeDataElements(IPC_msgInstanceFormatter(ipcRef), &failure);
+  }
+  TDL_RESUME_GuardedMove(*tdlRefPtr, distanceLeft);
+  IPC_freeByteArray(data);
+  delete tdlRefPtr;
+}
+
+Command GuardedMove (CMS distance, CMS stopRange)
+  Exception Handler GuardedMoveExceptionHandler(stopRange)
+{
+  GUARDED_MOVE_COMMAND_TYPE guardedMove;
+  
+  cout << "GuardedMove of " << distance << endl;
+  guardedMove.distance = distance;
+  guardedMove.stopRange = stopRange;
+  sendSimCommand(GUARDED_MOVE_COMMAND, &guardedMove,
+		 guardedMoveCmdHandler, TDL_REF(THIS));
+  POSTPONE;
+}
+Resume GuardedMove (CMS distanceLeft)
+{
+  if (distanceLeft > 0) {
+    cerr << "GuardedMove failed: Travelled only " << distance - distanceLeft
+	 << " cms out of " << distance << " expected" << endl;
+    FAIL GuardedMove_Failure(distanceLeft);
+  } else { // Otherwise ends successfully!
+    cout << "Guarded move completed" << endl;
+  }
+}
+
+/*-------------------------- MoveTurn ---------------------------*/
+
+Goal MoveTurn (CMS distance, DEGREES angle, CMS stopRange)
+{
+  cout << "Handling the " << TCM_NodeName(TDL_REF(THIS)) << " message" << endl;
+
+  cout << "  Planning ... please Wait" << endl;
+  /* Similar to "sleep(3)", but allows for events to be handled while waiting */
+  TCM_ProcessAgenda(TRUE, 3000); /* Simulate planning time */
+  spawn GuardedMove(distance, stopRange);
+  spawn Turn(angle) with serial;
+}
+
+
+/*----------------------- ShapeGoal ------------------------
+
+	The angle to turn for the polygonal shape is determined as follows:
+   A polygon of N sides has 180*(N-2) total interior angles, and thus
+   180-360/N for each interior angle.  The exterior angle (which is the
+   angle needed) is 180-interior angle, therefore, the angle to turn
+   is simply 360/N.
+
+----------------------------------------------------------------------------*/
+
+Goal ShapeGoal (int numSides, CMS length, CMS stopRange)
+{
+  DEGREES angle;
+
+  cout << "Handling the " << TCM_NodeName(TDL_REF(THIS)) << " message" << endl;
+  if ((numSides < 3) || (length <= 0.0)) {
+    cerr << "  Failure: Malformed Shape (" << numSides << ", " << length
+	 << ")" << endl;
+    FAIL Malformed_Shape();
+  } else {
+    angle = (int)(0.5 + 360/numSides);
+    cout << "  Each side is " << length << " cms; With interior angles of " 
+	 << 180-angle << endl;
+
+    // The "with" statement applies to all the MoveTurn goals spawned within
+    //   the "for" loop (except it has no affect on the first iteration, since 
+    //   there is no "previous")
+    // "sequential achievement" means execute any commands in the subtrees
+    //   of the MoveTurn goals one after another.
+    // "sequential expansion" means do not expand one MoveTurn goal until
+    //   the previous one has been completely expanded (but not necessarily
+    //   after it has been achieved).
+    // Thus, the two together enable expansion to be done concurrently with
+    //   execution, making overall completion time much shorter than if the
+    //   goals had been serialized (as in taskTrees.tdl).
+    with (sequential achievement previous, sequential expansion previous) {
+      for (int i=0; i<numSides; i++) {
+	spawn MoveTurn(length, angle, stopRange);
+      }
+    }
+  }
+}
+
+/*--------------------- GuardedMoveExceptionHandler ----------------------
+
+    Find which direction is more open (to the left or right side of the robot).
+    Turn in that direction, move a small distance away, turn back in the 
+    original direction, complete the move distance, and then return to the
+    original goal location and orientation.
+
+    If both sides are closed in (less than the stop range), bypass the
+    exception.
+
+    The current stopRange is needed for retrying the move commands.
+    Note that within an exception handler, we can refer directly to the 
+    exception data (in this case, "distanceLeft", which is the distance
+    left to travel).
+
+----------------------------------------------------------------------------*/
+
+Exception Handler GuardedMoveExceptionHandler (CMS stopRange)
+  Handles GuardedMove_Failure
+{
+  SONAR_SCAN_VAR_QUERY_TYPE range;
+  SONAR_SCAN_VAR_REPLY_PTR sonarLeftPtr, sonarRightPtr;
+  CMS minLeft, minRight, detourDist = DETOUR_DISTANCE;
+  DEGREES turnDir;
+  int i;
+
+  cout << "GuardedMove Exception Handler" << endl;;
+
+  if (ABS(GuardedMove_Failure.distanceLeft) <= 1.0) {
+    cout << "  Close enough" << endl;
+  } else {
+    /* Get sonar readings to the right and left side, and choose the one that 
+       has the most open space.  Cannot handle the exception if all readings 
+       are below the stop range */
+    range.startSonar = (-90 - 45)/15 + 24;
+    range.endSonar = (-90 + 45)/15 + 24;
+    IPC_queryResponseData(SONAR_SCAN_VAR_QUERY, &range,
+			  (void **)&sonarLeftPtr, IPC_WAIT_FOREVER);
+    minLeft = sonarLeftPtr->sonarData[0];
+    for (i=1; i<sonarLeftPtr->numItems; i++) {
+      if (sonarLeftPtr->sonarData[i] < minLeft)
+	minLeft = sonarLeftPtr->sonarData[i];
+    }
+    IPC_freeData(IPC_msgFormatter(SONAR_SCAN_REPLY), sonarLeftPtr);
+    cout << "  Minimum sonar reading on the left is "
+	 << minLeft << " cms" << endl;
+
+    range.startSonar = (90 - 45)/15;
+    range.endSonar = (90 + 45)/15;
+    IPC_queryResponseData(SONAR_SCAN_VAR_QUERY, &range,
+			  (void **)&sonarRightPtr, IPC_WAIT_FOREVER);
+    minRight = sonarRightPtr->sonarData[0];
+    for (i=1; i<sonarRightPtr->numItems; i++) {
+      if (sonarRightPtr->sonarData[i] < minRight)
+	minRight = sonarRightPtr->sonarData[i];
+    }
+    IPC_freeData(IPC_msgFormatter(SONAR_SCAN_REPLY), sonarRightPtr);
+    cout << "  Minimum sonar reading on the right is "
+	 << minRight << " cms" << endl;
+
+    if (minLeft <= stopRange &&minRight <= stopRange) {
+      FAIL;
+    } else {
+      turnDir = ((minLeft >= minRight) ? -90 : 90);
+      with (sequential achievement previous, sequential expansion previous) {
+	/* Turn in the detour direction */
+	cout << "  Turning to the " << (turnDir < 0 ? "left" : "right") << endl;
+	spawn Turn(turnDir);
+	/* Move the detour distance and turn back to original direction */
+	spawn MoveTurn(detourDist, -turnDir, stopRange);
+	/* Move parallel to original path and turn toward goal */
+	spawn MoveTurn(GuardedMove_Failure.distanceLeft, -turnDir, stopRange);
+	/* Move to the original goal location and turn back to original
+	   direction */
+	spawn MoveTurn(detourDist, turnDir, stopRange);
+      }
+    }
+  }
+}
+
+static void addIpcEventHandlers (void); // Forward Reference
+
+static void ipcMessageHandler (int sd, const void *dummy)
+{
+  IPC_listenClear(0);
+  addIpcEventHandlers();
+}
+
+static void addIpcEventHandlers (void)
+{
+  fd_set ipcFds = IPC_getConnections();
+  static fd_set currentIpcFds;
+  static BOOLEAN firstTime = TRUE;
+
+  if (firstTime) {
+    FD_ZERO(&currentIpcFds);
+    firstTime = FALSE;
+  }
+
+  for (int i=0; i<FD_SETSIZE; i++) {
+    if (FD_ISSET(i, &ipcFds) && !FD_ISSET(i, &currentIpcFds)) {
+      TCM_AddExternalEvent(i, ipcMessageHandler, NULL);
+    } else if (!FD_ISSET(i, &ipcFds) && FD_ISSET(i, &currentIpcFds)) {
+      TCM_RemoveExternalEvent(i);
+    }
+  }
+  currentIpcFds = ipcFds;
+}
+
+
+/*----------------------- main ------------------------
+  TASK_TREES module: create and execute a task tree for moving the robot
+  in a given shape.
+
+  Command line options are: exceptions <numSides> <length> <stopRange>,
+  where "numSides" is an integer greater than 2, "length" is a positive real,
+  and "stopRange" is the nominal stopping distance for guarded move.
+  If the command line options are not given, the defaults (numSides=3, 
+  length=100.0, stopRange=25.0) are used.  Units are in cms.
+
+  The command line option "-h" provides a help message.
+----------------------------------------------------------------------------*/
+int main (int argc, char **argv)
+{
+  int numSides;
+  CMS length;
+  CMS stopRange;
+
+  if (argc >= 2 && !strcmp(argv[1], "-h")) {
+    cerr << "Usage: " << argv[0] << " <numSides> <length> <stopRange>" << endl;
+    exit(0);
+  }
+
+  stopRange = (argc >= 4 ? (CMS)atof(argv[3]) : RANGE_DEFAULT);
+  length    = (argc >= 3 ? (CMS)atof(argv[2]) : LENGTH_DEFAULT);
+  numSides  = (argc >= 2 ? atoi(argv[1]) : NUMSIDES_DEFAULT);
+
+  TCM_Initialize();
+  TDL::setLogStream ("/dev/null");
+  TCM_SetTerminalLoggingOptions(Log_None);
+
+  IPC_connect("EXCEPTIONS");
+  addIpcEventHandlers();
+
+  ShapeGoal(numSides, length, stopRange);
+
+  return 0;
+}

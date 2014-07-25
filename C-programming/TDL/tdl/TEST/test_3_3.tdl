@@ -1,0 +1,79 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal f ( int i, const char * theString )
+{
+  cerr << "test-f: " << i << " - " << theString << endl;
+}
+
+Goal foo ()
+{
+  int i = 0;
+
+  WITH ( SERIAL )
+  {
+    if ( 0 )
+    {
+      w: WITH ( SEQUENTIAL HANDLING )
+      {
+        f1: SPAWN f ( i++, "if 0 spawn" );
+      }
+    }
+
+    SPAWN f ( i++, "SEQUENTIAL HANDLING on if 0 spawn" )
+      WITH          SEQUENTIAL HANDLING   f1;
+    SPAWN f ( i++, "SEQUENTIAL EXPANSION on if 0 spawn" )
+      WITH          SEQUENTIAL EXPANSION  f1;
+    SPAWN f ( i++, "SEQUENTIAL EXECUTION on if 0 spawn" )
+      WITH          SEQUENTIAL EXECUTION  f1;
+    SPAWN f ( i++, "SERIAL on if 0 spawn" ) WITH SERIAL f1;
+
+    SPAWN f ( i++, "DISABLE UNTIL (if 0 spawn) HANDLING COMPLETED" )
+      WITH          DISABLE UNTIL f1           HANDLING COMPLETED;
+
+    SPAWN f ( i++, "DISABLE FOR 0:0:5.2 AFTER (if 0 spawn) EXPANSION ENABLED" )
+      WITH          DISABLE FOR 0:0:5.2 AFTER f1           EXPANSION ENABLED;
+
+    SPAWN f ( i++, "TERMINATE AT (if 0 spawn) EXECUTION COMPLETED"
+	           "-- should not print" )
+      WITH         TERMINATE AT f1           EXECUTION COMPLETED;
+
+    SPAWN f ( i++, "TERMINATE IN 0:0:15.2 AFTER (if 0 spawn) EXECUTION ACTIVE")
+      WITH          TERMINATE IN 0:0:15.2 AFTER f1           EXECUTION ACTIVE;
+
+
+    SPAWN f ( i++, "SEQUENTIAL HANDLING on if 0 with" )
+      WITH          SEQUENTIAL HANDLING   w;
+    SPAWN f ( i++, "SEQUENTIAL EXPANSION on if 0 with" )
+      WITH          SEQUENTIAL EXPANSION  w;
+    SPAWN f ( i++, "SEQUENTIAL EXECUTION on if 0 with" )
+      WITH          SEQUENTIAL EXECUTION  w;
+    SPAWN f ( i++, "SERIAL on if 0 with" ) WITH SERIAL w;
+
+    SPAWN f ( i++, "DISABLE UNTIL (if 0 with) HANDLING COMPLETED" )
+      WITH          DISABLE UNTIL w              HANDLING COMPLETED;
+
+    SPAWN f ( i++, "DISABLE FOR 0:0:5.2 AFTER (if 0 with) EXPANSION ENABLED"
+	     )
+      WITH          DISABLE FOR 0:0:5.2 AFTER w              EXPANSION ENABLED;
+
+    SPAWN f ( i++, "TERMINATE AT (if 0 with) EXECUTION COMPLETED"
+	           " -- should not print" )
+      WITH          TERMINATE AT w              EXECUTION COMPLETED;
+
+    SPAWN f ( i++,"TERMINATE IN 0:0:15.2 AFTER (if 0 with) EXECUTION ACTIVE"
+	     )
+      WITH         TERMINATE IN 0:0:15.2 AFTER w              EXECUTION ACTIVE;
+  }
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  foo();
+}

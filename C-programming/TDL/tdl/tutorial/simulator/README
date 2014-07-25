@@ -1,0 +1,6 @@
+Creates the "simulator" executable, a simple robot simulation, 
+for use in the TDL tutorial.
+
+Type "gmake" to install.
+Type "simulator -h" for usage.
+

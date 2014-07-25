@@ -1,0 +1,46 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Exception bar();
+
+Exception Handler foo() handles bar
+{
+  cout << "foo()\n";  FLUSHALL();
+}
+
+Exception Handler foo(int i) handles bar
+{
+  MARKUSED(i);
+  cout << "foo(int)\n";  FLUSHALL();
+  FAIL;
+}
+
+Exception Handler foo(double i) handles bar
+{
+  MARKUSED(i);
+  cout << "foo(double)\n"; FLUSHALL();
+  FAIL;
+}
+
+
+Goal run() with Exception Handler foo(),
+                Exception Handler foo(int(1)),
+                Exception Handler foo(double(1))
+{
+  FLUSHALL();
+  cout << "run()\n";
+  FLUSHALL();
+  FAIL bar();
+}
+
+int
+main( int argc, char * argv[] )
+{
+  MARKUSED(argv);
+  // TDL_Initialize( argc < 2, argc < 3 );
+  TDL_Initialize( argc >= 3, argc >= 2 );
+  run();
+}

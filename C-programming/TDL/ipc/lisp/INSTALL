@@ -1,0 +1,22 @@
+		Installation instructions for IPC (LISP users)
+
+1) Install the C version of IPC (see ../src/INSTALL)
+
+2) Do "gmake install" in this directory (you must have SWIG installed)
+
+3) To compile the files (optional), run Lisp and do (compile-file <x>) 
+   where <x> is each of primFmttrs, formatters, and ipcLisp
+
+To load and run the LISP version of IPC, do (load "IPC").
+  This will load all the relevant IPC LISP files, including the C
+  libraries needed to run IPC.
+
+See the README file for instructions on how to make programs that use the IPC.
+
+Comments/questions/bugs to me: Reid Simmons (reids@cs.cmu.edu)
+
+Copyright (c) 2008, Carnegie Mellon University
+    This software is distributed under the terms of the 
+    Simplified BSD License (see ipc/LICENSE.TXT)
+
+

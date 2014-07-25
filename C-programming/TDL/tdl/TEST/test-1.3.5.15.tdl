@@ -1,0 +1,73 @@
+
+/*
+ * Notes:  Fail (A) is picked up by Exception Handler (B), resolving the
+ * Exception task so ParentGoal()'s printme is never invoked.  Furthermore,
+ * since this occurs before TaskB ever starts handling, TaskB's printme is
+ * not invoked.  And since TaskA is not actually terminated in and of itself,
+ * TaskA's printme is not invoked.
+ * 
+ * This program is not really being included because it's such a great
+ * system stress-tester.  It's just a really useful program for explaining
+ * exception handling and termination, and this seems a good place to keep it.
+ *
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Exception ourException(char * theLocation, int foo);
+
+Exception ourException2(char * theLocation) : ourException(theLocation, 1);
+
+Exception Handler TerminateTask ( TCM_Task_Tree_Ref theTask )
+  handles ourException
+{
+  cout << "TerminateTask: "
+       << TCM_GetAction ( theTask ) -> TCM_getActionName() << "\n" << flush;
+  TDL_BIND ( theTask );
+  theTask TERMINATE;
+}
+
+Goal printme ( const char * theMessage )
+{
+  cout << "printme:  " << theMessage << endl;
+}
+
+Goal ParentGoal() with exception handler TerminateTask ( TDL_REF(THIS) ),
+  on terminate spawn printme ( "Terminated ParentGoal" )
+{
+  cout << "ParentGoal\n" << flush;
+  WITH ( SERIAL )
+  {
+    /*(B)*/
+    SPAWN TaskA() with exception handler TerminateTask ( *TDL_REF(TaskB)() );
+    SPAWN TaskB();
+  }
+}
+
+Goal TaskA() on terminate spawn printme ( "TaskA" )
+{
+  FLUSHALL();
+  cout << "TaskA\n";
+  FLUSHALL();
+  /*(A)*/
+  FAIL ourException ( "TaskA" , 1 );
+}
+
+Goal TaskB() on terminate spawn printme ( "TaskB" )
+{
+  FLUSHALL();
+  cout << "TaskB\n";
+  FLUSHALL();
+  FAIL ourException2 ( "TaskB" );
+}
+
+int
+main( int argc, char * argv[] )
+{
+  MARKUSED(argv);
+//  TDL_Initialize( argc < 2, argc < 3 );
+  TDL_Initialize( argc >= 3, argc >= 2 );
+  spawn ParentGoal();
+  TCM_ProcessAgenda ( TRUE, 1000 );
+}

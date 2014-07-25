@@ -1,0 +1,74 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal f1( int i = -1 )
+{
+  cerr << "test:  f1 ( " << i << ")" << endl;
+}
+
+Goal f2( int i = -1 )
+{
+  cerr << "test:  f2 ( " << i << ")" << endl;
+}
+
+Goal f3( int i = -1 )
+{
+  cerr << "test:  f3 ( " << i << ")" << endl;
+}
+
+Goal f4( int i = -1 )
+{
+  cerr << "test:  f4 ( " << i << ")" << endl;
+}
+
+Goal f5( int i = -1 )
+{
+  cerr << "test:  f5 ( " << i << ")" << endl;
+}
+
+Goal foo()
+{
+  int i,j;
+
+  spawn f2(0) with serial f1[3][4];
+
+  for ( i=0; i<2; i++ )
+  {
+    cerr << "START for(i=" << i << ")" << endl;
+    if ( i > 0 )
+    {
+      for ( j=0; j<2; j++ )
+      {
+	cerr << "START for(j=" << j << ")" << endl;
+	SPAWN f1 ( i );
+	cerr << "END for(j=" << j << ")" << endl;
+      }
+    }
+    cerr << "END for(i=" << i << ")" << endl;
+  }
+
+  cerr << "test 1" << endl;
+
+  spawn f3(1) with serial f1[5];
+
+  cerr << "test 2" << endl;
+
+  spawn f4(2) with serial f1[5][6];
+
+  cerr << "test 3" << endl;
+
+  spawn f5(3) with serial f1[7][8];
+
+  cerr << "test 4 -- final" << endl;
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  foo();
+}
+

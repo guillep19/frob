@@ -1,0 +1,53 @@
+Main() running.
+semaphore = Semaphore:  0x8050e58
+   isThreadWaiting.......: 0
+   wakeupAlreadyReceived.: 0
+   sem_getvalue..........:  0
+   SemaphoreMutex: Mutex:  0x8050e58   (Unlocked)
+
+threadOne = Thread:  0xbffff624
+   Status   = "CREATED" (0)
+   Function = 0x8048e98
+   ThreadMutex: Mutex:  0xbffff624   (Unlocked)
+
+   ThreadStartedSemaphore: Semaphore:  0xbffff660
+        isThreadWaiting.......: 0
+        wakeupAlreadyReceived.: 0
+        sem_getvalue..........:  0
+        SemaphoreMutex: Mutex:  0xbffff660   (Unlocked)
+
+   ThreadStoppedSemaphore: Semaphore:  0xbffff698
+        isThreadWaiting.......: 0
+        wakeupAlreadyReceived.: 0
+        sem_getvalue..........:  0
+        SemaphoreMutex: Mutex:  0xbffff698   (Unlocked)
+
+
+Main() sending wakeupOtherThread()
+semaphore = Semaphore:  0x8050e58
+   isThreadWaiting.......: 0
+   wakeupAlreadyReceived.: 1
+   sem_getvalue..........:  0
+   SemaphoreMutex: Mutex:  0x8050e58   (Unlocked)
+
+Main() starting thread....
+One:  started
+One:  waiting on semaphore
+One:  waitForSignal() returned:  SUCCESS
+One:  waiting on semaphore again
+
+
+
+
+Main() resuming...
+semaphore = Semaphore:  0x8050e58
+   isThreadWaiting.......: 1
+   wakeupAlreadyReceived.: 0
+   sem_getvalue..........:  0
+   SemaphoreMutex: Mutex:  0x8050e58   (Unlocked)
+
+Main() sending wakeupOtherThread()
+semaphore . wakeupOtherThread() = SUCCESS
+One:  waitForSignal() [again] returned:  SUCCESS
+One:  ending.
+Main() ending...

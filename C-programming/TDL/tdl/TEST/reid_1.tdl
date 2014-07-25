@@ -1,0 +1,74 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+#include <stdio.h>
+
+/*
+extern GOAL A (int a);
+extern GOAL B (int a);
+extern GOAL C (int a);
+extern COMMAND D (int a);
+extern COMMAND E (int a);
+extern GOAL F (int a);
+extern GOAL G (int a);
+*/
+
+GOAL A (int a)
+{
+  printf("Doing A\n");
+  fflush(stdout);
+  SPAWN B(a+1);
+  if (a > 0)
+    SPAWN C(a+2) WITH SERIAL PREVIOUS;
+  SPAWN D(a-1) WITH SEQUENTIAL_ACHIEVEMENT PREVIOUS;
+}
+
+GOAL B (int a)
+{
+  printf("Doing B\n");
+  fflush(stdout);
+  SPAWN C(a-1);
+  SPAWN F(a) WITH SEQUENTIAL_ACHIEVEMENT C;
+  SPAWN G(a) WITH SEQUENTIAL_ACHIEVEMENT C;
+  SPAWN D(a+5) WITH SEQUENTIAL_ACHIEVEMENT F, SEQUENTIAL_ACHIEVEMENT G;
+}
+
+GOAL C (int a)
+{
+  printf("Doing C\n");
+  E(a+10);
+}
+
+COMMAND D (int a)
+{
+  MARKUSED(a);
+  printf("Doing D\n");
+}
+
+COMMAND E (int a)
+{
+  MARKUSED(a);
+  printf("Doing E\n");
+}
+
+GOAL F (int a)
+{
+  MARKUSED(a);
+  printf("Doing F\n");
+}
+
+GOAL G (int a)
+{
+  MARKUSED(a);
+  printf("Doing G\n");
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  Spawn A ( 1 ) with wait;
+}

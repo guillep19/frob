@@ -1,0 +1,55 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal f1( int i = -1, int j = -2 )
+{
+  cerr << "test:  f1 ( " << i << " , " << j << ")" << endl;
+}
+
+Goal f2( int i = -1 )
+{
+  cerr << "test:  f2 ( " << i << ")" << endl;
+}
+
+Goal f3( int i = -1 )
+{
+  cerr << "test:  f3 ( " << i << ")" << endl;
+}
+
+Goal f4( int i = -1 )
+{
+  cerr << "test:  f4 ( " << i << ")" << endl;
+}
+
+Goal f5( int i = -1 )
+{
+  cerr << "test:  f5 ( " << i << ")" << endl;
+}
+
+Goal foo()
+{
+  int i,j;
+
+  for ( i=0; i<2; i++ )
+  {
+    for ( j=0; j<2; j++ )
+    {
+      SPAWN f1 ( i, j );
+      SPAWN f2 ( i ) WITH SEQUENTIAL HANDLING  f1[i][j+2-2];
+      SPAWN f3 ( i ) WITH SEQUENTIAL EXPANSION f1[.][j+2-2];
+      SPAWN f4 ( i ) WITH SEQUENTIAL EXECUTION f1[.][.];
+    }
+    SPAWN f5 ( i ) WITH SERIAL f1[.];
+  }
+}
+
+int
+main()
+{
+  TCM_Initialize();
+  foo();
+}
+

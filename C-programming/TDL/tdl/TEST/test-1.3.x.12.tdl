@@ -1,0 +1,57 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+TCM_Task_Tree_Ref NOT_REAL_PARENT;
+
+PERSISTENT Goal NotRealParent()
+{
+  NOT_REAL_PARENT = TDL_REF(THIS);
+  fflush(stdout);
+  fflush(stderr);
+  cout << "NotRealParent\n" << flush;
+}
+
+
+PERSISTENT Goal foo()
+{
+  fflush(stdout);
+  fflush(stderr);
+  cout << "foo:\n" << flush;
+  TCM_DisplayTree ( stdout, TCM_RootNode() );
+  fflush(stdout);
+}
+
+
+PERSISTENT Goal bar()
+{
+  fflush(stdout);
+  fflush(stderr);
+  cout << "bar:\n" << flush;
+  TCM_DisplayTree ( stdout, TCM_RootNode() );
+  fflush(stdout);
+}
+
+PERSISTENT Goal runFoo()
+{
+  SPAWN foo() WITH PARENT ( NOT_REAL_PARENT );
+}
+
+void runBar()
+{
+  SPAWN bar() WITH PARENT ( NOT_REAL_PARENT );
+}
+
+
+
+int
+main()
+{
+  TDL_Initialize(FALSE);
+  SPAWN NotRealParent() with WAIT; /* WAIT is important! */
+  runBar();
+  SPAWN runFoo();
+  TCM_ProcessAgenda(TRUE,500);
+}

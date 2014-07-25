@@ -1,0 +1,169 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+#include <Thread.H>
+
+/*
+ * At some point in the future, we may need to use a lookup-table for
+ * THREAD_IDs -- if they are not consistent across systems.
+ * But for now, I'll just live with it.
+ *
+#define MAX_THREADS 10
+THREAD_ID  threadIds[MAX_THREADS];
+int        numberOfKnownThreads = 0;
+
+int lookupThreadIndex(THREAD_ID  threadId)
+{
+  THREAD_ID  clearedThreadId;
+  Thread::clearThread ( & clearedThreadId );
+
+  if ( Thread::equals ( threadId, clearedThreadId ) )
+    return 0;
+
+  for ( int i=0; i<numberOfKnownThreads; i++ )
+    if ( Thread::equals ( threadId, threadIds[i] ) )
+      return i+1;
+
+  if ( numberOfKnownThreads < MAX_THREADS )
+  {
+    threadIds [ numberOfKnownThreads++ ] = threadId;
+    return numberOfKnownThreads;
+  }
+
+  else
+    return -1;
+}
+*/
+
+THREAD_ID getThreadIndex()
+{
+  return Thread::getThreadId();
+}
+
+int getMainThreadIndex()
+{
+  THREAD_ID  threadId;
+  TCM_DebugGetPrimaryThreadId ( & threadId );
+  return threadId;
+}
+
+
+Persistent Goal A()
+{
+  cout << "Goal A: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) )
+       << "   --  " << getThreadIndex()
+       << "  --  main: " << getMainThreadIndex() << endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Goal A: ");
+  FLUSHALL();
+
+  SPAWN B();
+  E();
+}
+
+Persistent Goal B()
+{
+  cout << "Goal B: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) )
+       << "   --  " << getThreadIndex()
+       << "  --  main: " << getMainThreadIndex() << endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Goal B: ");
+  FLUSHALL();
+
+  SPAWN C( TDL_REF(THIS) );
+  POSTPONE;
+}
+
+Resume B()
+{
+  cout << "Resume B: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) )
+       << "   --  " << getThreadIndex()
+       << "  --  main: " << getMainThreadIndex() << endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Resume B: ");
+  FLUSHALL();
+
+  SPAWN D();
+  E();
+}
+
+
+
+Threaded Persistent Goal C(TCM_Task_Tree_Ref theTaskRef )
+{
+  cout << "Goal C: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) )
+       << "   --  " << getThreadIndex()
+       << "  --  main: " << getMainThreadIndex() << endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Goal C: ");
+  FLUSHALL();
+
+  usleep ( 200000 );
+  TDL_RESUME_B ( theTaskRef );
+
+  cout << "END Goal C: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) )
+       << "   --  " << getThreadIndex()
+       << "  --  main: " << getMainThreadIndex() << endl;
+  FLUSHALL();
+}
+
+Persistent Goal D()
+{
+  cout << "Goal D: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) )
+       << "   --  " << getThreadIndex()
+       << "  --  main: " << getMainThreadIndex() << endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Goal D: ");
+  FLUSHALL();
+
+  F();
+  SPAWN F() with WAIT;
+  SPAWN F() with disable for 0.1;
+  TCM_DisplayTree ( stderr, TCM_RootNode() );
+}
+
+Persistent Goal E()
+{
+  cout << "Goal E: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) )
+       << "   --  " << getThreadIndex()
+       << "  --  main: " << getMainThreadIndex() << endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Goal E: ");
+  FLUSHALL();
+}
+
+Persistent Goal F()
+{
+  cout << "Goal F: " << TCM_NodeName ( TCM_Parent ( TDL_REF(THIS) ) )
+       << "   --  " << getThreadIndex()
+       << "  --  main: " << getMainThreadIndex() << endl;
+  FLUSHALL();
+
+  TCM_DebugPrintUserTaskForThreadStack("Goal F: ");
+  FLUSHALL();
+}
+
+int
+main( int argc, char * argv[] )
+{
+  MARKUSED(argv);
+  // TDL_Initialize( argc < 2, argc < 3 );
+  TDL_Initialize( argc >= 3, argc >= 2 );
+  TCM_SetAllowInfiniteTimeouts( TRUE );
+  spawn A();
+  TCM_ProcessAgenda ( TRUE, 100 /*MSecs*/ );
+
+  do /* If thread is still running clearQueues/ProcessAgenda, sleep again.*/
+  {
+    usleep ( 200000 );
+  } while ( TCM_ProcessAgenda ( TRUE, 100 /*MSecs*/ ) == TCM_Error );
+}

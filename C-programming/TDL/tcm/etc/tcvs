@@ -1,0 +1,25 @@
+#!/usr/cs/bin/csh
+
+# This is a shell script to set the parameters for using cvs, a source
+# revision maintenance system.
+
+# Copyright (c) 2008, Carnegie Mellon University
+#     This software is distributed under the terms of the 
+#     Simplified BSD License (see tcm/LICENSE.TXT)
+
+# To use this script, put /afs/cs.cmu.edu/project/TCA/etc in your search
+# path.
+
+setenv CVSROOT /afs/cs.cmu.edu/project/TCA/Master
+
+if (-f /usr/local/bin/cvs) then
+  setenv CVS_DIR /usr/local/bin
+else
+  setenv CVS_DIR /usr/misc/.cvs/bin
+endif
+
+setenv RCSBIN $CVS_DIR
+
+echo cvs $*
+
+$CVS_DIR/cvs $*

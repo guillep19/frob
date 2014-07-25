@@ -1,0 +1,220 @@
+Root Node transitioning from Unplanned to Planning
+Root Node transitioning from Unachieved to Achieving
+Attempting to connect to IPC central server on localhost... connected.
+Root Node transitioning from Unplanned to Planning
+Root Node transitioning from Unachieved to Achieving
+Attempting to connect to IPC central server on localhost... connected.
+Goal                    A {1}:        TCM {0} --> ON HOLD         (Inactive)
+A transitioning from Unplanned to Planning
+A transitioning from Unhandled to Handling
+Goal                    A {1}:  ON HOLD  --> TCM             (Sent)
+A transitioning from Unachieved to Achieving
+Invoking AHnd 0
+Virtual                 B {2}:        TCM {1} --> ON HOLD         (Inactive)
+Goal                    C {3}:        TCM {1} --> ON HOLD         (Inactive)
+Virtual                 D {4}:        TCM {1} --> ON HOLD         (Inactive)
+monitor transitioning from Unplanned to Planning
+monitor transitioning from Planning to Planned
+Monitor           monitor {5}:        TCM {1} --> ON HOLD         (Inactive)
+B transitioning from Unplanned to Planning
+B transitioning from Unhandled to Handling
+Goal                    B {2}:  ON HOLD  --> TCM             (Sent)
+B transitioning from Unachieved to Achieving
+C transitioning from Unplanned to Planning
+C transitioning from Unhandled to Handling
+Goal                    C {3}:  ON HOLD  --> TCM             (Sent)
+monitor transitioning from Unachieved to Achieving
+monitor transitioning from Unhandled to Handling
+Monitor           monitor {5}:  ON HOLD  --> TCM             (Sent)
+A transitioning from Handling to Handled
+  Success               A {1}:
+Invoking CHnd 0
+E3 transitioning from Unplanned to Planning
+E3 transitioning from Planning to Planned
+Command                E3 {7}:        TCM {3} --> ON HOLD         (Inactive)
+C transitioning from Planning to Planned
+C transitioning from Handling to Handled
+  Success               C {3}:
+Invoking BHnd 0
+Virtual                E1 {7}:        TCM {2} --> ON HOLD         (Inactive)
+Virtual                E2 {8}:        TCM {2} --> ON HOLD         (Inactive)
+B transitioning from Handling to Handled
+  Success               B {2}:
+E1 transitioning from Unplanned to Planning
+E1 transitioning from Planning to Planned
+E2 transitioning from Unplanned to Planning
+E2 transitioning from Planning to Planned
+E2 transitioning from Unachieved to Achieving
+E2 transitioning from Unhandled to Handling
+Command                E2 {8}:  ON HOLD  --> TCM             (Sent)
+B transitioning from Planning to Planned
+Invoking EHnd 0
+E2 transitioning from Achieving to Achieved
+E2 transitioning from Handling to Handled
+  Success              E2 {8}:
+Cleaning up E2
+Deleting Action
+E1 transitioning from Unachieved to Achieving
+E1 transitioning from Unhandled to Handling
+Command                E1 {7}:  ON HOLD  --> TCM             (Sent)
+Deleting E2
+Invoking EHnd 0
+E1 transitioning from Achieving to Achieved
+E1 transitioning from Handling to Handled
+  Success              E1 {7}:
+Cleaning up E1
+Deleting Action
+Deleting E1
+B transitioning from Achieving to Achieved
+Cleaning up B
+Deleting Action
+Deleting Action
+Deleting B
+C transitioning from Unachieved to Achieving
+E3 transitioning from Unachieved to Achieving
+E3 transitioning from Unhandled to Handling
+Command                E3 {7}:  ON HOLD  --> TCM             (Sent)
+Invoking EHnd 0
+Monitor_Action::activate: 0
+ACT-monitor transitioning from Unplanned to Planning
+ACT-monitor transitioning from Planning to Planned
+Command       ACT-monitor {10}:        TCM {5} --> ON HOLD         (Inactive)
+E3 transitioning from Achieving to Achieved
+E3 transitioning from Handling to Handled
+  Success              E3 {7}:
+ACT-monitor transitioning from Unachieved to Achieving
+ACT-monitor transitioning from Unhandled to Handling
+Command       ACT-monitor {10}:  ON HOLD  --> TCM             (Sent)
+Cleaning up E3
+Deleting Action
+C transitioning from Achieving to Achieved
+Deleting E3
+Cleaning up C
+Deleting Action
+Deleting C
+Invoking monitorAct 2 -2 1 0
+EMon transitioning from Unplanned to Planning
+EMon transitioning from Planning to Planned
+Command              EMon {11}:        TCM {10} --> ON HOLD         (Inactive)
+EMon transitioning from Unachieved to Achieving
+EMon transitioning from Unhandled to Handling
+Command              EMon {11}:  ON HOLD  --> TCM             (Sent)
+ACT-monitor transitioning from Handling to Handled
+  Success     ACT-monitor {10}:
+Invoking EHnd 0
+EMon transitioning from Achieving to Achieved
+EMon transitioning from Handling to Handled
+  Success            EMon {11}:
+Cleaning up EMon
+Deleting Action
+ACT-monitor transitioning from Achieving to Achieved
+Deleting EMon
+Cleaning up ACT-monitor
+Deleting ACT-monitor
+Signalling Timed Event <Activate, monitor>
+Task_Tree_Monitor_Node::_handleSignal: Activation
+Monitor_Action::activate: 1
+ACT-monitor transitioning from Unplanned to Planning
+ACT-monitor transitioning from Planning to Planned
+Command       ACT-monitor {12}:        TCM {5} --> ON HOLD         (Inactive)
+ACT-monitor transitioning from Unachieved to Achieving
+ACT-monitor transitioning from Unhandled to Handling
+Command       ACT-monitor {12}:  ON HOLD  --> TCM             (Sent)
+Invoking monitorAct 2 13 2 1
+EMon transitioning from Unplanned to Planning
+EMon transitioning from Planning to Planned
+Command              EMon {13}:        TCM {12} --> ON HOLD         (Inactive)
+EMon transitioning from Unachieved to Achieving
+EMon transitioning from Unhandled to Handling
+Command              EMon {13}:  ON HOLD  --> TCM             (Sent)
+ACT-monitor transitioning from Handling to Handled
+  Success     ACT-monitor {12}:
+Invoking EHnd 0
+EMon transitioning from Achieving to Achieved
+EMon transitioning from Handling to Handled
+  Success            EMon {13}:
+Cleaning up EMon
+Deleting Action
+ACT-monitor transitioning from Achieving to Achieved
+Deleting EMon
+Cleaning up ACT-monitor
+Deleting ACT-monitor
+Signalling Timed Event <Activate, monitor>
+Task_Tree_Monitor_Node::_handleSignal: Activation
+Monitor_Action::activate: 2
+ACT-monitor transitioning from Unplanned to Planning
+ACT-monitor transitioning from Planning to Planned
+Command       ACT-monitor {14}:        TCM {5} --> ON HOLD         (Inactive)
+ACT-monitor transitioning from Unachieved to Achieving
+ACT-monitor transitioning from Unhandled to Handling
+Command       ACT-monitor {14}:  ON HOLD  --> TCM             (Sent)
+Invoking monitorAct 2 12 3 2
+EMon transitioning from Unplanned to Planning
+EMon transitioning from Planning to Planned
+Command              EMon {15}:        TCM {14} --> ON HOLD         (Inactive)
+EMon transitioning from Unachieved to Achieving
+EMon transitioning from Unhandled to Handling
+Command              EMon {15}:  ON HOLD  --> TCM             (Sent)
+ACT-monitor transitioning from Handling to Handled
+  Success     ACT-monitor {14}:
+Invoking EHnd 0
+EMon transitioning from Achieving to Achieved
+EMon transitioning from Handling to Handled
+  Success            EMon {15}:
+Cleaning up EMon
+Deleting Action
+ACT-monitor transitioning from Achieving to Achieved
+Deleting EMon
+Cleaning up ACT-monitor
+Deleting ACT-monitor
+Signalling Timed Event <Start_Achieving, D>
+D transitioning from Unachieved to Achieving
+D transitioning from Unplanned to Planning
+D transitioning from Unhandled to Handling
+Goal                    D {4}:  ON HOLD  --> TCM             (Sent)
+Invoking DHnd 0
+D transitioning from Achieving to Achieved
+D transitioning from Planning to Planned
+D transitioning from Handling to Handled
+  Success               D {4}:
+Cleaning up D
+Deleting Action
+Deleting D
+monitor transitioning from Alive to Terminating
+Will Terminate monitor {5} when all references to it are released
+A transitioning from Planning to Planned
+monitor transitioning from Achieving to Achieved
+monitor transitioning from Handling to Handled
+Skipping monitor
+A transitioning from Achieving to Achieved
+Deleting Action
+Deleting Action
+monitor transitioning from Terminating to Terminated
+Terminated monitor {5}
+Cleaning up A
+Deleting Action
+A transitioning from Alive to Terminating
+Will Terminate A {1} when all references to it are released
+A transitioning from Terminating to Terminated
+Terminated A {1}
+Deleting A
+Deleting monitor
+Killing B (agentB/agentA/2)
+Deleting B
+Killing D (agentB/agentA/4)
+Deleting D
+Deleting __TCM_TIMER_NODE__
+Closed Connection Detected from: Central Server localhost
+
+Killing Unknown (agentA/agentA/1)
+Deleting Unknown
+Killing Unknown (agentA/agentA/3)
+Deleting Unknown
+Killing Unknown (agentA/agentA/6)
+Deleting Unknown
+Killing Unknown (agentA/agentA/5)
+Deleting Unknown
+Killing E1 (agentA/agentB/7)
+Deleting E1
+Killing E2 (agentA/agentB/8)
+Deleting E2

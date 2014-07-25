@@ -1,0 +1,48 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal foo()
+{
+  FLUSHALL();
+  cout << " foo\n";
+  FLUSHALL();
+}
+
+Goal bar()
+{
+  FLUSHALL();
+  cout << " bar\n";
+  FLUSHALL();
+  spawn foo() with name "foo-from-bar";
+}
+
+
+Goal test()
+{
+  FLUSHALL();
+  cout << " test\n";
+  FLUSHALL();
+  spawn bar();
+}
+
+void
+f()
+{
+  FLUSHALL();
+  cout << " f\n";
+  FLUSHALL();
+  spawn foo() with name "foo-from-f";
+}
+
+
+int
+main()
+{
+  TDL_Initialize(FALSE);
+  f();
+  test();
+  TCM_ProcessAgenda ( TRUE, 100 );
+}

@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+#define SERVER_AGENT "ServerAgent"
+#define CLIENT_AGENT "ClientAgent"
+
+extern "H" {
+#ifdef TDLC_5
+#include "test-1.3.x.4-server-5-distributed_only.H"
+#else
+#include "test-1.3.x.4-server-6-distributed_only.H"
+#endif
+}
+
+
+goal test()
+{
+  spawn foo() with on SERVER_AGENT;
+}
+
+
+void
+clientSide( u_int4 theProcessIndex )
+{
+  MARKUSED ( theProcessIndex );
+  cout << "clientSide/stdout\n";
+  cerr << "clientSide/stderr\n";
+  TDL_Initialize ( FALSE, CLIENT_AGENT );
+  sleep(2);
+  test();
+  sleep(1);
+  cout << "clientSide ending.\n";
+}
+
+
+void
+execServerSide ( u_int4 theProcessIndex )
+{
+  MARKUSED ( theProcessIndex );
+
+  char * serverExecutable
+#ifdef TDLC_5
+     = "./test-1.3.x.4-server-5.exe";
+#else
+     = "./test-1.3.x.4-server-6.exe";
+#endif
+
+
+  execlp ( serverExecutable, serverExecutable, NULL );
+
+  cerr << "[execServerSide]  Error:  "
+       << "execlp ( \"" << serverExecutable << "\" ) FAILED!   Errno = "
+       << errno << " (\"" << strerror(errno) << "\")." << endl;
+}
+
+
+int
+main ( int argc, char * argv[] )
+{
+  TDL_ForkChildren ( execServerSide, clientSide, 5000, 999,
+		     TO_BOOLEAN ( argc > 1 ) );
+}
+

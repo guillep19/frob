@@ -1,0 +1,79 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Monitor aMonitor (int4 i, int4 j, int4 k)
+{
+  cerr << "Test(" << i << "," << j << "," << k << "):  aMonitor {"
+       << TCM_GetMonitorMaximumActivations    ( TDL_REF(THIS) ) << ", "
+       << TCM_GetMonitorMaximumTriggers       ( TDL_REF(THIS) ) << ", "
+       << TCM_GetMonitorActivationConstraints ( TDL_REF(THIS) ) << ", "
+		/* Do this to avoid output-diff problems when we *
+		 * run on a system that lacks 64-bit integers... */
+       << (   ( TCM_GetMonitorPeriod ( TDL_REF(THIS) ) == INFINITE_TIME )
+	    ?  "INFINITE_TIME"  : "PERIOD_WAS_SPECIFIED" )      << ", "
+       << TCM_GetMonitorInitialWait           ( TDL_REF(THIS) ) << ")" << endl;
+}
+
+
+Goal test()
+{
+  int4 i, j, k;
+
+
+  t1[0] MAXIMUM ACTIVATE 6;
+
+  w1: WITH ( MAXIMUM ACTIVATE 5,  MAXIMUM ACTIVATE 4 )
+  {
+    for ( i=0;  i<3;  i++ )
+    {
+      for ( j=0;  j<3;  j++ )
+      {
+	for ( k=0;  k<3;  k++ )
+	{
+	  t1: SPAWN aMonitor ( i, j, k )
+		WITH TERMINATE IN 0.5 AFTER CHILD ACTIVE,
+		     SERIAL PREVIOUS,
+                     MAXIMUM ACTIVATE 3, MAXIMUM ACTIVATE 1+2-3+1;
+	}
+      }
+    }
+  }
+
+  t1[2][1][1] MAXIMUM ACTIVATE 2;
+
+  t2: SPAWN aMonitor ( -1, -1, -1 )
+	WITH TERMINATE IN 0:0:3.0 AFTER CHILD ACTIVE,
+             SERIAL PREVIOUS;  /* PREVIOUS == the w1 WITH statement */
+
+/* There appears to be a problem with g+3 that we somehow hit when using:
+ *  TDL_BIND ( * TDL_REF(t1)[1][2](0), task1 );
+ * So, for now:
+ */
+#if  defined ( __GNUC__ ) && ( __GNUC__ >= 3 )
+  TDL_BIND ( * TDL_REF(t1).operator[](1).operator[](2)(0), task1 );
+#else
+  TDL_BIND ( * TDL_REF(t1)[1][2](0), task1 );
+#endif
+  task1 activate;
+
+#if  defined ( __GNUC__ ) && ( __GNUC__ >= 3 )
+  TDL_BIND ( * TDL_REF(t1).operator[](2).operator[](1)(1), task1 );
+#else
+  TDL_BIND ( * TDL_REF(t1)[2][1](1), task1 );
+#endif
+  task1 activate;
+
+  TDL_BIND ( * TDL_REF(t2)(), task1 );
+  task1 activate;
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  test();
+}

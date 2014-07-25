@@ -1,0 +1,86 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal foo()
+{
+  cout << "foo()\n";  FLUSHALL();
+}
+
+Goal foo(int i)
+{
+  MARKUSED(i);
+  cout << "foo(int)\n";  FLUSHALL();
+}
+
+Goal foo(double i)
+{
+  MARKUSED(i);
+  cout << "foo(double)\n";  FLUSHALL();
+}
+
+Command bar()
+{
+  cout << "bar()\n";  FLUSHALL();
+}
+
+Command bar(int i)
+{
+  MARKUSED(i);
+  cout << "bar(int)\n";  FLUSHALL();
+}
+
+Command bar(double i)
+{
+  MARKUSED(i);
+  cout << "bar(double)\n";  FLUSHALL();
+}
+
+Monitor charlie() with maximum activate 1, period 0.1
+{
+  cout << "charlie()\n";  FLUSHALL();
+}
+
+Monitor charlie(int i) with maximum activate 1, period 0.1
+{
+  MARKUSED(i);
+  cout << "charlie(int)\n";  FLUSHALL();
+}
+
+Monitor charlie(double i) with maximum activate 1, period 0.1
+{
+  MARKUSED(i);
+  cout << "charlie(double)\n";  FLUSHALL();
+}
+
+
+Goal run()
+{
+  with ( serial )
+  {
+    spawn foo();
+    spawn foo(int(1))    with name "foo-int";
+    spawn foo(double(1)) with name "foo-double";
+
+    spawn bar();
+    spawn bar(int(1))    with name "bar-int";
+    spawn bar(double(1)) with name "bar-double";
+
+    spawn charlie();
+    spawn charlie(int(1))    with name "charlie-int";
+    spawn charlie(double(1)) with name "charlie-double";
+  }
+}
+
+
+
+int
+main( int argc, char * argv[] )
+{
+  MARKUSED(argv);
+  // TDL_Initialize( argc < 2, argc < 3 );
+  TDL_Initialize( argc >= 3, argc >= 2 );
+  run();
+}

@@ -1,0 +1,227 @@
+
+test0
+BUFFER: (8)  0  0  0  0  0 FFFFFFD0 FFFFFF84 40 
+666.0
+8
+True
+BUFFER: (8)  0  0  0  0  0  0  0 40 
+[1, 2, 2.0]
+
+test1
+BUFFER: (1) 68 
+h
+1
+True
+BUFFER: (1) 6D 
+['e', 'm', 'm']
+
+test2
+BYTE ARRAY: (4) 7B  0  0  0 
+(123, 1)
+BYTE ARRAY: (4)  1  0  0  0 
+(True, 1)
+BYTE ARRAY: (4)  0  0 5C 42 
+(55.0, 1)
+BYTE ARRAY: (8)  0  0  0  0  0 D0 84 40 
+(666.0, 1)
+BYTE ARRAY: (1)  A 
+(10, 1)
+BYTE ARRAY: (1) FA 
+(250, 1)
+BYTE ARRAY: (9)  5  0  0  0 68 65 6C 6C 6F 
+('hello', 1)
+BYTE ARRAY: (5)  0  0  0  0 5A 
+('', 1)
+BYTE ARRAY: (1) 63 
+('c', 1)
+BYTE ARRAY: (2) 9A  2 
+(666, 1)
+BYTE ARRAY: (4) FF FF FF 7F 
+(2147483647, 1)
+
+test3
+BYTE ARRAY: (21) 9A  2  0  0  5  0  0  0 68 65 6C 6C 6F 6E 86 1B F0 F9 21  9 40 
+(<struct1: i: 666; a1: <struct2: str: 'hello'; d: 3.1415899999999999>>, 1)
+BYTE ARRAY: (29) D2  4  0  0  D  0  0  0 65 61 74 20 6D 6F 72 65 20 73 70 61 6D 33 F6 88 45 CA C0 23 40 
+(<struct1: i: 1234; a1: <struct2: str: 'eat more spam'; d: 9.8765432099999995>>, 1, False, False)
+'ERROR: Data structure does not match format -- Should be str; is float'
+
+test4
+BYTE ARRAY: (20)  A  0  0  0  B  0  0  0  C  0  0  0  D  0  0  0  E  0  0  0 
+[10, 11, 12, 13, 14]
+BYTE ARRAY: (78)  3  0  0  0 65 61 74  0  0  0  0  0  0  0  0  4  0  0  0 6D 6F 72 65  0  0  0  0  0  0 F0 3F  4  0  0  0 73 70 61 6D  0  0  0  0  0  0 20 40  3  0  0  0 66 6F 72  0  0  0  0  0  0 3B 40  4  0  0  0 6C 69 66 65  0  0  0  0  0  0 50 40 
+([<struct2: str: 'eat'; d: 0.0>, <struct2: str: 'more'; d: 1.0>, <struct2: str: 'spam'; d: 8.0>, <struct2: str: 'for'; d: 27.0>, <struct2: str: 'life'; d: 64.0>], 1)
+BYTE ARRAY: (48)  1  0  0  0  2  0  0  0  3  0  0  0  4  0  0  0  4  0  0  0  5  0  0  0  6  0  0  0  7  0  0  0  9  0  0  0  A  0  0  0  B  0  0  0  C  0  0  0 
+[[1, 2, 3, 4], [4, 5, 6, 7], [9, 10, 11, 12]]
+BYTE ARRAY: (96)  0  0  0  0  0  0 18 40  0  0  0  0  0  0 22 40  0  0  0  0  0  0 2C 40  0  0  0  0  0  0 35 40  0  0  0  0  0  0 22 40  0  0  0  0  0  0 28 40  0  0  0  0  0  0 31 40  0  0  0  0  0  0 38 40  0  0  0  0  0  0 2C 40  0  0  0  0  0  0 31 40  0  0  0  0  0  0 36 40  0  0  0  0  0  0 3D 40 
+([[6.0, 9.0, 14.0, 21.0], [9.0, 12.0, 17.0, 24.0], [14.0, 17.0, 22.0, 29.0]], 1)
+
+test5
+BYTE ARRAY: (28)  5  0  0  0  5  0  0  0 6F  0  0  0 70  0  0  0 71  0  0  0 72  0  0  0 73  0  0  0 
+<struct4: num: 5; ar: [111, 112, 113, 114, 115]>
+BYTE ARRAY: (86)  5  0  0  0  3  0  0  0 65 61 74  0  0  0  0  0  0  0  0  4  0  0  0 6D 6F 72 65  0  0  0  0  0  0 F0 3F  4  0  0  0 73 70 61 6D  0  0  0  0  0  0 20 40  3  0  0  0 66 6F 72  0  0  0  0  0  0 3B 40  4  0  0  0 6C 69 66 65  0  0  0  0  0  0 50 40  5  0  0  0 
+(<struct5: ar: [<struct2: str: 'eat'; d: 0.0>, <struct2: str: 'more'; d: 1.0>, <struct2: str: 'spam'; d: 8.0>, <struct2: str: 'for'; d: 27.0>, <struct2: str: 'life'; d: 64.0>]; num: 5>, 1)
+BYTE ARRAY: (60)  3  0  0  0  4  0  0  0  C  0  0  0  1  0  0  0  2  0  0  0  3  0  0  0  4  0  0  0  4  0  0  0  5  0  0  0  6  0  0  0  7  0  0  0  9  0  0  0  A  0  0  0  B  0  0  0  C  0  0  0 
+<struct6: dim1: 3; dim2: 4; ar: [[1, 2, 3, 4], [4, 5, 6, 7], [9, 10, 11, 12]]>
+(<struct6: dim1: 3; dim2: 4; ar: [[1, 2, 3, 4], [4, 5, 6, 7], [9, 10, 11, 12]]>, 1)
+
+test6
+BYTE ARRAY: (8) 2A  0  0  0  2  0  0  0 
+<struct7: i1: 42; status: 2>
+BYTE ARRAY: (12)  1  0  0  0  3  0  0  0  0  0  0  0 
+([1, 3, 0], 1)
+BYTE ARRAY: (8) 2A  0  0  0  2  0  0  0 
+(<struct7: i1: 42; status: 2>, 1)
+
+test7
+BYTE ARRAY: (21) 9A  2  0  0  5  0  0  0 68 65 6C 6C 6F 6E 86 1B F0 F9 21  9 40 
+<struct1: i: 666; a1: <struct2: str: 'hello'; d: 3.1415899999999999>>
+BYTE ARRAY: (23) 5A 9A  2  0  0 5A  5  0  0  0 68 65 6C 6C 6F 6E 86 1B F0 F9 21  9 40 
+<struct1: i: 666; a1: <struct2: str: 'hello'; d: 3.1415899999999999>>
+BYTE ARRAY: (6) 5A 9A  2  0  0  0 
+(<struct1: i: 666; a1: None>, 1)
+
+test8
+None
+None
+
+test9
+NMP IPC Version 3.10.0 (Jul-22-13)
+... IPC Connected on port 1381
+msgHandler1: f 42 1
+
+msgHandler1: f 666 1
+msgHandler2: f 666 3 4
+
+Resetting client data for handler f_msgHandler1
+Num handlers: 2
+msgHandler1: f 1234 2
+msgHandler2: f 1234 3 4
+
+Num handlers: 1
+msgHandler1: f 4321 2
+
+test10
+NMP IPC Version 3.10.0 (Jul-22-13)
+... IPC Connected on port 1381
+Please type -- either 'h' or 'q', end with a 'q'
+q
+quit
+
+test11
+NMP IPC Version 3.10.0 (Jul-22-13)
+... IPC Connected on port 1381
+Test: No IPC error
+ERROR: Not connected to IPC central
+HERE
+
+test12
+NMP IPC Version 3.10.0 (Jul-22-13)
+... IPC Connected on port 1381
+Here1
+Here2
+Resetting client data for handler f_msgHandler1
+Here3
+Here4
+
+test13
+NMP IPC Version 3.10.0 (Jul-22-13)
+... IPC Connected on port 1381
+msgHandler3: f 1234 None 4
+msgHandler3: f 1234 None 4
+msgHandler3: f 1234 None 4
+
+test14
+NMP IPC Version 3.10.0 (Jul-22-13)
+... IPC Connected on port 1381
+Please start, then quit from, test/module2
+connectHandler1: module2 None
+disconnectHandler1: module2 None
+HERE1
+WARNING: Replacing connect handler client data for connectHandler1
+WARNING: Replacing disconnect handler client data for disconnectHandler1
+Please start, then quit from, test/module2
+connectHandler1: module2 1
+connectHandler2: module2 None
+disconnectHandler1: module2 1
+disconnectHandler2: module2 None
+HERE2
+Please start, then quit from, test/module2
+connectHandler1: module2 1
+disconnectHandler1: module2 1
+HERE3
+Please start, then quit from, test/module2
+  (shouldn't do anything on connection, this time)
+disconnectHandler1: module2 1
+HERE4
+
+test15
+NMP IPC Version 3.10.0 (Jul-22-13)
+... IPC Connected on port 1381
+Please start test/module2
+changeHandler1: message1 1 None
+HERE1
+WARNING: Replacing change handler client data for changeHandler1
+Please quit from test/module2
+changeHandler1: message1 0 1
+changeHandler2: message1 0 None
+HERE2
+Please start test/module2
+changeHandler1: message1 1 1
+HERE3
+Please quit from test/module2
+  (shouldn't call the change handler, this time)
+disconnectHandler1: module2 123
+HERE4
+
+test16
+NMP IPC Version 3.10.0 (Jul-22-13)
+... IPC Connected on port 1381
+Do formats match? {int, {string, double}}: 1
+Do formats match? {int, fooType}: 1
+ERROR: Format string does not match that of registered message
+Do formats match? {int, double}: 0
+WARNING: Missing class associated with message h
+msgHandler2: h <IPCdata: 666; <IPCdata: 'hello'; 3.1415899999999999>> None 21
+msgHandler2: h <struct1: i: 666; a1: <struct2: str: 'hello'; d: 3.1415899999999999>> None 21
+printData: {666, {"hello", 3.14}}
+ 
+test17
+NMP IPC Version 3.10.0 (Jul-22-13)
+... IPC Connected on port 1381
+msgHandler4: f <struct1: i: 666; a1: <struct2: str: 'hello'; d: 3.1415899999999999>> None
+Reply from query: 9876
+msgHandler2: g 4321 None 4
+msgHandler5: f <struct1: i: 666; a1: <struct2: str: 'hello'; d: 3.1415899999999999>> None
+IPC_queryResponseData: (9876, 1)
+msgHandler6: h None 999
+msgHandler5: f <struct1: i: 0; a1: <struct2: str: 'hello'; d: 3.1415899999999999>> None
+IPC_queryResponseData: (<struct1: i: 0; a1: <struct2: str: 'hello'; d: 3.1415899999999999>>, 1)
+
+test18
+NMP IPC Version 3.10.0 (Jul-22-13)
+... IPC Connected on port 1381
+msgHandler4: f <struct1: i: 666; a1: <struct2: str: 'hello'; d: 3.1415899999999999>> None
+queryHandler1: Reply from query: 9876 1234
+msgHandler4: f <struct1: i: 666; a1: <struct2: str: 'hello'; d: 3.1415899999999999>> None
+queryHandler2: Reply from query: 9876 1234
+
+test19
+NMP IPC Version 3.10.0 (Jul-22-13)
+... IPC Connected on port 1381
+timerHnd2: [False, 0]
+timerHnd1: 1 False
+timerHnd2: [False, 1]
+timerHnd3: 1
+timerHnd2: [False, 1]
+timerHnd1: 2 False
+timerHnd2: [False, 2]
+timerHnd2: [False, 2]
+timerHnd3: 1
+timerHnd1: 3 True
+Deleting timer timerHnd1
+timerHnd2: [True, 3]
+Timer for handler (timerHnd4) does not exist
+Timer with ref (_d0e1700000000000_p_void) does not exist
+timerHnd4: 666
+Deleting timer timerHnd4

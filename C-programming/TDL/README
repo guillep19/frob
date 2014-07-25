@@ -1,0 +1,3 @@
+Before compiling, need to set IPC_DIR, TCM_DIR, BASE_TCM_DIR, 
+TDL_DIR, BASE_TDL_DIR and THREADS_DIR (tcm/THREADS)
+to point to their respective directories.

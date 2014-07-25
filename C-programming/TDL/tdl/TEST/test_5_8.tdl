@@ -1,0 +1,49 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+static TCM_Task_Tree_Ref monitorTask;
+const TCM_Task_Tree_Ref & getMonitorTask() { return monitorTask; }
+
+Monitor f1()
+serial, maximum trigger 3
+{
+  cerr << "Test:  Monitor f1:  # " << getNumberOfTriggers() << endl;
+  trigger();
+}
+
+/* Do *NOT* use a "const TCM_Task_Tree_Ref &" here,
+ * as test()'s TDL_REF(f1) will be deallocated when f2() is invoked.
+ */
+Goal f2 ( TCM_Task_Tree_Ref theMonitor )
+{
+  cerr << "Test:  Goal f2." << endl;
+
+  TDL_BIND ( theMonitor );
+  TDL_BIND ( monitorTask,        aName );
+  TDL_BIND ( ::getMonitorTask(), anotherName );
+
+  theMonitor  ACTIVATE;
+  aName       ACTIVATE;
+  anotherName ACTIVATE;
+}
+
+Goal
+test()
+{
+  monitorTask = TDL_REF ( f1 );
+
+  SPAWN f1();
+  SPAWN f2( TDL_REF ( f1 ) );
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  test();
+}
+

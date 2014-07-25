@@ -1,0 +1,264 @@
+/*****************************************************************************
+ * PROJECT: TDL Tutorial
+ *
+ * (c) Copyright 2001 Reid Simmons. All rights reserved.
+ * (c) Copyright 1994 Richard Goodwin and Reid Simmons. All rights reserved.
+ *
+ * FILE: taskTreesConcPlan.tdl
+ *
+ * DESCRIPTION:	TDL module that illustrates use of goals and task trees.
+ *              1. Define a "move_turn" goal that moves a given distance,
+ *		   then turns a given number of degrees.
+ *		2. Define a "shape" goal that moves the robot in a given
+ *		   shape, defined by the number of sides and the length of
+ *		   each side.
+ *
+ *		This is a stand-alone module.  It takes the following
+ *		command-line options: taskTrees <numSides> <length> <range>,
+ *		where "numSides" is an integer greater than 2, and "length"
+ *		is a positive real.  The "stopRange" argument is passed
+ *		to the guarded move command, and indicates the range at 
+ *		which to stop before objects.
+ *
+ *		If the command line options are not given, the defaults
+ *		are used (numSides=3, length=100.0 cms, stopRange = 25.0 cms).
+ *
+ *	  THE ONLY DIFFERENCE BETWEEN THIS FILE AND taskTrees.tdl IS THAT IN
+ *        taskTrees.tdl EACH MOVETURN GOAL IS COMPLETELY SERIAL WITH THE 
+ *        PREVIOUS ONE, WHILE HERE EACH MOVETURN GOAL IS PLANNED CONCURRENTLY
+ *	  WITH THE EXECUTION OF A PREVIOUS ONE.  SINCE WE SIMULATE 3 SECONDS OF
+ *	  "PLANNING TIME", THIS MAKES IT RUN MUCH FASTER (ALTHOUGH NOTE THAT,
+ *	  IN GENERAL, CONCURRENT PROGRAMS ARE HARDER TO DEBUG!)
+ *
+ *		To run this example (on Linux):
+ *		  1. ipc/bin/Linux/central -lmdsi
+ *		  2. simulator/simulator sim.param
+ *		  3. ./taskTreesConcPlan
+ *
+ * $Source: /afs/cs.cmu.edu/project/TCA/Master/tcaV8/tutorial/simulator/taskTreesConcPlan.tdl,v $ 
+ * $Revision: 1.6 $
+ * $Date: 1996/08/05 16:10:22 $
+ * $Author: rich $
+ *
+ * REVISION HISTORY:
+ *
+ * $Log: taskTreesConcPlan.tdl,v $
+ *****************************************************************************/
+
+#include "simCommands.h"
+#include "simMessages.h"
+#include "taskTreesConcPlan.h"
+
+/* Defaults used for the command line options */
+#define NUMSIDES_DEFAULT 3
+#define LENGTH_DEFAULT   100.0 /* cms */
+#define RANGE_DEFAULT     30.0 /* cms */
+
+/*-------------------------- Exceptions that can arise ----------------------*/
+
+Exception Malformed_Shape();
+Exception GuardedMove_Failure(CMS distanceLeft);
+
+/*-------------------------- Turn Command ---------------------------*/
+
+static void turnCmdHandler (MSG_INSTANCE ipcRef, void *data, void *clientData)
+{
+  TCM_Task_Tree_Ref *tdlRefPtr = (TCM_Task_Tree_Ref *)clientData;
+  
+  if (!isSuccess(ipcRef)) {
+    FAILURE_TYPE failure;
+    IPC_unmarshallData(IPC_msgInstanceFormatter(ipcRef), data, &failure,
+		       sizeof(failure));
+    cerr << "WARNING: Unhandled turn failure: " << failure.failure << endl;
+    IPC_freeDataElements(IPC_msgInstanceFormatter(ipcRef), &failure);
+  }
+  TDL_RESUME_Turn(*tdlRefPtr);
+  IPC_freeByteArray(data);
+  delete tdlRefPtr;
+}
+
+Command Turn (DEGREES angle)
+{
+  cout << "Turn of " << angle << endl;
+  sendSimCommand(TURN_COMMAND, &angle, turnCmdHandler, TDL_REF(THIS));
+  POSTPONE;
+}
+Resume Turn (void)
+{
+  cout << "Turn completed" << endl;
+}
+
+/*----------------------- Guarded Move Command ------------------------*/
+
+static void guardedMoveCmdHandler (MSG_INSTANCE ipcRef, void *data,
+				   void *clientData)
+{
+  TCM_Task_Tree_Ref *tdlRefPtr = (TCM_Task_Tree_Ref *)clientData;
+  CMS distanceLeft = 0.0;
+  
+  if (!isSuccess(ipcRef)) {
+    FAILURE_TYPE failure;
+    IPC_unmarshallData(IPC_msgInstanceFormatter(ipcRef), data, &failure,
+		       sizeof(failure));
+    if (!strcmp(failure.failure, GUARDED_MOVE_FAILURE)) {
+      IPC_unmarshallData(IPC_parseFormat(failure.dataFormat),
+			 failure.failureData.content,
+			 &distanceLeft, sizeof(distanceLeft));
+    } else {
+      cerr << "WARNING: Unhandled guarded move failure: " << failure.failure
+	   << endl;
+    }
+    IPC_freeDataElements(IPC_msgInstanceFormatter(ipcRef), &failure);
+  }
+  TDL_RESUME_GuardedMove(*tdlRefPtr, distanceLeft);
+  IPC_freeByteArray(data);
+  delete tdlRefPtr;
+}
+
+Command GuardedMove (CMS distance, CMS stopRange)
+{
+  GUARDED_MOVE_COMMAND_TYPE guardedMove;
+  
+  cout << "GuardedMove of " << distance << endl;
+  guardedMove.distance = distance;
+  guardedMove.stopRange = stopRange;
+  sendSimCommand(GUARDED_MOVE_COMMAND, &guardedMove,
+		 guardedMoveCmdHandler, TDL_REF(THIS));
+  POSTPONE;
+}
+Resume GuardedMove (CMS distanceLeft)
+{
+  if (distanceLeft > 0) {
+    cerr << "GuardedMove failed: Travelled only " << distance - distanceLeft
+	 << " cms out of " << distance << " expected" << endl;
+    FAIL GuardedMove_Failure(distanceLeft);
+  } else { // Otherwise ends successfully!
+    cout << "Guarded move completed" << endl;
+  }
+}
+
+/*-------------------------- MoveTurn ---------------------------*/
+
+Goal MoveTurn (CMS distance, DEGREES angle, CMS stopRange)
+{
+  cout << "Handling the " << TCM_NodeName(TDL_REF(THIS)) << " message" << endl;
+
+  cout << "  Planning ... please Wait" << endl;
+  /* Similar to "sleep(3)", but allows for events to be handled while waiting */
+  TCM_ProcessAgenda(TRUE, 3000); /* Simulate planning time */
+  spawn GuardedMove(distance, stopRange);
+  spawn Turn(angle) with serial;
+}
+
+
+/*----------------------- ShapeGoal ------------------------
+
+	The angle to turn for the polygonal shape is determined as follows:
+   A polygon of N sides has 180*(N-2) total interior angles, and thus
+   180-360/N for each interior angle.  The exterior angle (which is the
+   angle needed) is 180-interior angle, therefore, the angle to turn
+   is simply 360/N.
+
+----------------------------------------------------------------------------*/
+
+Goal ShapeGoal (int numSides, CMS length, CMS stopRange)
+{
+  DEGREES angle;
+
+  cout << "Handling the " << TCM_NodeName(TDL_REF(THIS)) << " message" << endl;
+  if ((numSides < 3) || (length <= 0.0)) {
+    cerr << "  Failure: Malformed Shape (" << numSides << ", " << length
+	 << ")" << endl;
+    FAIL Malformed_Shape();
+  } else {
+    angle = (int)(0.5 + 360/numSides);
+    cout << "  Each side is " << length << " cms; With interior angles of " 
+	 << 180-angle << endl;
+
+    // The "with" statement applies to all the MoveTurn goals spawned within
+    //   the "for" loop (except it has no affect on the first iteration, since 
+    //   there is no "previous")
+    // "sequential achievement" means execute any commands in the subtrees
+    //   of the MoveTurn goals one after another.
+    // "sequential expansion" means do not expand one MoveTurn goal until
+    //   the previous one has been completely expanded (but not necessarily
+    //   after it has been achieved).
+    // Thus, the two together enable expansion to be done concurrently with
+    //   execution, making overall completion time much shorter than if the
+    //   goals had been serialized (as in taskTrees.tdl).
+    with (sequential achievement previous, sequential expansion previous) {
+      for (int i=0; i<numSides; i++) {
+	spawn MoveTurn(length, angle, stopRange);
+      }
+    }
+  }
+}
+
+static void addIpcEventHandlers (void); // Forward Reference
+
+static void ipcMessageHandler (int sd, const void *dummy)
+{
+  IPC_listenClear(0);
+  addIpcEventHandlers();
+}
+
+static void addIpcEventHandlers (void)
+{
+  fd_set ipcFds = IPC_getConnections();
+  static fd_set currentIpcFds;
+  static BOOLEAN firstTime = TRUE;
+
+  if (firstTime) {
+    FD_ZERO(&currentIpcFds);
+    firstTime = FALSE;
+  }
+
+  for (int i=0; i<FD_SETSIZE; i++) {
+    if (FD_ISSET(i, &ipcFds) && !FD_ISSET(i, &currentIpcFds)) {
+      TCM_AddExternalEvent(i, ipcMessageHandler, NULL);
+    } else if (!FD_ISSET(i, &ipcFds) && FD_ISSET(i, &currentIpcFds)) {
+      TCM_RemoveExternalEvent(i);
+    }
+  }
+  currentIpcFds = ipcFds;
+}
+
+
+/*----------------------- main ------------------------
+  TASK_TREES module: create and execute a task tree for moving the robot
+  in a given shape.
+
+  Command line options are: taskTreesConcPlan <numSides> <length> <stopRange>,
+  where "numSides" is an integer greater than 2, "length" is a positive real,
+  and "stopRange" is the nominal stopping distance for guarded move.
+  If the command line options are not given, the defaults (numSides=3, 
+  length=100.0, stopRange=25.0) are used.  Units are in cms.
+
+  The command line option "-h" provides a help message.
+----------------------------------------------------------------------------*/
+int main (int argc, char **argv)
+{
+  int numSides;
+  CMS length;
+  CMS stopRange;
+
+  if (argc >= 2 && !strcmp(argv[1], "-h")) {
+    cerr << "Usage: " << argv[0] << " <numSides> <length> <stopRange>" << endl;
+    exit(0);
+  }
+
+  stopRange = (argc >= 4 ? (CMS)atof(argv[3]) : RANGE_DEFAULT);
+  length    = (argc >= 3 ? (CMS)atof(argv[2]) : LENGTH_DEFAULT);
+  numSides  = (argc >= 2 ? atoi(argv[1]) : NUMSIDES_DEFAULT);
+
+  TCM_Initialize();
+  TDL::setLogStream ("/dev/null");
+  TCM_SetTerminalLoggingOptions(Log_None);
+
+  IPC_connect("TASK TREES CONC PLAN");
+  addIpcEventHandlers();
+
+  ShapeGoal(numSides, length, stopRange);
+
+  return 0;
+}

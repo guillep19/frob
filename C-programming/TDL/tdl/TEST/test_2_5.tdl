@@ -1,0 +1,284 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Goal g( const char * string )
+{
+  cerr << "test-g: " << string << endl;
+}
+
+
+Goal f1( int count, const char * string )
+{
+  cerr << "test-f1: " << count << string << endl;
+}
+
+
+Goal foo()
+{
+  int i = 0;
+
+ with ( serial ) {
+  A: spawn f1 ( i++,"-  expand first"          ) with expand first;
+     spawn f1 ( i++,"-  delay expansion"       ) with delay expansion;
+     spawn f1 ( i++,"-  sequential handling"   ) with sequential handling    A;
+     spawn f1 ( i++,"-  sequential expansion"  ) with sequential expansion   A;
+     spawn f1 ( i++,"-  sequential execution"  ) with sequential execution   A;
+     spawn f1 ( i++,"-  sequential planning"   ) with sequential planning    A;
+     spawn f1 ( i++,"-  sequential achievement") with sequential achievement A;
+     spawn f1 ( i++,"-  sequential_achievement") with sequential_achievement A;
+     spawn f1 ( i++,"-  sequentialachievement" ) with sequentialachievement  A;
+
+     spawn f1 ( i++,"- serial"  ) with serial  A;
+     spawn f1 ( i++,"- wait"    ) with wait;
+
+     spawn g ( "test-previous" );
+     spawn f1 ( i++,"- disable expansion   until PREVIOUS expansion   active" )
+       with            disable expansion   until PREVIOUS expansion   active;
+
+     spawn f1 ( i++,"- disable handling    until A        achievement enabled")
+       with            disable handling    until A        achievement enabled;
+
+     spawn f1 ( i++,"- disable execution   until PARENT   planning  active")
+       with            disable execution   until PARENT   planning  active;
+
+     spawn f1 ( i++,"- disable planning    until A        planning  completed")
+       with            disable planning    until A        planning  completed;
+
+     spawn f1 ( i++,"- disable achievement until SELF     handling    enabled")
+       with            disable achievement until SELF     handling    enabled;
+
+     spawn f1 ( i++,
+	       "- wait,disable achievement until SELF     handling    enabled")
+       with       wait,disable achievement until SELF     handling    enabled;
+
+     spawn f1 ( i++,"- disable expansion until 0:0:1.2" )
+       with            disable expansion until 0:0:1.2;
+
+     spawn f1 ( i++,"- disable expansion for  0:0:1.3" )
+       with            disable expansion for  0:0:1.3;
+
+
+     spawn f1 ( i++,"- disable expansion for 0:0:1.4 after A handling enabled")
+       with            disable expansion for 0:0:1.4 after A handling enabled;
+
+     spawn f1 ( i++,"- disable expansion for 0:0:1.5 after A planning active")
+       with            disable expansion for 0:0:1.5 after A planning active;
+
+     spawn f1 ( i++,
+		 "- disable expansion for 0:0:1.6 after A execution completed")
+       with         disable expansion for 0:0:1.6 after A execution completed;
+
+
+     spawn f1 ( i++,"- disable until A execution completed" )
+       with            disable until A execution completed;
+
+     spawn f1 ( i++,"- DISABLE_UNTIL A execution completed" )
+       with            DISABLE_UNTIL A execution completed;
+
+     spawn f1 ( i++,"- dIsAbLe___UnTiL A execution completed" )
+       with            dIsAbLe___UnTiL A execution completed;
+
+     spawn f1 ( i++,"- DiSaBlEuNtIl A execution completed" )
+       with            DiSaBlEuNtIl A execution completed;
+
+
+     spawn f1 ( i++,"- disable for   0:0:1.2" )
+       with            disable for   0:0:1.2;
+
+     spawn f1 ( i++,"- DISABLE_FOR   0:0:1.2" )
+       with            DISABLE_FOR   0:0:1.2;
+
+     spawn f1 ( i++,"- dIsAbLe___FoR 0:0:1.2" )
+       with            dIsAbLe___FoR 0:0:1.2;
+
+     spawn f1 ( i++,"- DiSaBlEfoR    0:0:1.2" )
+       with            DiSaBlEfoR    0:0:1.2;
+       
+
+     spawn f1 ( i++,"- terminate at Z handling   enabled" )
+       with            terminate at Z handling   enabled;
+
+     spawn f1 ( i++,"- terminate at Z expansion  active" )
+       with            terminate at Z expansion  active;
+
+     spawn f1 ( i++,"- terminate at Z execution  completed" )
+       with            terminate at Z execution  completed;
+
+     spawn f1 ( i++,"- terminate at Z planning   active" )
+       with            terminate at Z planning   active;
+
+     spawn f1 ( i++,"- terminate at Z achievement completed" )
+       with            terminate at Z achievement completed;
+
+
+     spawn f1 ( i++,"- terminate at 23:59:59.9")
+       with            terminate at 23:59:59.9;
+
+     spawn f1 ( i++,"- terminate in 0:0:4.8")
+       with            terminate in 0:0:4.8;
+
+
+     spawn f1 ( i++,"- terminate in 0:0:4.1 after Z handling enabled")
+       with            terminate in 0:0:4.1 after Z handling enabled;
+
+     spawn f1 ( i++,"- terminate in 0:0:4.2 after Z planning active")
+       with            terminate in 0:0:4.2 after Z planning active;
+
+     spawn f1 ( i++,"- terminate in 0:0:4.3 after Z execution completed")
+       with            terminate in 0:0:4.3 after Z execution completed;
+
+     spawn f1 ( i++,"- terminate in 0:0:4.4 after SELF handling active")
+       with            terminate in 0:0:4.4 after SELF handling active;
+
+
+  Z: spawn g ( "Z" );
+ }
+
+}
+
+
+void
+test_func( int i)
+{
+  TCM_Task_Tree_Ref A, Z;
+
+  A: spawn f1 ( i++,"+ expand first"          ) with wait, expand first;
+     spawn f1 ( i++,"+ delay expansion"       ) with wait, delay expansion;
+     spawn f1 ( i++,"+ sequential handling"    )
+       with wait,      sequential handling    previous;
+     spawn f1 ( i++,"+ sequential expansion"   )
+       with wait,      sequential expansion   previous;
+     spawn f1 ( i++,"+ sequential execution"   )
+       with wait,      sequential execution   previous;
+     spawn f1 ( i++,"+ sequential planning"    )
+       with wait,      sequential planning    previous;
+     spawn f1 ( i++,"+ sequential achievement" )
+       with wait,      sequential achievement previous;
+     spawn f1 ( i++,"+ sequential_achievement" )
+       with wait,      sequential_achievement previous;
+     spawn f1 ( i++,"+ sequentialachievement"  )
+       with wait,      sequentialachievement  previous;
+
+     spawn f1 ( i++,"+ serial"  ) with wait, serial  previous;
+     spawn f1 ( i++,"+ wait"    ) with wait;
+
+     spawn g ( "test-previous-1" );
+     spawn f1 ( i++,"+ disable expansion   until PREVIOUS expansion   active" )
+       with wait,      disable expansion   until PREVIOUS expansion   active;
+
+     spawn f1 ( i++,"+ disable handling    until previous achievement enabled")
+       with wait,      disable handling    until previous achievement enabled;
+
+     spawn f1 ( i++,"+ disable execution   until PARENT   planning    active")
+       with wait,      disable execution   until PARENT   planning    active;
+
+     spawn f1 ( i++,"+ disable planning    until previous planning  completed")
+       with wait,      disable planning    until previous planning  completed;
+
+     spawn f1 ( i++,"+ disable achievement until SELF     handling    enabled")
+       with wait,      disable achievement until SELF     handling    enabled;
+
+
+     spawn f1 ( i++,"+ disable expansion until 0:0:1.2" )
+       with wait,      disable expansion until 0:0:1.2;
+
+     spawn f1 ( i++,"+ disable expansion for  0:0:2.3" )
+       with wait,      disable expansion for  0:0:2.3;
+
+
+     spawn f1 ( i++,
+	     "+ disable expansion for 0:0:2.4 after previous handling enabled")
+       with wait,
+                disable expansion for 0:0:2.4 after previous handling enabled;
+
+     spawn f1 ( i++,
+	      "+ disable expansion for 0:0:2.5 after previous planning active")
+       with wait,disable expansion for 0:0:2.5 after previous planning active;
+
+     spawn f1 ( i++,
+	  "+ disable expansion for 0:0:2.6 after previous execution completed")
+       with wait,
+             disable expansion for 0:0:2.6 after previous execution completed;
+
+
+
+     spawn f1 ( i++,"+ disable until previous execution completed" )
+       with wait,      disable until previous execution completed;
+
+     spawn f1 ( i++,"+ DISABLE_UNTIL previous execution completed" )
+       with wait,      DISABLE_UNTIL previous execution completed;
+
+     spawn f1 ( i++,"+ dIsAbLe___UnTiL previous execution completed" )
+       with wait,      dIsAbLe___UnTiL previous execution completed;
+
+     spawn f1 ( i++,"+ DiSaBlEuNtIl previous execution completed" )
+       with wait,      DiSaBlEuNtIl previous execution completed;
+
+
+
+     spawn f1 ( i++,"+ disable for   0:0:2.2" )
+       with wait,      disable for   0:0:1.2;
+
+     spawn f1 ( i++,"+ DISABLE_FOR   0:0:2.2" )
+       with wait,      DISABLE_FOR   0:0:1.2;
+
+     spawn f1 ( i++,"+ dIsAbLe___FoR 0:0:2.2" )
+       with wait,      dIsAbLe___FoR 0:0:1.2;
+
+     spawn f1 ( i++,"+ DiSaBlEfoR    0:0:2.2" )
+       with wait,      DiSaBlEfoR    0:0:1.2;
+
+       
+
+     spawn f1 ( i++,"+ terminate at previous handling   enabled" )
+       with wait,      terminate at previous handling   enabled;
+
+     spawn f1 ( i++,"+ terminate at previous expansion  active" )
+       with wait,      terminate at previous expansion  active;
+
+     spawn f1 ( i++,"+ terminate at parent execution  completed" )
+       with wait,      terminate at parent execution  completed;
+
+     spawn f1 ( i++,"+ terminate at previous planning   active" )
+       with wait,      terminate at previous planning   active;
+
+     spawn f1 ( i++,"+ terminate at previous achievement completed" )
+       with wait,      terminate at previous achievement completed;
+
+
+     spawn f1 ( i++,"+ terminate at 23:59:59.9")
+       with wait,      terminate at 23:59:59.9;
+
+     spawn f1 ( i++,"+ terminate in 0:0:4.8")
+       with wait,      terminate in 0:0:4.8;
+
+
+     spawn f1 ( i++,"+ terminate in 0:0:4.1 after previous handling enabled")
+       with wait,      terminate in 0:0:4.1 after previous handling enabled;
+
+     spawn f1 ( i++,"+ terminate in 0:0:4.2 after previous planning active")
+       with wait,      terminate in 0:0:4.2 after previous planning active;
+
+     spawn f1 ( i++,
+		  "+ terminate in 0:0:4.3 after previous execution completed")
+       with wait,    terminate in 0:0:4.3 after previous execution completed;
+
+     spawn f1 ( i++,"+ terminate in 0:0:4.4 after SELF handling active")
+       with wait,      terminate in 0:0:4.4 after SELF handling active;
+
+  Z: spawn g ( "Z" );
+
+}
+
+
+int
+main()
+{
+  TCM_Initialize();
+  cerr << endl << "test1:  " << (TCM_RootNode().operator*()) << endl << endl;
+  foo();
+  test_func(200);
+}

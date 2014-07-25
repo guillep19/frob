@@ -1,0 +1,98 @@
+Root Node transitioning from Unplanned to Planning
+Root Node transitioning from Unachieved to Achieving
+Goal                    A {1}:        TCM {0} --> ON HOLD         (Inactive)
+A transitioning from Unplanned to Planning
+A transitioning from Unhandled to Handling
+Goal                    A {1}:  ON HOLD  --> TCM             (Sent)
+A transitioning from Unachieved to Achieving
+Invoking AHnd 0
+Goal                    B {2}:        TCM {1} --> ON HOLD         (Inactive)
+Goal                    C {3}:        TCM {1} --> ON HOLD         (Inactive)
+Goal                    D {4}:        TCM {1} --> ON HOLD         (Inactive)
+B transitioning from Unplanned to Planning
+B transitioning from Unhandled to Handling
+Goal                    B {2}:  ON HOLD  --> TCM             (Sent)
+B transitioning from Unachieved to Achieving
+C transitioning from Unplanned to Planning
+C transitioning from Unhandled to Handling
+Goal                    C {3}:  ON HOLD  --> TCM             (Sent)
+A transitioning from Handling to Handled
+  Success               A {1}:
+Invoking BHnd 0
+E1 transitioning from Unplanned to Planning
+E1 transitioning from Planning to Planned
+Command                E1 {5}:        TCM {2} --> ON HOLD         (Inactive)
+E2 transitioning from Unplanned to Planning
+E2 transitioning from Planning to Planned
+Command                E2 {6}:        TCM {2} --> ON HOLD         (Inactive)
+E2 transitioning from Unachieved to Achieving
+E2 transitioning from Unhandled to Handling
+Command                E2 {6}:  ON HOLD  --> TCM             (Sent)
+B transitioning from Planning to Planned
+B transitioning from Handling to Handled
+  Success               B {2}:
+Invoking CHnd 0
+E3 transitioning from Unplanned to Planning
+E3 transitioning from Planning to Planned
+Command                E3 {7}:        TCM {3} --> ON HOLD         (Inactive)
+C transitioning from Planning to Planned
+C transitioning from Handling to Handled
+  Success               C {3}:
+Invoking EHnd 0
+E2 transitioning from Achieving to Achieved
+E2 transitioning from Handling to Handled
+  Success              E2 {6}:
+Cleaning up E2
+Deleting Action
+E1 transitioning from Unachieved to Achieving
+E1 transitioning from Unhandled to Handling
+Command                E1 {5}:  ON HOLD  --> TCM             (Sent)
+Deleting E2
+Invoking EHnd 0
+E1 transitioning from Achieving to Achieved
+E1 transitioning from Handling to Handled
+  Success              E1 {5}:
+Cleaning up E1
+Deleting Action
+B transitioning from Achieving to Achieved
+Deleting E1
+Cleaning up B
+Deleting Action
+Deleting Action
+C transitioning from Unachieved to Achieving
+Deleting B
+E3 transitioning from Unachieved to Achieving
+E3 transitioning from Unhandled to Handling
+Command                E3 {7}:  ON HOLD  --> TCM             (Sent)
+Invoking EHnd 0
+E3 transitioning from Achieving to Achieved
+E3 transitioning from Handling to Handled
+  Success              E3 {7}:
+Cleaning up E3
+Deleting Action
+C transitioning from Achieving to Achieved
+Deleting E3
+Cleaning up C
+Deleting Action
+D transitioning from Unachieved to Achieving
+Deleting C
+D transitioning from Unplanned to Planning
+D transitioning from Unhandled to Handling
+Goal                    D {4}:  ON HOLD  --> TCM             (Sent)
+Invoking DHnd 0
+D transitioning from Achieving to Achieved
+D transitioning from Planning to Planned
+D transitioning from Handling to Handled
+  Success               D {4}:
+Cleaning up D
+Deleting Action
+A transitioning from Planning to Planned
+A transitioning from Achieving to Achieved
+Deleting D
+Cleaning up A
+Deleting Action
+A transitioning from Alive to Terminating
+Will Terminate A {1} when all references to it are released
+A transitioning from Terminating to Terminated
+Terminated A {1}
+Deleting A

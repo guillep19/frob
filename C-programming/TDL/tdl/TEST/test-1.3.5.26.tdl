@@ -1,0 +1,89 @@
+/*
+ * Copyright (c) 2008, Carnegie Mellon University
+ *     This software is distributed under the terms of the 
+ *     Simplified BSD License (see tdl/LICENSE.TXT)
+ */
+
+Exception ourException(STRING theLocation);
+
+Exception ourException2(STRING theLocation, int foo)
+  : ourException(theLocation);
+
+Exception Handler Excep1Hnd ( ) handles ourException, maximum activate 1
+{
+  FLUSHALL();
+  cout << "Excep1Hnd: " << ourException.theLocation << endl;
+  //BYPASS;
+  FAIL ourException2(ourException.theLocation, 1);
+}
+
+Exception Handler Excep2Hnd ( ) handles ourException2, maximum activate 2
+{
+  FLUSHALL();
+  cout << "Excep2Hnd: " << ourException2.theLocation << " "
+       << ourException2.foo << endl;
+  FAIL ourException(ourException2.theLocation);
+}
+
+Exception Handler Excep3Hnd ( ) handles ourException, maximum activate 3
+{
+  FLUSHALL();
+  cout << "Excep3Hnd: " << ourException.theLocation << endl;
+  SUCCESS;
+}
+
+Goal TaskA() 
+  with exception handler Excep3Hnd(),
+  exception handler Excep2Hnd()
+{
+  FLUSHALL();
+  cout << "TaskA\n" << flush;
+  WITH ( SERIAL ) {
+    SPAWN TaskB();
+    SPAWN TaskC();
+  }
+}
+
+Goal TaskB() 
+  with exception handler Excep1Hnd()
+{
+  FLUSHALL();
+  cout << "TaskB\n" << flush;
+  WITH ( SERIAL ) {
+    SPAWN TaskE1();
+    SPAWN TaskE2();
+  }
+}
+
+Goal TaskC()
+{
+  FLUSHALL();
+  SPAWN TaskE3();
+  cout << "TaskC\n" << flush;
+}
+
+Command TaskE1()
+{
+  FLUSHALL();
+  cout << "TaskE1\n" << flush;
+  FAIL ourException2("E1 failed", -1);
+}
+
+Command TaskE2()
+{
+  FLUSHALL();
+  cout << "TaskE2\n" << flush;
+}
+
+Command TaskE3()
+{
+  FLUSHALL();
+  cout << "TaskE3\n" << flush;
+  FAIL ourException("E3 failed");
+}
+
+int main ()
+{
+  TDL_Initialize ( FALSE, TRUE );
+  TaskA();
+}
