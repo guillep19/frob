@@ -1,0 +1,198 @@
+#include "tdl.H"
+#include "elevator.h"
+#define SHOW_TASKS
+#include "elevatorUtils.h"
+
+Exception noElevatorAvailable (int floor);
+
+Exception wrongFloor (string car, int curFloor);
+
+Exception outOfService (string car, int curFloor);
+
+Exception Handler alertFailure (int floor)
+  with handles noElevatorAvailable
+{
+  TCM_TerminateNode(TCM_ExceptionHandlerNode(TDL_REF(THIS)));
+  spawn alertOperator(floor);
+}
+
+Exception Handler alertWrongFloorFailure ()
+  with handles wrongFloor
+{
+  TCM_TerminateNode(TCM_ExceptionHandlerNode(TDL_REF(THIS)));
+  spawn alertOperator(wrongFloor.curFloor);
+}
+
+Exception Handler wrongFloorHnd (int toFloor)
+  with handles wrongFloor, maximum activate 2
+{
+  PRINT_ENTERING1(toFloor);
+  TCM_TerminateNode(TCM_ExceptionHandlerNode(TDL_REF(THIS)));
+  spawn rideElevator(wrongFloor.car, wrongFloor.curFloor, toFloor);
+}
+
+Exception Handler outOfServiceHnd (int toFloor)
+  with handles outOfService
+{
+  PRINT_ENTERING1(toFloor);
+  TCM_TerminateNode(TCM_ExceptionHandlerNode(TDL_REF(THIS)));
+  spawn elevatorTaskCont(outOfService.curFloor, toFloor);
+}
+
+Goal elevatorTask (int fromFloor, int toFloor, TCM_Task_Tree_Ref navigateToRef)
+  with exception handler alertFailure(fromFloor),
+  exception handler alertWrongFloorFailure()
+{
+  PRINT_ENTERING2(fromFloor, toFloor);
+  TDL_BIND(navigateToRef, navigateTo);
+  spawn callElevator(fromFloor) // Concurrent
+    with disable achievement for 1.0 /*secs*/ after navigateTo active;
+  spawn elevatorTaskCont(fromFloor, toFloor) 
+    with serial navigateTo, serial callElevator;
+}
+
+Goal elevatorTaskCont (int fromFloor, int toFloor)
+  with exception handler outOfServiceHnd(toFloor),
+  delay expansion, // Due to run-time query if car has been assigned
+  persistent string whichCar
+{
+  PRINT_ENTERING2(fromFloor, toFloor);
+  whichCar = assignedElevator();
+  string source = "lobby";
+  if (whichCar.empty()) {
+    source = "waiting spot";
+    spawn waitForElevator(fromFloor, &whichCar);
+  }
+  spawn approachAndRideElevator(source, fromFloor, toFloor, &whichCar)
+    with serial previous;
+}
+
+Goal waitForElevator (int floor, string *whichCar)
+{
+  PRINT_ENTERING1(floor);
+  spawn navigateTo("lobby", "waiting spot");
+  spawn monitorAssignment(floor, whichCar); // Concurrent
+}
+
+static double monitorPeriod = 1.0; // seconds
+static double monitorWait = 5.0; // seconds to wait before alerting operator
+
+Monitor monitorAssignment (int floor, string *whichCar)
+  maximum trigger 1, period monitorPeriod
+{
+  PRINT_ENTERING1(floor); // TDL_REF(THIS)
+  *whichCar = assignedElevator();
+  if (!whichCar->empty()) {
+    TRIGGER();
+  } else if (GetNumberOfActivates() >= monitorWait/monitorPeriod) {
+    FAIL noElevatorAvailable(floor); // Fail if waited long enough
+  }
+}
+
+Goal approachAndRideElevator (string source, int fromFloor, int toFloor,
+			      string *whichCar)
+  delay expansion, // Due to run-time query if car has been assigned
+  // handler has to be on this node to make the 'activate' count work right
+  exception handler wrongFloorHnd(toFloor)
+{
+  PRINT_ENTERING3(source, fromFloor, toFloor);
+  // Sanity check
+  if (whichCar->empty()) FAIL noElevatorAvailable(fromFloor);
+
+  spawn navigateTo(source, *whichCar);
+  spawn monitorArrival(toFloor, *whichCar); // Concurrent
+  spawn rideElevator(*whichCar, fromFloor, toFloor)
+    with serial navigateTo, serial monitorArrival;
+}
+
+Monitor monitorArrival (int floor, string car)
+  maximum trigger 1, period monitorPeriod
+{
+  PRINT_ENTERING2(floor, car);
+  if (elevatorArrived(car, floor)) {
+    TRIGGER();
+  } else if (GetNumberOfActivates() >= monitorWait/monitorPeriod) {
+    spawn alertOperator(floor); // Note: don't fail here, just continue
+  }
+}
+
+// Elevator is present and in front of elevator
+Goal rideElevator (string car, int fromFloor, int toFloor)
+{
+  PRINT_ENTERING3(car, fromFloor, toFloor);
+  spawn enterCar();
+  spawn travelInCar(toFloor) with serial previous;
+  spawn exitCar() with serial previous;
+  spawn checkFloor(car, toFloor) with serial previous;
+}
+
+Command checkFloor (string car, int floor)
+{
+  PRINT_ENTERING2(car, floor); // TDL_REF(THIS)
+  int curFloor = currentFloor();
+  if (curFloor != floor) {
+    switch (elevatorStatus(car)) {
+    case Normal: 
+      Fail wrongFloor(car, curFloor);
+      break;
+    case OutOfService:
+      Fail outOfService(car, curFloor);
+      break;
+    default: Fail;
+    }
+  }
+}
+
+Command navigateTo (string source, string dest)
+{
+  PRINT_ENTERING2(source, dest); // TDL_REF(THIS)
+}
+
+Command callElevator (int floor)
+{
+  PRINT_ENTERING1(floor); // TDL_REF(THIS)
+}
+
+Command enterCar ()
+{
+  PRINT_ENTERING0(); // TDL_REF(THIS)
+}
+
+Command exitCar ()
+{
+  PRINT_ENTERING0(); // TDL_REF(THIS)
+}
+
+Command travelInCar (int toFloor)
+{
+  PRINT_ENTERING1(toFloor); // TDL_REF(THIS)
+}
+
+Command alertOperator (int floor)
+{
+  PRINT_ENTERING1(floor); // TDL_REF(THIS)
+}
+
+Goal topLevel ()
+{
+ nav1: spawn navigateTo("somewhere", "lobby");
+  // Concurrent, to allow "callElevator" to happen while navigating
+  spawn elevatorTask(1, 4, TDL_REF(nav1));
+}
+
+#ifdef USE_HATCHET
+#include "TcmLogOverIpc.h"
+#include "ipc.h"
+#endif
+
+int main ()
+{
+  //TDL_Initialize(false, true);
+  TDL_Initialize();
+#ifdef USE_HATCHET
+  IPC_connect("elevator");
+  logSetLoggingFunctions();
+  logToTerminal(false);
+#endif
+  topLevel();
+}
