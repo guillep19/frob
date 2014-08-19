@@ -1,9 +1,10 @@
 
-\documentclass[a4paper, 11pt, oneside]{report}
+\documentclass[a4paper, 11pt, oneside]{article}
 \usepackage[a4paper,left=2.5cm,right=2cm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[activeacute, spanish]{babel}
 \usepackage{cite}
+\usepackage{url}
 
 \title{Informe}
 \author{Guillermo Pacheco}
@@ -14,55 +15,12 @@
 
 \maketitle
 
-\chapter{Objetivo}
-
-Diseño de un lenguaje de programación para robots con bajas capacidades de cómputo, con fin educativo.
-
-Diseño e implementación de una máquina virtual para dicho lenguaje, que debe ser implementado en alguna de las
-arquitecturas presentadas.
-
-El lenguaje debe intentar estandarizar los diferentes kits de robótica.
-
-\section{Requerimientos}
-
-El lenguaje debe permitir expresar declarativamente o imperativamente el 
-comportamiento de un robot.
-Se deben proveer abstracciones para el hardware periférico, de tal manera que 
-se puedan definir nuevas abstracciones para incluir nuevo hardware.
-Se debe contemplar la posibilidad de compilar programas expresados en haskell 
-mediante el paradigma de programación funcional reactiva.
-
-A continuación se relevan las arquitecturas consideradas para el proyecto.
-Se relevan sus especificaciones y los trabajos relacionados que hay realizados
- en torno a la temática de éste proyecto.
-
-Periféricos estándar:
-
-\begin {enumerate}
-  \item Motor
-  \item Sensor de distancia
-  \item Comunicación (serial, inalambrica, usb, etc)
-  \item Acelerometro
-  \item Sensor de inclinacion
-  \item Boton, Interruptor
-  \item Sensor de sonido
-  \item Sensor de inclinacion
-  \item Gps
-  \item Sensor infrarrojo
-  \item Sensor de luz
-  \item Sensor de voltaje, etc
-  \item Brujula / compass
-  \item Parlante
-  \item Leds
-  \item Pantallas
-\end {enumerate}
-
-
-\section{Relevamiento de kits, placas, procesadores y arquitecturas}
-
-Prueba de citar \cite{Guillermo2014}
-
-\input{sections/resumen-tdl}
+%\input{sections/resumen-tdl}
+\input{sections/resumen}
+\input{sections/comparacion-kits}
+\input{sections/comparacion-lenguajes}
+\input{sections/disenio}
+\input{sections/implementacion}
 
 \bibliographystyle{acm}
 \bibliography{biblio}
