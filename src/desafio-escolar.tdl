@@ -1,0 +1,105 @@
+
+#include "tdl.H"
+#include "desafio-escolar.H"
+
+double distances[23] = {
+  540.0, 982.1, 500.4, 600.2, 1300.5,
+  9.8, 9.4, 9.1, 8.6,
+  500.4, 600.2, 1300.5, 540.0, 982.1,
+  9.3, 9.0, 9.4, 9.4,
+  500.4, 600.2, 1300.5, 540.0, 982.1
+};
+
+double color_sensor_izq[40] = {
+  0, 0, 0, 1, 1, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 1, 1, 1, 1, 0, 0,
+  0, 0, 0, 1, 1, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 1, 1, 1, 1, 0, 0
+};
+
+double color_sensor_der[40] = {
+  0, 0, 0, 0, 0, 0, 1, 1, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+  0, 0, 0, 0, 0, 0, 1, 1, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 1, 0
+};
+
+
+command setVelocidadMotor (int id, int direccion) {
+  printf("                                         :: setVelocidadMotor(id=%d, direccion=%d)\n", id, direccion);
+}
+
+/* idRueda = 0, Izquierda
+   idRueda = 1, Derecha
+   Adelante izq vel = 1
+   Adelante der vel = -1
+   Detenida = 0
+*/
+const int VELOCIDAD_RUEDA = 10;
+monitor avanzarRueda(int numRueda, int direccion) PERIOD 0:0:0.5,
+                                                  PERSISTENT int count = 0 {
+  int velocidad = VELOCIDAD_RUEDA;
+  if ((numRueda == 0) && (color_sensor_izq[count % 40] == 1)) {
+    //se esta yendo por la izquierda.
+    velocidad = 0;
+  } else if ((numRueda == 1) && (color_sensor_der[count % 40] == 1)) {
+    //se esta yendo por la derecha.
+    velocidad = 0;
+  }
+  spawn setVelocidadMotor(numRueda, velocidad * direccion) with wait;
+}
+
+/*
+ Nota:
+Para no correr el error de contar un flanco doble,
+se pueden tomar las medidas como promedios de distancia
+para suavizar los datos. En la simulacion no lo hago, ya
+que no aporta nada.
+*/
+monitor hayCasa() WITH MAXIMUM ACTIVATE 23,
+                       PERIOD 0:0:1.0,
+                       PERSISTENT int count = 0,
+                       PERSISTENT bool disabled = false {
+  count++;
+  if (distances[count - 1] < 10) {
+    if (!disabled) {
+      printf(":: hayCasa%d\n", count - 1);
+      disabled = true;
+      TRIGGER();
+    } else {
+      printf(":: mismaCasa\n");
+    }
+  } else {
+    disabled = false;
+    //printf(":: !hayCasa\n");
+  }
+}
+
+command encontrarSegundaCasa() {
+  printf(":: encontrarSegundaCasa\n");
+  spawn hayCasa() with maximum trigger 2;
+}
+
+goal seguirLinea() {
+  printf("                                         :: seguirLinea\n");
+  spawn avanzarRueda(0, -1);
+  spawn avanzarRueda(1, 1);
+}
+
+goal llevarPizza() {
+  spawn encontrarSegundaCasa();
+  spawn seguirLinea()
+    with terminate at encontrarSegundaCasa execution completed;
+
+  spawn setVelocidadMotor(0, 0) with disable until seguirLinea execution completed;
+  spawn setVelocidadMotor(1, 0) with disable until seguirLinea execution completed;
+}
+
+int main()
+{
+  TDL_Initialize();
+  printf(":: llevarPizza\n");
+  spawn llevarPizza() with wait;
+  printf(":: llevePizza!\n");
+}
+
