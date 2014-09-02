@@ -7,42 +7,121 @@ Haskell genera codigo de bajo nivel.
 
  - Codigo se interpreta en la VM.
 
-
 Threads en la VM:
 
 Cada Task se comporta como un thread.
 
 El task puede estar en varios estados:
- - Deshabilitado
+ - Bloqueado
  - Corriendo
- -
+ - Finalizado
  
 Ejemplo de programa:
 --------------------
 
 Tipos basicos:
   Bool: True | False
-  Int: x in { -1
+  Int
+  Float
 
-Input Color color-izquierdo
-Input Color color-derecho
-Input Distance distancia-casa
-Output Motor motor-izquierdo
-Output Motor motor-derecho
-
-var EsBlanco = function(Color c):
-    return c == 0
-
-//setVelocidad :: Motor x Velocidad -> Motor
-
-type Motor {
-  float setVelocidad(float velocidad)
+Type Motor {
+  >>: a -> mem(x)
 }
 
-type ColorSensor {
-  colors: [WHITE, BLACK],
-  get_color: function() {
-    
+Inputs:
+  Color color-izquierdo
+  Color color-derecho
+  Distance distancia-casa
+Outputs:
+  Motor motor-izquierdo
+  Motor motor-derecho
+
+
+esBlanco: Color IO() -> bool
+color -> (color < 0.2)
+
+setVelocidad: motor x float -> motor
+m, v -> (v >> m)
+
+Type ColorSensor : Sensor {
+  get: function() {
+    //retorna el valor leido
   }
 }
 
+Function hayCasa (Distance d): Bool
+  return (d.get_meters() < 10.0)
+
+Tarea contarCasas() {
+  property cuenta = 0
+  viendo = False
+
+  while (True):
+    if hayCasa(distance):
+      if not viendo:
+        viendo = True
+        cuenta = cuenta + 1
+    else:
+      viendo = False
+    sleep(2)
+}
+
+#La tarea termina cuando sus hijas terminen.
+Tarea encontrarSegundaCasa {
+  t: contarCasas()
+  |= t.cuenta == 2 -> Finished(t)
+  run(t)
+}
+
+Tarea seguirLinea {
+
+}
+
+
+monitor <ident> lparen arglist rparen constraints lcurly block rcurly
+
+
+Predicados:
+===========
+
+Existen tres estados posibles de las tareas,
+Ejecutando, Bloqueado, Finalizado.
+
+Se pueden expresar predicados para especificar el orden entre las mismas.
+Existen tres predicados básicos que indican el estado de la tarea:
+ Ejecutando, Bloqueado, Finalizado.
+Por ejemplo, "Ejecutando(t)" significa que la tarea "t" está en estado
+ejecutando.
+
+Ejemplos:
+"Bloquear la tarea t2 cuando la tarea t1 este lista."
+Listo(t1) -> Bloqueado(t2)
+
+"Ejecutar la tarea t2 cuando la tarea t1 finalice."
+Finalizado(t1) -> Ejecutando(t2)
+
+"Bloquear la tarea t3 cuando la tarea t1 finalice y la tarea t2 esté
+bloqueada"
+Finalizado(t1) ^ Bloqueado(t2) -> Bloqueada(t3)
+
+Hay axiomas sobre las tareas que se cumplen:
+++++++++++++++++++++++++++++++++++++++++++++
+
+La tarea no está finalizada hasta finalicen sus hijas:
+
+\forall t (\exists th in (Hijas(t)) not Finalizado(th) -> not Finalizado(t))
+
+Casi equivalente es decir, si finaliza la tarea padre, finalizan sus hijas:
+
+\forall t (Finalizado(t) -> \forall th in Hijas(t) Finalizado(th))
+
+Los estados de las tareas son exclusivos:
+
+\forall t (Finalizado(t) -> not (Bloqueado(t) or Ejecutando(t)))
+\forall t (Bloqueado(t) -> not (Ejecutando(t) or Finalizado(t)))
+\forall t (Ejecutando(t) -> not (Bloqueado(t) or Finalizado(t)))
+
+Definicion formal:
+------------------
+
+Task = { ti : i \in N }

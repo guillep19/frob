@@ -1,96 +1,176 @@
 
-Ideas:
+\section{Diseño del lenguaje}
 
- - Definir estructuras del lenguaje. Tipos de datos, funciones, estructuras globales del lenguaje.
- - Crear una vm que use bytecode para correr.
- - Que la vm se pueda usar en modo intérprete, conectado a una pc.
- - Que se pueda claro, usar en modo standalone.
- - La vm es dedicada, es como un OS. Ésto por ser objetivo usarlo en plataformas de bajo poder de cómputo.
+\subsection{Diseño general}
+
+El lenguaje presentado intenta simplificar al programador la creación
+y el orden de ejecución de diversas tareas concurrentemente.
+Las construcciones principales del lenguaje son llamadas \emph{Tareas}.
+Las tareas se declaran, junto con restricciones entre las mismas, y
+al ejecutarse, cada una lo hace en un hilo independiente de ejecución.
+Cada tarea, al declararse comienza bloqueada y es ejecutada con la
+instrucción \emph{Start}, por ejemplo $Start(t1)$ asumiendo que $t1$ fue
+declarada previamente, comienza la tarea $t1$.
+
+Las tareas tienen tres estados posibles, \emph{Bloqueado},
+\emph{Ejecutando} y \emph{Finalizado}, dichos estados pueden ser usados
+para ordenar las tareas, los posibles predicados se detallan a
+continuación.
+
+\subsection{Predicados}
+
+Existen tres estados posibles de las tareas,
+Ejecutando, Bloqueado, Finalizado.
+
+Se pueden expresar predicados para especificar el orden entre las mismas.
+Existen tres predicados básicos que indican el estado de la tarea: Ejecutando, Bloqueado, Finalizado.
+Por ejemplo, \emph{Ejecutando(t)} significa que la tarea \emph{t} está en estado ejecutando.
+
+Ejemplos:
+
+\begin{itemize}
+\item
+``Bloquear la tarea t2 cuando la tarea t1 este lista."
+
+$\models Listo(t1) \rightarrow Bloqueado(t2)$
+
+\item
+``Ejecutar la tarea t2 cuando la tarea t1 finalice."
+
+$\models Finalizado(t1) \rightarrow Ejecutando(t2)$
+
+\item
+``Bloquear la tarea t3 cuando la tarea t1 finalice y la tarea t2 esté
+bloqueada"
+
+$\models Finalizado(t1) \land Bloqueado(t2) \rightarrow Bloqueada(t3)$
+
+\end{itemize}
+
+Hay axiomas sobre las tareas que se cumplen:
+--------------------------------------------
+
+La tarea no está finalizada hasta finalicen sus hijas:
+
+$\forall t (\exists th \in (Hijas(t)) \neg Finalizado(th) \rightarrow \neg Finalizado(t))$
+
+Casi equivalente es decir, si finaliza la tarea padre, finalizan sus hijas:
+
+$\forall t :: (Finalizado(t) \rightarrow \forall th : th \in Hijas(t) : Finalizado(th))$
+
+Los estados de las tareas son exclusivos:
+
+\begin{itemize}
+\item
+$\forall t (Finalizado(t) \rightarrow \neg (Bloqueado(t) \lor Ejecutando(t)))$
+\item
+$\forall t (Bloqueado(t) \rightarrow \neg (Ejecutando(t) \lor Finalizado(t)))$
+\item
+$\forall t (Ejecutando(t) \rightarrow \neg (Bloqueado(t) \lor Finalizado(t)))$
+\end{itemize}
+
+\subsection{Sintaxis, Gramática}
+
+\begin{verbatim}
+
+ident = [_a-z][_a-zA-Z]*
+
+params =
+       | ident params
+
+param-decl = "(" params ")"
+
+task-decl = "Task" ident "{" task-block "}"
+
+task-block:
+           | task-elem
+           | "|=" task-constraint
+           | "Start" task-start
+           | func-call
+           | task-block
+
+task-constraint: guard-constraint "->" action-constraint
+
+guard-constraint:
+                  | not guard-constraint
+                  | bool-guard
+                  | basic-constraint
+                  | basic-constraint "and" guard-constraint
+                  | basic-constraint "or" guard-constraint
+
+action-constraint:
+                  | basic-constraint
+                  | basic-constraint and action-constraint
+
+basic-constraint: "Blocked" ident
+                | "Running" ident
+                | "Finished" ident
 
 
-- Definir tareas.
-- Precedencia entre tareas.
-- Pasaje de datos entre tareas.
+func-decl: "Function" ident param-decl "{" func-block "}"
 
-Paralelizar por defecto.
+\end{verbatim}
 
-Estados:
-Pausado, Habilitado, En curso, Habilitado.
+\subsection{Ejemplo}
 
--> Pausado
+\begin{verbatim}
 
--> Pausado -> Habilitado
--> Habilitado -> Pausado
--> Habilitado -> En curso
--> En curso -> Pausado
--> (En curso, Habilitado, Pausado) -> (Finalizado error, Finalizado ok)
-
-Tareas
-======
-Las tareas tienen 3 estados, Pausado, Ejecutando y Finalizada.
-
-Al pausarse pueden tener un motivo de pausa.
-Al ser creadas se ejecutan libremente, a menos que una restricción
-las detenga.
-
-Restricciones
-=============
-
-Las restricciones entre una tarea y otra se especifican así:
-
-Sean t1 y t2 tareas.
-
-t2.ready = function() { t1.start() }
-t2.finished = function() { t1.finish() }
-t2.start()
-"
-t1.pause = function() {}
-
-Implementación
-==============
-Para implementar a bajo nivel, se puede utilizar el concepto de fork y join.
-
-Se implementa un scheduler capaz de tomar "hilos" de ejecucion,
-los hilos se crean al hacer "fork" y se abandonan al hacer "join".
-
-Scheduler {
-  threads: [
-    {ip: 5, locals: { 'a': 3, ... }, stack: { ... }},
-    {ip: 15, locals: { 'b': 'fruit', ... }, stack: { ... }}
-  ],
-  code: [
-    'ADD 5, r3',
-    'READ 2, r1',
-    'JZ r1, 5',
-    'labelx: FORK 10',
-    'ADD r2, r3',
-    'DEBUG 2'
-    ...
-  ]
+Function hayCasa() {
+  return (read(sensor_distancia) < DISTANCIA_CASA)
 }
-(El código es a modo de ejemplo, puede ser mas alto el nivel)
 
-Para permitir un debug simple, se pueden insertar instrucciones "DEBUG" que hagan que el scheduler detenga la tarea y notifique si es posible.
+Tarea contarCasas() {
+  observable cuenta = 0
+  viendo = False
 
+  While (True) {
+    if not hayCasa() {
+       viendo = False
+    } else if not viendo {
+       viendo = True
+       cuenta = cuenta = 1
+    }
+  }
+}
 
-Pregunta importante
-===================
-Con fork y join, puedo lograr implementar mi lenguaje con las restricciones de TDL?
+Task encontrarSegundaCasa {
+  t: contarCasas()
+  |= t.cuenta == 2 -> Finished(t)
+  start(t)
+}
 
+Task avanzarRueda(numRueda, direccion) {
+  while (True) {
+    velocidad = VELOCIDAD_RUEDA
+    if (read(sensor_color[numRueda]) < THRESHOLD) {
+      velocidad = 0
+    }
+    setVelocidadMotor(numRueda, velocidad * direccion)
+    sleep(0.5)
+  }
+}
 
-Modulos std
-===========
-Read Input
-Write Output
+Task seguirLinea {
+  t1: avanzarRueda(0, -1)
+  t2: avanzarRueda(1, 1)
+}
 
-Diseño de VM
-============
+Function setVelocidadMotor(numMotor, velocidad) {
+  write(motor[numMotor], velocidad)
+}
 
-Stack vs Register
+Task detener {
+  setVelocidadMotor(0, 0)
+  setVelocidadMotor(1, 0)
+}
 
-Stack:
- - JVM, .net, php, python, old javascript engine.
-Register:
- - Lua, Dalvik, new javascript engines.
- - Smaller, faster (30%)
- - RISC.
+Task main {
+  t1: encontrarSegundaCasa
+  t2: seguirLinea
+  |= Finished(t1) -> Finished(t2)
+  t3: detener
+  |= Finished(t1) ^ Finished(t2) -> Running(t3)
+  Start(t1, t2)
+}
+
+\end{verbatim}

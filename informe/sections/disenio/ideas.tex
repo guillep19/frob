@@ -1,0 +1,96 @@
+
+Ideas:
+
+ - Definir estructuras del lenguaje. Tipos de datos, funciones, estructuras globales del lenguaje.
+ - Crear una vm que use bytecode para correr.
+ - Que la vm se pueda usar en modo intérprete, conectado a una pc.
+ - Que se pueda claro, usar en modo standalone.
+ - La vm es dedicada, es como un OS. Ésto por ser objetivo usarlo en plataformas de bajo poder de cómputo.
+
+
+- Definir tareas.
+- Precedencia entre tareas.
+- Pasaje de datos entre tareas.
+
+Paralelizar por defecto.
+
+Estados:
+Pausado, Habilitado, En curso, Habilitado.
+
+-> Pausado
+
+-> Pausado -> Habilitado
+-> Habilitado -> Pausado
+-> Habilitado -> En curso
+-> En curso -> Pausado
+-> (En curso, Habilitado, Pausado) -> (Finalizado error, Finalizado ok)
+
+Tareas
+======
+Las tareas tienen 3 estados, Pausado, Ejecutando y Finalizada.
+
+Al pausarse pueden tener un motivo de pausa.
+Al ser creadas se ejecutan libremente, a menos que una restricción
+las detenga.
+
+Restricciones
+=============
+
+Las restricciones entre una tarea y otra se especifican así:
+
+Sean t1 y t2 tareas.
+
+t2.ready = function() { t1.start() }
+t2.finished = function() { t1.finish() }
+t2.start()
+"
+t1.pause = function() {}
+
+Implementación
+==============
+Para implementar a bajo nivel, se puede utilizar el concepto de fork y join.
+
+Se implementa un scheduler capaz de tomar "hilos" de ejecucion,
+los hilos se crean al hacer "fork" y se abandonan al hacer "join".
+
+Scheduler {
+  threads: [
+    {ip: 5, locals: { 'a': 3, ... }, stack: { ... }},
+    {ip: 15, locals: { 'b': 'fruit', ... }, stack: { ... }}
+  ],
+  code: [
+    'ADD 5, r3',
+    'READ 2, r1',
+    'JZ r1, 5',
+    'labelx: FORK 10',
+    'ADD r2, r3',
+    'DEBUG 2'
+    ...
+  ]
+}
+(El código es a modo de ejemplo, puede ser mas alto el nivel)
+
+Para permitir un debug simple, se pueden insertar instrucciones "DEBUG" que hagan que el scheduler detenga la tarea y notifique si es posible.
+
+
+Pregunta importante
+===================
+Con fork y join, puedo lograr implementar mi lenguaje con las restricciones de TDL?
+
+
+Modulos std
+===========
+Read Input
+Write Output
+
+Diseño de VM
+============
+
+Stack vs Register
+
+Stack:
+ - JVM, .net, php, python, old javascript engine.
+Register:
+ - Lua, Dalvik, new javascript engines.
+ - Smaller, faster (30%)
+ - RISC.
