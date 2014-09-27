@@ -1,5 +1,8 @@
 
 *.o
+*.hi
+*.aux
+*.dvi
 *.out
 *.swp
 *.log
