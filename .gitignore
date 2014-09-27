@@ -2,6 +2,8 @@
 *.o
 *.hi
 *.aux
+*.blg
+*.bbl
 *.dvi
 *.out
 *.swp
