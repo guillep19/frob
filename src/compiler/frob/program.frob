@@ -1,0 +1,68 @@
+-- Primer programa de prueba de lenguaje FROB.
+
+Function hay_casa() {
+  Return (read(sensor_distancia) < DISTANCIA_CASA)
+}
+
+-- Cuenta casas
+Task contarCasas() {
+  Observable cuenta = 0
+  Var viendo = False
+
+  Loop {
+    If Not hay_casa() {
+       viendo = False
+    } else If Not viendo {
+       viendo = True
+       cuenta = cuenta + 1
+    }
+    Sleep(0.5)
+  }
+}
+
+-- Cuenta casas hasta que llegue a 2
+Task encontrarSegundaCasa {
+  t: contarCasas()
+  |= t.cuenta == 2 -> Finished(t)
+  Start(t)
+}
+
+-- Avanza rueda mientras vea el color correcto.
+Task avanzarRueda(numRueda, direccion) {
+  Loop {
+    velocidad = VELOCIDAD_RUEDA
+    if (read(sensor_color[numRueda]) < THRESHOLD) {
+      velocidad = 0
+    }
+    setVelocidadMotor(numRueda, velocidad * direccion)
+    Sleep(0.5)
+  }
+}
+
+--
+Task seguirLinea {
+  t1: avanzarRueda(0, -1)
+  t2: avanzarRueda(1, 1)
+}
+
+--
+Function setVelocidadMotor(numMotor, velocidad) {
+  write(motor[numMotor], velocidad)
+}
+
+-- Detener los motores.
+Task detener {
+  setVelocidadMotor(0, 0)
+  setVelocidadMotor(1, 0)
+}
+
+--
+Task main {
+  t1: encontrarSegundaCasa
+  t2: seguirLinea
+  |= Finished(t1) -> Finished(t2)
+  t3: detener
+  |= Finished(t1) And Finished(t2) -> Running(t3)
+  Start(t1, t2)
+}
+

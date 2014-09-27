@@ -1,0 +1,95 @@
+
+ident = [_a-z][_a-zA-Z]*
+
+params =
+       | ident params
+
+param-decl = "(" params ")"
+
+task-decl = "Task" ident "{" task-block "}"
+
+task-block:
+           | task-elem
+           | "|=" task-constraint
+           | "Start" task-start
+           | func-call
+           | task-block
+
+task-constraint: guard-constraint "->" action-constraint
+
+guard-constraint:
+                  | not guard-constraint
+                  | bool-guard
+                  | basic-constraint
+                  | basic-constraint "and" guard-constraint
+                  | basic-constraint "or" guard-constraint
+
+action-constraint:
+                  | basic-constraint
+                  | basic-constraint and action-constraint
+
+basic-constraint: "Blocked" ident
+                | "Running" ident
+                | "Finished" ident
+
+
+func-decl: "Function" ident param-decl "{" func-block "}"
+
+Function hayCasa() {
+  return (read(sensor_distancia) < DISTANCIA_CASA)
+}
+
+Task contarCasas() {
+  observable cuenta = 0
+  viendo = False
+
+  loop {
+    if not hayCasa() {
+       viendo = False
+    } else if not viendo {
+       viendo = True
+       cuenta = cuenta = 1
+    }
+  }
+}
+
+Task encontrarSegundaCasa {
+  t: contarCasas()
+  |= t.cuenta == 2 -> Finished(t)
+  start(t)
+}
+
+Task avanzarRueda(numRueda, direccion) {
+  loop {
+    velocidad = VELOCIDAD_RUEDA
+    if (read(sensor_color[numRueda]) < THRESHOLD) {
+      velocidad = 0
+    }
+    setVelocidadMotor(numRueda, velocidad * direccion)
+    sleep(0.5)
+  }
+}
+
+Task seguirLinea {
+  t1: avanzarRueda(0, -1)
+  t2: avanzarRueda(1, 1)
+}
+
+Function setVelocidadMotor(numMotor, velocidad) {
+  write(motor[numMotor], velocidad)
+}
+
+Task detener {
+  setVelocidadMotor(0, 0)
+  setVelocidadMotor(1, 0)
+}
+
+Task main {
+  t1: encontrarSegundaCasa
+  t2: seguirLinea
+  |= Finished(t1) -> Finished(t2)
+  t3: detener
+  |= Finished(t1) ^ Finished(t2) -> Running(t3)
+  Start(t1, t2)
+}
+
