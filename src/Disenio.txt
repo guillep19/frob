@@ -53,17 +53,20 @@ Function hayCasa (Distance d): Bool
   return (d.get_meters() < 10.0)
 
 Tarea contarCasas() {
-  property cuenta = 0
-  viendo = False
+  property cuenta = 0;
+  viendo = False;
 
-  while (True):
-    if hayCasa(distance):
-      if not viendo:
-        viendo = True
-        cuenta = cuenta + 1
-    else:
-      viendo = False
+  loop {
+    if hayCasa(distance) {
+      if not viendo {
+        viendo = True;
+        cuenta = cuenta + 1;
+      }
+    } else {
+      viendo = False;
+    }
     sleep(2)
+  }
 }
 
 #La tarea termina cuando sus hijas terminen.
@@ -78,48 +81,8 @@ Tarea seguirLinea {
 }
 
 
-monitor <ident> lparen arglist rparen constraints lcurly block rcurly
+Task ident args lcurly complex-block rcurly
 
-
-Predicados:
-===========
-
-Existen tres estados posibles de las tareas,
-Ejecutando, Bloqueado, Finalizado.
-
-Se pueden expresar predicados para especificar el orden entre las mismas.
-Existen tres predicados básicos que indican el estado de la tarea:
- Ejecutando, Bloqueado, Finalizado.
-Por ejemplo, "Ejecutando(t)" significa que la tarea "t" está en estado
-ejecutando.
-
-Ejemplos:
-"Bloquear la tarea t2 cuando la tarea t1 este lista."
-Listo(t1) -> Bloqueado(t2)
-
-"Ejecutar la tarea t2 cuando la tarea t1 finalice."
-Finalizado(t1) -> Ejecutando(t2)
-
-"Bloquear la tarea t3 cuando la tarea t1 finalice y la tarea t2 esté
-bloqueada"
-Finalizado(t1) ^ Bloqueado(t2) -> Bloqueada(t3)
-
-Hay axiomas sobre las tareas que se cumplen:
-++++++++++++++++++++++++++++++++++++++++++++
-
-La tarea no está finalizada hasta finalicen sus hijas:
-
-\forall t (\exists th in (Hijas(t)) not Finalizado(th) -> not Finalizado(t))
-
-Casi equivalente es decir, si finaliza la tarea padre, finalizan sus hijas:
-
-\forall t (Finalizado(t) -> \forall th in Hijas(t) Finalizado(th))
-
-Los estados de las tareas son exclusivos:
-
-\forall t (Finalizado(t) -> not (Bloqueado(t) or Ejecutando(t)))
-\forall t (Bloqueado(t) -> not (Ejecutando(t) or Finalizado(t)))
-\forall t (Ejecutando(t) -> not (Bloqueado(t) or Finalizado(t)))
 
 Definicion formal:
 ------------------
