@@ -1,39 +1,43 @@
 
 const DISTANCIA_CASA 10
 
-const Blocked 1
-const Running 2
-const Finished 3
+const Blocked 0
+const Running 1
+const Finished 2
 
-use digital-in sensor_distancia 0x....
-use digital-in sensor_color_izq 0x....
-use digital-in sensor_color_der 0x....
-use digital-out motor_izq 0x....
-use digital-out motor_der 0x....
+use digital-in sensor_distancia 1
+use digital-in sensor_color_izq 2
+use digital-in sensor_color_der 3
+use digital-out motor_izq 4
+use digital-out motor_der 5
 
 hayCasa:
-  read sensor_distancia
-  push DISTANCIA_CASA
-  binary_sub
-  ret
+  read 1 //sensor_distancia
+  push 10 //DISTANCIA_CASA
+  binary_sub //DISTANCIA_CASA - sensor_distancia
+  return
 
 contarCasas:
-  decl cuenta
-  decl viendo
+  push_var 0 //contarCasas.cuenta
+  push_var 1 //contarCasas.viendo
   push 0
-  store cuenta
+  write_var 0 //contarCasas.cuenta
   push 0
-  store viendo
+  write_var 0 //contarCasas.viendo
 loop:
   call hayCasa
-  pop %r1, (%sp)
-  neg %r1
-  jmpz loop_else
-  load viendo False
-  jmp loop_if_end
-  loop_else: load viendo True
-  add cuenta cuenta 1
-
-  loop_if_end: jmp loop
-
+  neg
+  jump_zero loop_else
+  push 0 //False
+  write_var 1 // viendo = False
+  jump loop_if_end
+loop_else:
+  push 1 //True
+  write_var 1 // viendo = True
+  push 0 //cuenta
+  push 1
+  binary_add //cuenta + 1
+  write_var 0 //cuenta = cuenta + 1
+loop_if_end:
+  jmp loop
 
