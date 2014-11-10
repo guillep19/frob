@@ -1,0 +1,48 @@
+
+La máquina virtual va a ser basada en stack. Ésto significa
+que las operaciones van a tomar sus argumentos del stack y
+colocar resultados en el mismo.
+
+add: *sp++ = *sp-- + *sp--
+sub: *sp++ = *sp-- - *sp--
+mul: *sp++ = *sp-- * *sp--
+div: *sp++ = *sp-- / *sp--
+dup: *sp++ = *sp
+pop: sp--
+inc: *sp += 1
+dec: *sp -= 1
+
+También existe un espacio de memoria, donde se pueden
+guardar y cargar variables. Las variables se identifican con
+un entero entre 0 y 255. Cada variable tiene un largo de 16 bit
+y el único tipo es entero sin signo (rango de −32,768 a 32,767).
+Las operaciones para manipular variables son:
+
+load_var: *sp++ = variables[inm]
+store_var: variables[inm] = *sp--
+
+Existen en la máquina entradas y salidas predefinidas,
+el máximo de cada una de ellas es 256 (numeradas de 0 a 255).
+Las entradas se pueden habilitar/deshabilitar usando las instrucciones:
+
+enable: inputs[inm] = 1
+disable: inputs[inm] = 0
+
+Las salidas se pueden acceder con la instruccion:
+
+out: addr = *sp-- *sp-- (si son mas de 16bit, los tiene que
+                                   sacar de sp tambien)
+
+Program memory: 32 KB 
+RAM: 2048 bytes
+EEPROM: 256
+
+----------------------------
+El código se carga en una constante global, un array de tipo WORD.
+De ésta manera el mismo se ubica en la memoria de programa.
+El código de la máquina virtual, junto al código del
+programa a ejecutar no debe exceder los 32 KB.
+
+----------------------------
+
+
