@@ -18,8 +18,8 @@ hayCasa:
   return
 
 contarCasas:
-  push_var 0 //contarCasas.cuenta
-  push_var 1 //contarCasas.viendo
+  var 0 //contarCasas.cuenta
+  var 1 //contarCasas.viendo
   push 0
   write_var 0 //contarCasas.cuenta
   push 0

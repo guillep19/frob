@@ -1,5 +1,7 @@
 {
-module Main (main) where
+module Tokens where
+
+import Data
 }
 
 %wrapper "basic"
@@ -30,34 +32,3 @@ tokens :-
   $digit+                          { \s -> Int (read s) }
   [\=\+\-\*\,\{\}\(\)\<\>\:\[\]\.] { \s -> Sym (head s) }
   $alpha [$alpha $digit \_]*       { \s -> Var s }
-
-{
--- Each action has type :: String -> Token
-
--- The token type:
-data Token =
-  Function         |
-  Return           |
-  Task             |
-  Constraint_I     |
-  Constraint_Arrow |
-  Observable       | 
-  Loop             | 
-  If               | 
-  Else             | 
-  Not              | 
-  And              | 
-  Or               | 
-  TFalse           | 
-  TTrue            | 
-  Start            |
-  Sym Char         |
-  Var String       |
-  Float Float      |
-  Int Int     
-  deriving (Eq,Show)
-
-main = do
-  s <- getContents
-  print (alexScanTokens s)
-}
