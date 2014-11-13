@@ -5,10 +5,6 @@
 typedef uint8_t BYTE;
 typedef uint16_t WORD;
 typedef const WORD CODE[];
-CODE code = {0x0106, 0x0200, 0x0300}; //10 bytes
-
-BYTE stack[16]; //128 bytes
-BYTE* sp = stack;
 
 #define halt 0x00
 #define add 0x01
@@ -27,13 +23,25 @@ BYTE* sp = stack;
 #define disable 0x0e //inputs[inmediate] = 0
 #define write 0x0f //output[inmediate] = 
 
+CODE code = {
+  add << 8 | 1,
+  sub << 8 | 5,
+  push << 8 | 16,
+  jump << 8,
+  sub << 8 | 4,
+  halt << 8 | 0
+}; //12 bytes
+
+BYTE stack[16]; //128 bytes
+BYTE* sp = stack;
+
 BYTE running = 1;
 
-void halt() {
+void f_halt() {
   running = 0;
 }
 
-void add() {
+void f_add() {
   BYTE a = *sp;
   sp--;
   
@@ -43,22 +51,40 @@ void add() {
 //  return word;
 //}
 
-//typedef const char STRING[32];
-//STRING labels[128] = {
-//  "halt", "add", "sub", "push", "pop", "push_var",
-//  "jump_le", "jump_ge", "jump_l", "jump_g", "jump_neq", "jump"
-//};
+typedef const char STRING[32];
+STRING labels[] = {
+    "halt",
+    "add",
+    "sub",
+    "push",
+    "pop",
+    "push_var",
+    "jump_le",
+    "jump_ge",
+    "jump_l",
+    "jump_g",
+    "jump_eq",
+    "jump_neq",
+    "jump",
+    "enable",
+    "disable",
+    "write"
+};
 
-//void print_instruction(WORD instruction) {
- // BYTE high = (0xff00 & instruction) >> 8;
- // BYTE low = 0x00ff & instruction;
- // printf("%02x %02x %s(%d)\n", high, low, labels[high], low);
-//}
+void print_instruction(WORD instruction) {
+  BYTE high = (0xff00 & instruction) >> 8;
+  BYTE low = 0x00ff & instruction;
+  printf("%02x %02x %s(%d)\n", high, low, labels[high], low);
+}
 
-//void print_code(CODE code) {
-  //printf("Code:\n---------------\n");
-  //printf("---------------\n");
-//}
+void print_code(CODE code) {
+  printf("Code:\n---------------\n");
+  WORD* p;
+  for(p = (WORD*) code; *p ; p++) {
+    print_instruction(*p);
+  };
+  printf("---------------\n");
+}
 
 //void run(CODE code) {
   //printf("Running...\n");
@@ -68,7 +94,7 @@ int main(int argc, char* argv[]) {
   //WORD inst = instruction(sub, 6);
   //code[0] = (WORD)inst;
   //print_instruction(inst);
-  //print_code(code);
+  print_code(code);
   //run(code);
   return 0;
 }
