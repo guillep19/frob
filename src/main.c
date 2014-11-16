@@ -23,15 +23,7 @@ typedef const WORD CODE[];
 #define disable 0x0e //inputs[inmediate] = 0
 #define write 0x0f //output[inmediate] = 
 
-CODE code = {
-  add << 8 | 1,
-  sub << 8 | 5,
-  push << 8 | 16,
-  jump << 8,
-  sub << 8 | 4,
-  halt << 8 | 0
-}; //12 bytes
-
+#include "vmcode.c"
 BYTE stack[16]; //128 bytes
 BYTE* sp = stack;
 
