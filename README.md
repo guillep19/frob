@@ -7,6 +7,12 @@ Proyecto de grado - Guillermo Pacheco - Facultad de Ingeniería - UdelaR
 Noticias
 --------
 
+* Lunes 9-03-2015:
+  Implementación de máquina virtual en ANSI C.
+
+* Viernes 6-03-2015:
+  Termino definición de vm y comienzo implementación de máquina virtual.
+
 * Martes 10-06:
   Armar manuales para programar en C en cada plataforma (y MV).
   Evaluar pblua (lego), elua (varios micro), leJos, mbedlogo. Armar benchmark.
