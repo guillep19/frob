@@ -1,43 +1,18 @@
 
-CODE code = {
-  add << 8 | 1,
-  sub << 8 | 5,
-  push << 8 | 16,
-  jump << 8,
-  sub << 8 | 4,
-  sub << 8 | 4,
-  sub << 8 | 4,
-  sub << 8 | 4,
-  sub << 8 | 4,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  push << 8 | 16,
-  halt << 8 | 0,
-  halt << 8 | 0,
-  halt << 8 | 0,
-  halt << 8 | 0
+extern CODE code = {
+  push | 10,
+  push | 20,
+  add, //30
+  push | 5,
+  sub, //25
+  push | 3,
+  jump, //goto ip+3
+  push | 30,
+  sub, //no lo hace
+  push | 75,
+  add, //25 + 75
+  sub | 4,
+  push | 16,
+  halt
 }; //12 bytes
-
 
