@@ -7,10 +7,13 @@ Proyecto de grado - Guillermo Pacheco - Facultad de Ingeniería - UdelaR
 Noticias
 --------
 
+* Jueves 12-03-2015:
+  Implementación de operaciones y pruebas de vm usando ejemplo. (Avance: 60%).
+
 * Miércoles 11-03-2015:
   Implementación de operaciones y pruebas de vm (Avance: 40%).
 
-* Miércoles 10-03-2015:
+* Martes 10-03-2015:
   Implementación de operaciones (Avance: 20%).
 
 * Lunes 9-03-2015:
