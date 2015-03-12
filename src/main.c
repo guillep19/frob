@@ -152,6 +152,24 @@ void f_write() {
   /* TODO: set flag, to be processed as soon as possible */
 }
 
+void (*functions[])() = {
+  (void*) f_halt,
+  (void*) f_call, (void*) f_ret,
+  (void*) f_start, (void*) f_end,
+  (void*) f_jump, (void*) f_jump_eq,
+  (void*) f_jump_neq, (void*) f_jump_gt, (void*) f_jump_lt,
+  //Binary operators
+  (void*) f_add, (void*) f_sub, (void*) f_div,
+  (void*) f_mul, (void*) f_and, (void*) f_or,
+  //Unary operators
+  (void*) f_neg,
+  //Stack operations
+  (void*) f_push, (void*) f_pop, (void*) f_dup,
+// Memory operations
+  (void*) f_store, (void*) f_load,
+// Input/Output operations
+  (void*) f_read, (void*) f_write
+};
 
 void print_instruction(WORD instruction) {
   BYTE high = (0xff00 & instruction) >> 8;
@@ -194,16 +212,7 @@ void run_vm() {
       if (inm == 0x00ff) { ip++; inm = *ip; }
       printf("%02x %d\n", op_code, inm);
       getchar();
-      switch (op_code) {
-        case halt: f_halt(); break;
-        case push: f_push(); break;
-        case add: f_add(); break;
-        case sub: f_sub(); break;
-        case jump: f_jump(); break;
-        case store: f_store(); break;
-        case load: f_load(); break;
-        default: break;
-      }
+      (functions[op_code])();
       ip++;
     }
   printf("Finished\n");
