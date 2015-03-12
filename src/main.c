@@ -36,7 +36,7 @@
 #define write 0x17 //outputs[inmediate] = *sp--
 
 typedef uint8_t BYTE;
-typedef uint16_t WORD;
+typedef int16_t WORD;
 typedef const WORD CODE[];
 
 #include "vmcode.c"
@@ -56,6 +56,7 @@ WORD instr = 0;
 BYTE op_code = 0;
 WORD inm = 0;
 WORD aux = 0;
+WORD aux2 = 0;
 
 //VM ops
 void f_halt() {
@@ -70,24 +71,30 @@ void f_start() {}
 void f_end() {}
 //Jumps
 void f_jump() {
-  WORD count = *sp--;
-  count--;
-  for (;count>0;count--) {
-    ip++;
-    printf("ip++,");
-  }
-  printf("*ip= %04x\n", *ip);
+  ip += (*sp--) - 1;
+  printf("jump (sp:%d) *ip= %04x\n", *sp, *ip);
 }
 void f_jump_eq() {
-  WORD a = *sp--;
-  if (a == *sp--) {
-    ip = (WORD*) &code[*sp--];
-  }
+  aux = *sp--;
+  if (aux == *sp--) ip += (*sp--) - 1; else sp--;
+  printf("jump_eq (sp:%d) *ip= %04x\n", *sp, *ip);
 }
-void f_jump_neq() { WORD a = *sp--; if (a != *sp--) { ip = (WORD*) &code[*sp--]; } }
-void f_jump_gt() { WORD a = *sp--; if (a > *sp--) { ip = (WORD*) &code[*sp--]; } }
-void f_jump_lt() { WORD a = *sp--; if (a < *sp--) { ip = (WORD*) &code[*sp--]; } }
-//Binay
+void f_jump_neq() {
+  aux = *sp--;
+  if (aux != *sp--) ip += (*sp--) - 1; else sp--;
+  printf("jump_neq (sp:%d) *ip= %04x\n", *sp, *ip);
+}
+void f_jump_gt() {
+  aux = *sp--;
+  if (aux > *sp--) ip += (*sp--) - 1; else sp--;
+  printf("jump_gt (sp:%d) *ip= %04x\n", *sp, *ip);
+}
+void f_jump_lt() {
+  aux = *sp--;
+  if (aux < *sp--) ip += (*sp--) - 1; else sp--;
+  printf("jump_lt (sp:%d) *ip= %04x\n", *sp, *ip);
+}
+//Binary
 void f_add() {
   aux = *sp--; *sp = *sp + aux;
   printf("add: %d\n", *sp);
@@ -134,7 +141,7 @@ void f_dup() {
 //Memory operations
 void f_store() {
   globals[inm] = *sp--;
-  printf("store: %d globals[%d]=%d\n", *sp, inm, globals[inm]);
+  printf("store: (sp:%d) globals[%d]=%d\n", *sp, inm, globals[inm]);
 }
 void f_load() {
   *++sp = globals[inm];
@@ -142,13 +149,14 @@ void f_load() {
 }
 //Input/Output operations
 void f_read() {
-  inputs[inm] = ip;
-  /* TODO: move ip to next ready thread */
-  /* TODO: clear sp */
-  /* TODO: this should be here? or should it be in run_vm? */
+  inputs[globals[inm]] = ip;
+  running = 0;
+  printf("read: (sp:%d) inputs[globals[%d]==%d] == %p", 
+         *sp, inm, globals[inm], inputs[globals[inm]]);
 }
 void f_write() {
   outputs[inm] = *sp--;
+  printf("write: (sp:%d) outputs[%d] == %d", *sp, inm, outputs[inm]);
   /* TODO: set flag, to be processed as soon as possible */
 }
 
