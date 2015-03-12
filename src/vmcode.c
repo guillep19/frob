@@ -2,6 +2,8 @@
 extern CODE code = {
   push << 8 | 10,
   push << 8 | 20,
+  store << 8,
+  load << 8,
   add << 8, //30
   push << 8 | 5,
   sub << 8, //25
