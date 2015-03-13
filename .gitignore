@@ -6,5 +6,7 @@
 *.bbl
 *.dvi
 *.out
-*.swp
 *.log
+*.swp
+*.swn
+*.swo
