@@ -41,11 +41,16 @@ typedef const WORD CODE[];
 
 #include "vmcode.c"
 
+#define MAX_INPUTS 16
+#define MAX_IP_BUFFER 32
+
 WORD stack[128]; //256 bytes
 WORD globals[64]; //128 bytes
-WORD* inputs[16]; //32 bytes
+WORD* inputs[MAX_INPUTS] = {0}; //32 bytes
 WORD outputs[16]; //32 bytes
-WORD ip_buffer[32]; //64 bytes
+WORD* ip_buffer[MAX_IP_BUFFER] = {0}; //64 bytes
+BYTE ip_buffer_first = 0;
+BYTE ip_buffer_last = 0;
 //Total:1/2 kb (arduino nano tiene 2kb)
 WORD* sp = stack;
 WORD* ip;
@@ -149,14 +154,14 @@ void f_load() {
 }
 //Input/Output operations
 void f_read() {
-  inputs[globals[inm]] = ip;
+  inputs[globals[inm]] = ++ip;
   running = 0;
   printf("read: (sp:%d) inputs[globals[%d]==%d] == %p", 
          *sp, inm, globals[inm], inputs[globals[inm]]);
 }
 void f_write() {
   outputs[inm] = *sp--;
-  printf("write: (sp:%d) outputs[%d] == %d", *sp, inm, outputs[inm]);
+  printf("write: (sp:%d) outputs[%d] == %d\n", *sp, inm, outputs[inm]);
   /* TODO: set flag, to be processed as soon as possible */
 }
 
@@ -209,20 +214,69 @@ void print_stack() {
   printf("\n------\n");
 }
 
+void run_thread() {
+  running = 1;
+  while (running) {
+    instr = *ip;
+    op_code = (0xff00 & instr) >> 8;
+    inm = 0x00ff & instr;
+    if (inm == 0x00ff) { ip++; inm = *ip; }
+    printf("%02x %d\n", op_code, inm);
+    getchar();
+    (functions[op_code])();
+    ip++;
+  }
+  ip = 0;
+}
+
+
+WORD input_iterator = 0;
+WORD started = 0;
+WORD helper_iterator = 0; //TODO: Remove this variable, its used as stub value for input.
+
+void read_input() {
+  /* Finds out whether there is an input waiting to
+     be read. If there is any, it reads it, pushes
+     the result in the stack, and returns the ip
+     stored in inputs[index], else returns NULL */
+  started = input_iterator;
+  do {
+    input_iterator = (input_iterator + 1) % MAX_INPUTS;
+    ip = inputs[input_iterator];
+    printf("ip == inputs[%d] == %p\n", input_iterator, ip);
+  } while ((!ip) && (input_iterator != started));
+  if (ip) {
+    inputs[input_iterator] = 0;
+    /*TODO; This code is a stub only to mimic a predictable input.REMOVE IT */
+    WORD value = 0;
+    if (++helper_iterator == 4) value = 1;
+    sp++; *sp = value;
+    printf("TODO: read value from (%d), (stub) pushed %d\n", input_iterator, value);
+    /* End of stub. TODO: Implement the real READ */
+  }
+}
 
 void run_vm() {
   printf("Running vm....\n");
   ip = (WORD*) code;
-    while (running) {
-      instr = *ip;
-      op_code = (0xff00 & instr) >> 8;
-      inm = 0x00ff & instr;
-      if (inm == 0x00ff) { ip++; inm = *ip; }
-      printf("%02x %d\n", op_code, inm);
-      getchar();
-      (functions[op_code])();
-      ip++;
+  while (ip) {
+    run_thread();
+    if (!ip) {
+      printf("Looking for a ready thread...\n");
+      //Maybe I could have assumed ip = null..
+      if (ip_buffer_first != ip_buffer_last) {
+        //There are threads ready to run
+        ip = ip_buffer[ip_buffer_first++];
+        printf("Thread %d took control.\n", ip_buffer_first - 1);
+      } else {
+        printf("No threads ready to run.\n");
+      }
     }
+    if (!ip) {
+      printf("Searching for a thread waiting to read...\n");
+      read_input();
+    }
+  }
   printf("Finished\n");
 }
 
