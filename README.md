@@ -7,6 +7,11 @@ Proyecto de grado - Guillermo Pacheco - Facultad de Ingeniería - UdelaR
 Noticias
 --------
 
+* Sábado 14-03-2015:
+  - Logré configurar un entorno y cross compilar la máquina para la placa mbed.
+  - Probé con el ejemplo en bytecode, debuggear desde mi pc la ejecución por
+    el puerto serial, y que encienda un led.
+
 * Viernes 13-03-2015:
   - Implementación de threading y ceder control al pedir input.
   - Tengo listo un ejemplo escrito en bytecode funcionando, que enciende un led al apretar un botón.
