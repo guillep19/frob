@@ -1,5 +1,9 @@
-#include <stdio.h>
-#include <stdint.h>
+//#include <stdio.h>
+//#include <stdint.h>
+
+#include "mbed.h"
+DigitalOut myled(LED1);
+Serial pc(USBTX, USBRX); // tx, rx
 
 //VM ops
 #define halt 0x00
@@ -20,8 +24,8 @@
 #define sub 0x0B //a=*sp--;*sp -= a;
 #define div 0x0C //a=*sp--;*sp = *sp / a;
 #define mul 0x0D //a=*sp--;*sp = *sp * a;
-#define and 0x0E //a=*sp--;*sp = *sp & a;
-#define or 0x0F //a=*sp--;*sp = *sp | a;
+#define op_and 0x0E //a=*sp--;*sp = *sp & a;
+#define op_or 0x0F //a=*sp--;*sp = *sp | a;
 //Unary operators
 #define neg 0x10 //*sp = !(*sp)
 //Stack operations
@@ -44,7 +48,7 @@ typedef const WORD CODE[];
 #define MAX_INPUTS 16
 #define MAX_IP_BUFFER 32
 
-WORD stack[128]; //256 bytes
+WORD stack[128] = {0}; //256 bytes
 WORD globals[64]; //128 bytes
 WORD* inputs[MAX_INPUTS] = {0}; //32 bytes
 WORD outputs[16]; //32 bytes
@@ -66,7 +70,7 @@ WORD aux2 = 0;
 //VM ops
 void f_halt() {
   running = 0;
-  printf("halt\n");
+  pc.printf("halt\n");
 }
 //Functions
 void f_call() {}
@@ -77,141 +81,145 @@ void f_end() {}
 //Jumps
 void f_jump() {
   ip += (*sp--) - 1;
-  printf("jump (sp:%d) *ip= %04x\n", *sp, *ip);
+  pc.printf("jump (sp:%d) *ip= %04x\n", *sp, *ip);
 }
 void f_jump_eq() {
   aux = *sp--;
   if (aux == *sp--) ip += (*sp--) - 1; else sp--;
-  printf("jump_eq (sp:%d) *ip= %04x\n", *sp, *ip);
+  pc.printf("jump_eq (sp:%d) *ip= %04x\n", *sp, *ip);
 }
 void f_jump_neq() {
   aux = *sp--;
   if (aux != *sp--) ip += (*sp--) - 1; else sp--;
-  printf("jump_neq (sp:%d) *ip= %04x\n", *sp, *ip);
+  pc.printf("jump_neq (sp:%d) *ip= %04x\n", *sp, *ip);
 }
 void f_jump_gt() {
   aux = *sp--;
   if (aux > *sp--) ip += (*sp--) - 1; else sp--;
-  printf("jump_gt (sp:%d) *ip= %04x\n", *sp, *ip);
+  pc.printf("jump_gt (sp:%d) *ip= %04x\n", *sp, *ip);
 }
 void f_jump_lt() {
   aux = *sp--;
   if (aux < *sp--) ip += (*sp--) - 1; else sp--;
-  printf("jump_lt (sp:%d) *ip= %04x\n", *sp, *ip);
+  pc.printf("jump_lt (sp:%d) *ip= %04x\n", *sp, *ip);
 }
 //Binary
 void f_add() {
   aux = *sp--; *sp = *sp + aux;
-  printf("add: %d\n", *sp);
+  pc.printf("add: %d\n", *sp);
 }
 
 void f_sub() {
   aux = *sp--; *sp = *sp - aux;
-  printf("sub: %d\n", *sp);
+  pc.printf("sub: %d\n", *sp);
 }
 void f_div() {
   aux = *sp--; *sp = *sp / aux;
-  printf("div: %d\n", *sp);
+  pc.printf("div: %d\n", *sp);
 }
 void f_mul() {
   aux = *sp--; *sp = *sp * aux;
-  printf("mul: %d\n", *sp);
+  pc.printf("mul: %d\n", *sp);
 }
 void f_and() {
   aux = *sp--; *sp = *sp & aux;
-  printf("and: %d\n", *sp);
+  pc.printf("and: %d\n", *sp);
 }
 void f_or() {
   aux = *sp--; *sp = *sp | aux;
-  printf("or: %d\n", *sp);
+  pc.printf("or: %d\n", *sp);
 }
 //Unary operators
 void f_neg() {
   *sp = !(*sp);
-  printf("neg: %d\n", *sp);
+  pc.printf("neg: %d\n", *sp);
 }
 //Stack operations
 void f_push() {
   sp++; *sp = inm;
-  printf("push: %d\n", *sp);
+  pc.printf("push: %d\n", *sp);
 }
 void f_pop() {
   sp--;
-  printf("pop: %d\n", *sp);
+  pc.printf("pop: %d\n", *sp);
 }
 void f_dup() {
-  *sp++ = *sp;
-  printf("dup: %d\n", *sp);
+  sp++;
+  *sp = *(sp-1);
+  pc.printf("dup: %d\n", *sp);
 }
 //Memory operations
 void f_store() {
   globals[inm] = *sp--;
-  printf("store: (sp:%d) globals[%d]=%d\n", *sp, inm, globals[inm]);
+  pc.printf("store: (sp:%d) globals[%d]=%d\n", *sp, inm, globals[inm]);
 }
 void f_load() {
   *++sp = globals[inm];
-  printf("load: %d == globals[%d] == %d\n", *sp, inm, globals[inm]);
+  pc.printf("load: %d == globals[%d] == %d\n", *sp, inm, globals[inm]);
 }
 //Input/Output operations
 void f_read() {
   inputs[globals[inm]] = ++ip;
   running = 0;
-  printf("read: (sp:%d) inputs[globals[%d]==%d] == %p", 
+  pc.printf("read: (sp:%d) inputs[globals[%d]==%d] == %p", 
          *sp, inm, globals[inm], inputs[globals[inm]]);
 }
 void f_write() {
   outputs[inm] = *sp--;
-  printf("write: (sp:%d) outputs[%d] == %d\n", *sp, inm, outputs[inm]);
+  pc.printf("write: (sp:%d) outputs[%d] == %d\n", *sp, inm, outputs[inm]);
+  if (inm == 1) {
+    myled = outputs[inm];
+  };
   /* TODO: set flag, to be processed as soon as possible */
 }
 
 void (*functions[])() = {
-  (void*) f_halt,
-  (void*) f_call, (void*) f_ret,
-  (void*) f_start, (void*) f_end,
-  (void*) f_jump, (void*) f_jump_eq,
-  (void*) f_jump_neq, (void*) f_jump_gt, (void*) f_jump_lt,
+  &f_halt,
+  f_call, f_ret,
+  f_start, f_end,
+  f_jump, f_jump_eq,
+  f_jump_neq, f_jump_gt, f_jump_lt,
   //Binary operators
-  (void*) f_add, (void*) f_sub, (void*) f_div,
-  (void*) f_mul, (void*) f_and, (void*) f_or,
+  f_add, f_sub, f_div,
+  f_mul, f_and, f_or,
   //Unary operators
-  (void*) f_neg,
+  f_neg,
   //Stack operations
-  (void*) f_push, (void*) f_pop, (void*) f_dup,
+  f_push, f_pop, f_dup,
 // Memory operations
-  (void*) f_store, (void*) f_load,
+  f_store, f_load,
 // Input/Output operations
-  (void*) f_read, (void*) f_write
+  f_read, f_write
 };
 
 void print_instruction(WORD instruction) {
   BYTE high = (0xff00 & instruction) >> 8;
   BYTE low = 0x00ff & instruction;
-  printf("%02x %02x\n", high, low);
+  pc.printf("%02x %02x\n", high, low);
 }
 
 void print_code() {
-  printf("Code:\n---------------\n");
+  pc.printf("Code:\n---------------\n");
   WORD* ip;
   for(ip = (WORD*) code; *ip ; ip++) {
     print_instruction(*ip);
   };
-  printf("---------------\n");
+  pc.printf("---------------\n");
 }
 
 void print_stack() {
-  printf("Stack:\n");
+  pc.printf("Stack:\n");
   WORD* p = (WORD*) stack;
   if (p != sp) {
     p++;
     for (; p != sp; p++) {
-      printf("-> [%d] ", *p);
+      pc.printf("-> [%d] ", *p);
     };
-    printf("-> [%d] -x", *sp);
+    pc.printf("-> [%d] -x", *sp);
   } else {
-    printf("-x");
+    pc.printf("-x");
   }
-  printf("\n------\n");
+  pc.printf("\n------\n");
 }
 
 void run_thread() {
@@ -221,8 +229,8 @@ void run_thread() {
     op_code = (0xff00 & instr) >> 8;
     inm = 0x00ff & instr;
     if (inm == 0x00ff) { ip++; inm = *ip; }
-    printf("%02x %d\n", op_code, inm);
-    getchar();
+    pc.printf("%02x %d\n", op_code, inm);
+    pc.getc();
     (functions[op_code])();
     ip++;
   }
@@ -243,7 +251,7 @@ void read_input() {
   do {
     input_iterator = (input_iterator + 1) % MAX_INPUTS;
     ip = inputs[input_iterator];
-    printf("ip == inputs[%d] == %p\n", input_iterator, ip);
+    pc.printf("ip == inputs[%d] == %p\n", input_iterator, ip);
   } while ((!ip) && (input_iterator != started));
   if (ip) {
     inputs[input_iterator] = 0;
@@ -251,36 +259,36 @@ void read_input() {
     WORD value = 0;
     if (++helper_iterator == 4) value = 1;
     sp++; *sp = value;
-    printf("TODO: read value from (%d), (stub) pushed %d\n", input_iterator, value);
+    pc.printf("TODO: read value from (%d), (stub) pushed %d\n", input_iterator, value);
     /* End of stub. TODO: Implement the real READ */
   }
 }
 
 void run_vm() {
-  printf("Running vm....\n");
+  pc.printf("Running vm....\n");
   ip = (WORD*) code;
   while (ip) {
     run_thread();
     if (!ip) {
-      printf("Looking for a ready thread...\n");
+      pc.printf("Looking for a ready thread...\n");
       //Maybe I could have assumed ip = null..
       if (ip_buffer_first != ip_buffer_last) {
         //There are threads ready to run
         ip = ip_buffer[ip_buffer_first++];
-        printf("Thread %d took control.\n", ip_buffer_first - 1);
+        pc.printf("Thread %d took control.\n", ip_buffer_first - 1);
       } else {
-        printf("No threads ready to run.\n");
+        pc.printf("No threads ready to run.\n");
       }
     }
     if (!ip) {
-      printf("Searching for a thread waiting to read...\n");
+      pc.printf("Searching for a thread waiting to read...\n");
       read_input();
     }
   }
-  printf("Finished\n");
+  pc.printf("Finished\n");
 }
 
-int main(int argc, char* argv[]) {
+int main() {
   print_stack();
   print_code();
   run_vm();

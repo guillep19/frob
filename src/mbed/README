@@ -1,0 +1,4 @@
+
+Para conectarme al mbed por serial y poder correr la vm en modo debug:
+
+minicom -b 9600 -o -D /dev/ttyACM0
