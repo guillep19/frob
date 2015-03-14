@@ -20,22 +20,20 @@ Ejemplo de programa:
 --------------------
 
 Tipos basicos:
-  Bool: True | False
-  Int
+  Int16
   Float
 
 Type Motor {
-  >>: a -> mem(x)
+  
 }
 
 Inputs:
-  Color color-izquierdo
-  Color color-derecho
-  Distance distancia-casa
+  color-izquierdo 0
+  color-derecho 1
+  distancia-casa 2
 Outputs:
-  Motor motor-izquierdo
-  Motor motor-derecho
-
+  motor-izquierdo 0
+  motor-derecho 1
 
 esBlanco: Color IO() -> bool
 color -> (color < 0.2)
