@@ -7,6 +7,25 @@ Proyecto de grado - Guillermo Pacheco - Facultad de Ingeniería - UdelaR
 Noticias
 --------
 
+* Domingo 15-03-2015:
+  - Tengo probado el ejemplo hecho anteriormente en bytecode, en la placa mbed.
+  - Terminé el diseño a papel de toda la solución.
+    * Diagrama del compilador, los componentes necesarios y los pasos para compilar un programa en alto nivel hasta subirlo a un kit.
+    * Diagrama de máquina virtual. Mostrando como se portaría a diferentes arquitecturas (IOInterface) y el código en común (VM).
+    * Diagrama en bajo nivel del funcionamiento de la vm. Mostrando sus partes, interacciones, y su disposición en la memoria ram o rom. (
+      ip_buffer, input_buffer, output_buffer, stack, sp, ip, code)
+    * Diagrama conceptual de la vm, con sus tres etapas IPO (Input Process Output).
+  - Encontré un mecanismo para facilitar la generación de bytecode desde un lenguaje de alto nivel.
+    * Utilizando python.ast, se puede obtener el AST de un programa en python, con el AST ya definido, es muy fácil generar
+      el código final. La sintaxis de alto nivel, la estoy definiendo con esa idea en mente.
+  - Encontré una idea que puede ser interesante. Pythonect:Dataflow programming language based on python. 
+    http://docs.pythonect.org/en/latest/tutorial/helloworld.html
+    Dataflow programming y FRP se parecen bastante y lo rescaté al ser parte de la idea inicial del proyecto.
+  - Idea de editor web simple.
+  - Falta terminar:
+    * Definición del bytecode a bajo nivel 95%.
+    * Definición del lenguaje de alto nivel 50%.
+
 * Sábado 14-03-2015:
   - Logré configurar un entorno y cross compilar la máquina para la placa mbed.
   - Probé con el ejemplo en bytecode, debuggear desde mi pc la ejecución por
