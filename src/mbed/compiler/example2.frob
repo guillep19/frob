@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#frob
 
 #Inputs
 sensor_distancia = 1
@@ -9,13 +9,10 @@ sensor_color_der = 3
 velocidad_motor_izq = 1
 velocidad_motor_der = 2
 
-#
 # Constantes
-#
 # Al recibir un valor de distancia menor a DISTANCIA_CASA, se considera
 # que se esta frente a una.
 DISTANCIA_CASA = 100
-#
 # Los valores del sensor de color menores e este valor se consideran BLANCO
 UMBRAL_DE_BLANCO = 50 
 
@@ -35,7 +32,7 @@ def task_contar_casas():
       cuenta = cuenta + 1
 
 def es_blanco(color):
-    return color < UMBRAL_DE_BLANCO
+  return color < UMBRAL_DE_BLANCO
 
 ## El camino es negro y el fondo es blanco,  
 ## el robot debe tratar de seguir la linea sin
@@ -55,15 +52,13 @@ def task_seguir_linea():
 
 
 def task_stop_all():
-    vel_izq = 0
-    vel_der = 0
-    write(velocidad_motor_izq, 0)
-    write(velocidad_motor_der, 0)
+  write(velocidad_motor_izq, 0)
+  write(velocidad_motor_der, 0)
 
 def main():
-    start(task_contar_casas)
-    start(task_seguir_linea)
+  start(task_contar_casas)
+  start(task_seguir_linea)
 
-    on_finish(task_contar_casas):
-        stop(task_seguir_linea)
-        start(task_stop_all)
+  with on_finish(task_contar_casas):
+    stop(task_seguir_linea)
+    start(task_stop_all)
