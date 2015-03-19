@@ -7,6 +7,18 @@ Proyecto de grado - Guillermo Pacheco - Facultad de Ingeniería - UdelaR
 Noticias
 --------
 
+* Jueves 19-03-2015:
+  - Implemento 50% del compilador, genero bytecode a partir de alto nivel.
+    Hay que actualizar la
+    implementacion de la vm con cambios que surgieron en el bytecode.
+* Miércoles 18-03-2015:
+  - Creé una pequeña muestra de como sería un "editor" web de grafos que
+    pueden representar los programas en alto nivel (graficamente).
+    Está hecho en javascript, podría ser una buena idea para un frontend.
+* Martes 17-03-2015:
+  - Comienzo la implementación del compilador con python.ast.
+  - Creo ejemplos en el lenguaje de alto nivel para compilar. Implementación
+    del desafío escolar completa.
 * Domingo 15-03-2015:
   - Tengo probado el ejemplo hecho anteriormente en bytecode, en la placa mbed.
   - Terminé el diseño a papel de toda la solución.
