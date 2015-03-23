@@ -55,10 +55,9 @@ def task_stop_all():
   write(velocidad_motor_izq, 0)
   write(velocidad_motor_der, 0)
 
-def main():
-  start(task_contar_casas)
-  start(task_seguir_linea)
+start(task_contar_casas)
+start(task_seguir_linea)
 
-  with on_finish(task_contar_casas):
-    stop(task_seguir_linea)
-    start(task_stop_all)
+with on_finish(task_contar_casas):
+  stop(task_seguir_linea)
+  start(task_stop_all)
