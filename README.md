@@ -7,6 +7,9 @@ Proyecto de grado - Guillermo Pacheco - Facultad de Ingeniería - UdelaR
 Noticias
 --------
 
+* Domingo 22-03-2015:
+  - Implemento 90% del compilador. Faltan detalles.
+  - Probado con ejemplo2.frob.
 * Jueves 19-03-2015:
   - Implemento 50% del compilador, genero bytecode a partir de alto nivel.
     Hay que actualizar la
