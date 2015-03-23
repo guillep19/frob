@@ -268,6 +268,7 @@ def optimize_and_calculate_labels(bytecode):
   # Important: After this transformation, the instructions can not be
   # changed.
   # Returns: (bytecode, labels)
+  globals_uid_gen = iter(xrange(1024))
   optimized = []
   labels = {}
   lineno = 0
@@ -276,15 +277,34 @@ def optimize_and_calculate_labels(bytecode):
     if inst.get('label') is not None:
       labels[inst.get('label')] = lineno
     # TODO: Split code with length > 1 (like push or jump)
+    opcode = inst.get('opcode')
+    if opcode == 'push':
+        length = 2
+        optimized.append({'opcode': 'push'})
+        optimized.append({'value': inst.get('arg')})
+    elif opcode == 'jump' or opcode == 'jump_false':
+        length = 2
+        optimized.append({'opcode': opcode})
+        optimized.append({'value': inst.get('arg')})
+    elif opcode == 'load' or opcode == 'store':
+        var_name = inst.get('arg')
+        if global_index.get(var_name) is None:
+            global_index[var_name] = globals_uid_gen.next() #TODO: Podria hacerlo mientras recorro el arbol
+        optimized.append(inst)
+    elif opcode == 'nop':
+        length = 0
+    else:
+        # Dont modify the line
+        optimized.append(inst)
     lineno += length
-  return (optimized, labels)
+  return (optimized, labels, global_index)
 
 def replace_labels(labels, bytecode):
   # TODO: Replace labels for relative or absolute values
   return bytecode
 
 bytecode_wr = insert_restrictions(restrictions, bytecode)
-(bytecode_opt, labels) = optimize_and_calculate_labels(bytecode)
+(bytecode_opt, labels, global_index) = optimize_and_calculate_labels(bytecode)
 bytecode_final = replace_labels(labels, bytecode)
 print_bytecode(bytecode_wr)
 import pdb; pdb.set_trace()
