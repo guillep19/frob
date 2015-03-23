@@ -130,7 +130,10 @@ def generate_bytecode(node,
     l_else = 'else_%s' % uid
     l_end = 'end_if_%s' % uid
     bytecode = generate_bytecode(node.test)
-    bytecode.append({'opcode': 'jump_false', 'arg': l_else})
+    if node.orelse:
+      bytecode.append({'opcode': 'jump_false', 'arg': l_else})
+    else:
+      bytecode.append({'opcode': 'jump_false', 'arg': l_end})
     for child in node.body:
       child_bytecode = generate_bytecode(child,
                                          function_parameters,
@@ -238,7 +241,6 @@ def print_bytecode(bytecode):
 #print "////////////////////////generate_bytecode////////////////////////"
 bytecode = generate_bytecode(tree)
 print "////////////////////////print_bytecode////////////////////////"
-print_bytecode(bytecode)
 
 from itertools import takewhile, dropwhile
 
@@ -258,4 +260,31 @@ def insert_restrictions(restrictions, bytecode):
       bytecode.extend(restriction['bytecode'])
       bytecode.extend(xs_2)
   return bytecode
+
+def optimize_and_calculate_labels(bytecode):
+  # Eliminates the nop instructions used to simplify bytecode generation.
+  # Generates a map 'labels' where 'labels[label]'
+  # stores the index in the final code.
+  # Important: After this transformation, the instructions can not be
+  # changed.
+  # Returns: (bytecode, labels)
+  optimized = []
+  labels = {}
+  lineno = 0
+  for inst in bytecode:
+    length = 1
+    if inst.get('label') is not None:
+      labels[inst.get('label')] = lineno
+    # TODO: Split code with length > 1 (like push or jump)
+    lineno += length
+  return (optimized, labels)
+
+def replace_labels(labels, bytecode):
+  # TODO: Replace labels for relative or absolute values
+  return bytecode
+
+bytecode_wr = insert_restrictions(restrictions, bytecode)
+(bytecode_opt, labels) = optimize_and_calculate_labels(bytecode)
+bytecode_final = replace_labels(labels, bytecode)
+print_bytecode(bytecode_wr)
 import pdb; pdb.set_trace()
