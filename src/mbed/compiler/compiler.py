@@ -2,6 +2,7 @@
 
 import ast
 import argparse
+from itertools import takewhile, dropwhile
 
 parser = argparse.ArgumentParser(description='Compiles a frob program to binary bytecode.')
 parser.add_argument('-c', type=str, help='input filename', required=True)
@@ -10,43 +11,6 @@ args = parser.parse_args()
 f = open(args.c, 'r')
 source = f.read()
 tree = ast.parse(source)
-
-variable_to_index = {}
-variable_count = 0
-
-
-# Transformation: Replace constant value in constant name.
-class ConstantReplacer(ast.NodeVisitor):
-  _constants = {}
-
-  def visit_Module(self, node):
-    """Find eglible variables to be inlined and store
-    the Name->value mapping in self._constants for later use"""
-    assigns = [x for x in node.body if
-               type(x) == ast.Assign]
-    for assign in assigns:
-        if type(assign.value) in (ast.Num, ast.Str):
-            for name in assign.targets:
-                if name.id.isupper():
-                    print name.id, "Es constante!!! y vale ", assign.value.n
-                    self._constants[name.id] = assign.value
-                else:
-                    print name.id, "No es constante, guardar en hash de variables"
-                    variable_to_index[name.id] = variable_count
-                    variable_count = variable_count + 1
-    return self.generic_visit(node)
-
-  def visit_Name(self, node):
-    """If node.id is in self._constants, replace the
-    loading of the node with the actual value"""
-    print "visit_Name:  ", node.id, " value: ", self._constants.get(node.id)
-    return self._constants.get(node.id, node)
-
-
-def replace_constants(tree):
-    replacer = ConstantReplacer()
-    newtree = replacer.visit(tree)
-    return newtree
 
 uid_gen = iter(xrange(1024))
 restrictions = []
@@ -78,9 +42,7 @@ def generate_bytecode(node,
   elif type(node) == ast.FunctionDef:
     bytecode = [{'label': node.name, 'opcode': 'nop'}]
     paramname_to_index = dict((p.id, i) for i, p in enumerate(node.args.args))
-    print "paramname_to_index:", paramname_to_index
     is_function = not node.name.startswith("task_")
-    print "function ", node.name, " isfunction=", is_function
     for child in node.body:
       child_bytecode = generate_bytecode(child,
                                          function_parameters=paramname_to_index,
@@ -92,10 +54,6 @@ def generate_bytecode(node,
       print "ERROR out of index!"
     if not is_function:
       bytecode.append({'label': 'end_%s' % node.name, 'opcode': 'halt'})
-    #FunctionDef(
-    #body=[Return(value=Compare(left=Name(id='distancia'),
-    #                           ops=[Lt()],
-    #                           comparators=[Name(id='DISTANCIA_CASA')]))])
   elif type(node) == ast.While:
     uid = uid_gen.next()
     l_start = 'start_while_%s' % uid
@@ -197,7 +155,6 @@ def generate_bytecode(node,
     bytecode = [{'opcode': 'not'}]
   elif type(node) == ast.Expr:
     bytecode = generate_bytecode(node.value)
-    #Expr(value=Call(func=Name(id='stop'), args=[Name(id='task_seguir_linea')]))
   elif type(node) == ast.Call:
     function_name = node.func.id
     if function_name == 'stop' or function_name == 'start':
@@ -222,7 +179,6 @@ def generate_bytecode(node,
     bytecode = []
   return bytecode
 
-import json
 
 def print_bytecode(bytecode):
   lineno = 0
@@ -239,12 +195,26 @@ def print_bytecode(bytecode):
     print line
     lineno += 1
 
+def generate_c_code(bytecode):
+  # Used to generate vmcode.c file.
+  lineno = 0
+  lines = []
+  print "extern CODE code = {"
+  for inst in bytecode:
+    line = '  /*{0:0>3}:*/ '.format(lineno)
+    if inst.get('opcode') is not None:
+      line += ' {} << 8'.format(inst.get('opcode'))
+      if inst.get('arg') is not None:
+        line += ' | {}'.format(inst.get('arg'))
+    else:
+      line += ' {}'.format(inst.get('value'))
+    lines.append(line)
+    lineno += 1
+  content = ',\n'.join(lines)
+  print content
+  print "};"
 
-#print "////////////////////////generate_bytecode////////////////////////"
-bytecode = generate_bytecode(tree)
-print "////////////////////////print_bytecode////////////////////////"
 
-from itertools import takewhile, dropwhile
 
 def span(condition, xs):
   # Returns two lists, one is takewhile(condition, list) and the other is the rest.
@@ -254,7 +224,7 @@ def span(condition, xs):
 def insert_restrictions(restrictions, bytecode):
   for restriction in restrictions:
     if restriction['event'] == 'on_finish':
-      print "Sustituyendo en on_finish de tarea %s" % restriction['task']
+      #print "Sustituyendo en on_finish de tarea %s" % restriction['task']
       label = 'end_%s' % restriction['task']
       condition = (lambda inst: inst.get('label') != label)
       (xs_1, xs_2) = span(condition, bytecode)
@@ -321,14 +291,20 @@ def replace_labels(labels, global_index, bytecode):
       if type(value) == str and labels.get(value) is not None:
         inst['value'] = labels.get(value)
     else:
-      print "Dejo intacta opcode=", opcode
+      pass
+      #print "Dejo intacta opcode=", opcode
     final_bytecode.append(inst)
   return final_bytecode
 
+# Generate bytecode and restrictions from tree
+bytecode = generate_bytecode(tree)
+# 
 bytecode_wr = insert_restrictions(restrictions, bytecode)
 (bytecode_opt, labels, global_index) = optimize_and_calculate_labels(bytecode_wr)
-print labels
+#print labels
+#print global_index
 bytecode_final = replace_labels(labels, global_index, bytecode_opt)
-print_bytecode(bytecode_final)
 #print_bytecode(bytecode_final)
-import pdb; pdb.set_trace()
+
+
+generate_c_code(bytecode_final)
