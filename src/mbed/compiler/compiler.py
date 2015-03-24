@@ -76,7 +76,7 @@ def generate_bytecode(node,
       {'opcode': opcode, 'arg': node.targets[0].id}
     )
   elif type(node) == ast.FunctionDef:
-    bytecode = []
+    bytecode = [{'label': node.name, 'opcode': 'nop'}]
     paramname_to_index = dict((p.id, i) for i, p in enumerate(node.args.args))
     print "paramname_to_index:", paramname_to_index
     is_function = not node.name.startswith("task_")
@@ -100,8 +100,8 @@ def generate_bytecode(node,
     uid = uid_gen.next()
     l_start = 'start_while_%s' % uid
     l_end = 'end_while_%s' % uid
-    bytecode = generate_bytecode(node.test)
-    bytecode[0]['label'] = l_start
+    bytecode = [{'label': l_start, 'opcode': 'nop'}]
+    bytecode.extend(generate_bytecode(node.test))
     bytecode.append({'opcode': 'jump_false', 'arg': l_end})
     for child in node.body:
       child_bytecode = generate_bytecode(child,
@@ -141,13 +141,12 @@ def generate_bytecode(node,
       bytecode.extend(child_bytecode)
     if node.orelse:
       bytecode.append({'opcode': 'jump', 'arg': l_end})
-      else_code = []
+      else_code = [{'label': l_else, 'opcode': 'nop'}]
       for child in node.orelse:
         child_bytecode = generate_bytecode(child,
                                            function_parameters,
                                            inside_function)
         else_code.extend(child_bytecode)
-      else_code[0]['label'] = l_else
       bytecode.extend(else_code)
     bytecode.append({'label': l_end, 'opcode': 'nop'})
   elif type(node) == ast.Return:
@@ -231,9 +230,12 @@ def print_bytecode(bytecode):
     line = '%d:' % lineno
     if inst.get('label') is not None:
       line += '[%s]' % inst.get('label')
-    line += ' %s' % inst.get('opcode')
-    if inst.get('arg') is not None:
-      line += ' %s' % inst.get('arg')
+    if inst.get('opcode') is not None:
+      line += ' %s' % inst.get('opcode')
+      if inst.get('arg') is not None:
+        line += ' %s' % inst.get('arg')
+    else:
+      line += ' {}'.format(inst.get('value'))
     print line
     lineno += 1
 
@@ -271,6 +273,7 @@ def optimize_and_calculate_labels(bytecode):
   globals_uid_gen = iter(xrange(1024))
   optimized = []
   labels = {}
+  global_index = {}
   lineno = 0
   for inst in bytecode:
     length = 1
@@ -280,11 +283,15 @@ def optimize_and_calculate_labels(bytecode):
     opcode = inst.get('opcode')
     if opcode == 'push':
         length = 2
-        optimized.append({'opcode': 'push'})
-        optimized.append({'value': inst.get('arg')})
+        optimized.append({'opcode': 'push', 'label': inst.get('label')})
+        optimized.append({'value': int(inst.get('arg'))})
     elif opcode == 'jump' or opcode == 'jump_false':
         length = 2
-        optimized.append({'opcode': opcode})
+        optimized.append({'opcode': opcode, 'label': inst.get('label')})
+        optimized.append({'value': inst.get('arg')})
+    elif opcode == 'call' or opcode == 'start' or opcode == 'stop':
+        length = 2
+        optimized.append({'opcode': opcode, 'label': inst.get('label')})
         optimized.append({'value': inst.get('arg')})
     elif opcode == 'load' or opcode == 'store':
         var_name = inst.get('arg')
@@ -299,12 +306,29 @@ def optimize_and_calculate_labels(bytecode):
     lineno += length
   return (optimized, labels, global_index)
 
-def replace_labels(labels, bytecode):
-  # TODO: Replace labels for relative or absolute values
-  return bytecode
+def replace_labels(labels, global_index, bytecode):
+  # Replace labels for relative or absolute values
+  final_bytecode = []
+  for inst in bytecode:
+    opcode = inst.get('opcode')
+    if opcode == 'load' or opcode == 'store':
+      inst['arg'] = global_index.get(inst.get('arg'))
+    elif opcode == 'read' or opcode == 'write': #(TODO"agrupar con load y store?)
+      inst['arg'] = global_index.get(inst.get('arg'))
+    elif opcode is None and inst.get('value') is not None:
+      # Reemplazo la etiqueta por el numero de linea.
+      value = inst.get('value')
+      if type(value) == str and labels.get(value) is not None:
+        inst['value'] = labels.get(value)
+    else:
+      print "Dejo intacta opcode=", opcode
+    final_bytecode.append(inst)
+  return final_bytecode
 
 bytecode_wr = insert_restrictions(restrictions, bytecode)
-(bytecode_opt, labels, global_index) = optimize_and_calculate_labels(bytecode)
-bytecode_final = replace_labels(labels, bytecode)
-print_bytecode(bytecode_wr)
+(bytecode_opt, labels, global_index) = optimize_and_calculate_labels(bytecode_wr)
+print labels
+bytecode_final = replace_labels(labels, global_index, bytecode_opt)
+print_bytecode(bytecode_final)
+#print_bytecode(bytecode_final)
 import pdb; pdb.set_trace()
