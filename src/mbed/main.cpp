@@ -6,38 +6,41 @@ DigitalOut myled(LED1);
 Serial pc(USBTX, USBRX); // tx, rx
 
 //VM ops
-#define halt 0x00
+#define halt       0x00
 //Functions
-#define call 0x01
-#define ret 0x02
+#define call       0x01
+#define ret        0x02
+#define load_param 0x03
 //Tasks
-#define start 0x03 //running[inmediate] = 1
-#define end 0x04 //running[inmediate] = 0
+#define start      0x04 //ip_buffer[last++] = *++ip
+#define stop       0x05 //running[inmediate] = 0
 //Jumps
-#define jump 0x05 //ip = *sp--;
-#define jump_eq 0x06 //a=*sp--;if (a == *sp--) {ip = *sp--}
-#define jump_neq 0x07 //a=*sp--;if (a != *sp--) {ip = *sp--}
-#define jump_gt 0x08 //a=*sp--;if (a > *sp--) {ip = *sp--}
-#define jump_lt 0x09 //a=*sp--;if (a < *sp--) {ip = *sp--}
+#define jump       0x06 //ip = *sp--;
+#define jump_false 0x07 //ip = *sp--;
+//Binary Boolean comparators
+#define cmp_eq     0x08 //a=*sp--;*sp = (a == *sp--)
+#define cmp_neq    0x09 //a=*sp--; *sp = (a != *sp--)
+#define cmp_gt     0x0a //a=*sp--;*sp = (a > *sp--)
+#define cmp_lt     0x0b //a=*sp--;*sp = (a < *sp--)
 //Binary operators
-#define add 0x0A //a=*sp--;*sp += a;
-#define sub 0x0B //a=*sp--;*sp -= a;
-#define div 0x0C //a=*sp--;*sp = *sp / a;
-#define mul 0x0D //a=*sp--;*sp = *sp * a;
-#define op_and 0x0E //a=*sp--;*sp = *sp & a;
-#define op_or 0x0F //a=*sp--;*sp = *sp | a;
-//Unary operators
-#define neg 0x10 //*sp = !(*sp)
+#define add        0x0C //a=*sp--;*sp += a;
+#define sub        0x0D //a=*sp--;*sp -= a;
+#define div        0x0E //a=*sp--;*sp = *sp / a;
+#define mul        0x0F //a=*sp--;*sp = *sp * a;
+#define op_and     0x10 //a=*sp--;*sp = *sp & a;
+#define op_or      0x11 //a=*sp--;*sp = *sp | a;
+//Unary Boolean operators
+#define op_not     0x12 //*sp = !(*sp)
 //Stack operations
-#define push 0x11 //*++sp = inmediate (0..255)
-#define pop 0x12 //sp--
-#define dup 0x13 //sp--
+#define push       0x13 //*++sp = inmediate (0..255)
+#define pop        0x14 //sp--
+#define dup        0x15 //sp--
 //Memory operations
-#define store 0x14 //globals[inmediate] = *sp--
-#define load 0x15 //*++sp = globals[inmediate]
+#define store      0x16 //globals[inm] = *sp--
+#define load       0x17 //*++sp = globals[inm]
 //Input/Output operations
-#define read 0x16 //inputs[inmediate] = ip++
-#define write 0x17 //outputs[inmediate] = *sp--
+#define read       0x18 //inputs[inmediate] = ip++
+#define write      0x19 //outputs[inmediate] = *sp--
 
 typedef uint8_t BYTE;
 typedef int16_t WORD;
@@ -57,9 +60,9 @@ BYTE ip_buffer_first = 0;
 BYTE ip_buffer_last = 0;
 //Total:1/2 kb (arduino nano tiene 2kb)
 WORD* sp = stack;
+WORD fp = 0;
 WORD* ip;
 
-BYTE running = 1;
 
 WORD instr = 0;
 BYTE op_code = 0;
@@ -69,126 +72,158 @@ WORD aux2 = 0;
 
 //VM ops
 void f_halt() {
-  running = 0;
-  pc.printf("halt\n");
+  ip = 0;
+  pc.printf("halt");
 }
 //Functions
-void f_call() {}
-void f_ret() {}
+void f_call() {
+  //arg0, arg1, count ! oldfp, oldip
+  WORD fun_location = *ip;
+  *++sp = fp; //store oldfp
+  *++sp = (WORD) (++ip - (WORD*) code); //store oldip
+  fp = (WORD) (sp - stack); //create new frame
+  ip = (WORD*) code + fun_location; //jump to function
+  pc.printf("call:");
+}
+void f_ret() {
+  WORD ret_value = *sp;
+  sp = stack + fp; //remove current frame
+  ip = (WORD*) code + *sp--; //restore ip
+  fp = *sp--; //restore fp
+  aux = *sp--; //get count to pop arguments
+  sp -= aux; //remove arguments
+  *++sp = ret_value; //push result to return
+  pc.printf("ret:");
+}
+void f_load_param() {
+  *++sp = stack[fp - inm - 3]; //3 because of count,oldfp,oldip
+  pc.printf("load_param: inm=%d", inm);
+}
 //Tasks
-void f_start() {}
-void f_end() {}
+void f_start() {
+  aux = *ip++;
+  ip_buffer[ip_buffer_last++] = (WORD*) code + aux;
+  pc.printf("start: taskpos=%d", aux);
+}
+void f_stop() {
+  pc.printf("stop NOT IMPLEMENTED");
+}
 //Jumps
 void f_jump() {
-  ip += (*sp--) - 1;
-  pc.printf("jump (sp:%d) *ip= %04x\n", *sp, *ip);
+  aux = *ip;
+  ip = (WORD*) code + aux;
+  pc.printf("jump: pos=%d", aux);
 }
-void f_jump_eq() {
-  aux = *sp--;
-  if (aux == *sp--) ip += (*sp--) - 1; else sp--;
-  pc.printf("jump_eq (sp:%d) *ip= %04x\n", *sp, *ip);
+void f_jump_false() {
+  aux = *ip++;
+  if (!*sp--) ip = (WORD*) code + aux;
+  pc.printf("jump_false: pos=%d", aux);
 }
-void f_jump_neq() {
+void f_cmp_eq() {
   aux = *sp--;
-  if (aux != *sp--) ip += (*sp--) - 1; else sp--;
-  pc.printf("jump_neq (sp:%d) *ip= %04x\n", *sp, *ip);
+  if (aux == *sp--) *++sp = 1; else *++sp = 0;
+  pc.printf("cmp_eq:");
 }
-void f_jump_gt() {
+void f_cmp_neq() {
   aux = *sp--;
-  if (aux > *sp--) ip += (*sp--) - 1; else sp--;
-  pc.printf("jump_gt (sp:%d) *ip= %04x\n", *sp, *ip);
+  if (aux != *sp--) *++sp = 1; else *++sp = 0;
+  pc.printf("cmp_neq:");
 }
-void f_jump_lt() {
+void f_cmp_gt() {
   aux = *sp--;
-  if (aux < *sp--) ip += (*sp--) - 1; else sp--;
-  pc.printf("jump_lt (sp:%d) *ip= %04x\n", *sp, *ip);
+  if (aux > *sp--) *++sp = 1; else *++sp = 0;
+  pc.printf("cmp_gt:");
+}
+void f_cmp_lt() {
+  aux = *sp--;
+  if (aux < *sp--) *++sp = 1; else *++sp = 0;
+  pc.printf("cmp_lt:");
 }
 //Binary
 void f_add() {
   aux = *sp--; *sp = *sp + aux;
-  pc.printf("add: %d\n", *sp);
+  pc.printf("add:");
 }
 
 void f_sub() {
   aux = *sp--; *sp = *sp - aux;
-  pc.printf("sub: %d\n", *sp);
+  pc.printf("sub:");
 }
 void f_div() {
   aux = *sp--; *sp = *sp / aux;
-  pc.printf("div: %d\n", *sp);
+  pc.printf("div:");
 }
 void f_mul() {
   aux = *sp--; *sp = *sp * aux;
-  pc.printf("mul: %d\n", *sp);
+  pc.printf("mul:");
 }
-void f_and() {
+void f_op_and() {
   aux = *sp--; *sp = *sp & aux;
-  pc.printf("and: %d\n", *sp);
+  pc.printf("and:");
 }
-void f_or() {
+void f_op_or() {
   aux = *sp--; *sp = *sp | aux;
-  pc.printf("or: %d\n", *sp);
+  pc.printf("or:");
 }
 //Unary operators
-void f_neg() {
+void f_op_not() {
   *sp = !(*sp);
-  pc.printf("neg: %d\n", *sp);
+  pc.printf("lnot:");
 }
 //Stack operations
 void f_push() {
-  sp++; *sp = inm;
-  pc.printf("push: %d\n", *sp);
+  *++sp = *ip++;
+  pc.printf("push:");
 }
 void f_pop() {
   sp--;
-  pc.printf("pop: %d\n", *sp);
+  pc.printf("pop:");
 }
 void f_dup() {
   sp++;
   *sp = *(sp-1);
-  pc.printf("dup: %d\n", *sp);
+  pc.printf("dup:");
 }
 //Memory operations
 void f_store() {
   globals[inm] = *sp--;
-  pc.printf("store: (sp:%d) globals[%d]=%d\n", *sp, inm, globals[inm]);
+  pc.printf("store: globals[%d]=%d", inm, globals[inm]);
 }
 void f_load() {
   *++sp = globals[inm];
-  pc.printf("load: %d == globals[%d] == %d\n", *sp, inm, globals[inm]);
+  pc.printf("load: globals[%d]", inm);
 }
 //Input/Output operations
 void f_read() {
-  inputs[globals[inm]] = ++ip;
-  running = 0;
-  pc.printf("read: (sp:%d) inputs[globals[%d]==%d] == %p", 
-         *sp, inm, globals[inm], inputs[globals[inm]]);
+  inputs[globals[inm]] = ip;
+  ip = 0;
+  pc.printf("read: inputs[globals[%d]==%d] == %p", 
+            inm, globals[inm], inputs[globals[inm]]);
 }
 void f_write() {
   outputs[inm] = *sp--;
-  pc.printf("write: (sp:%d) outputs[%d] == %d\n", *sp, inm, outputs[inm]);
+  pc.printf("write: outputs[%d] == %d", inm, outputs[inm]);
   if (inm == 1) {
     myled = outputs[inm];
   };
-  /* TODO: set flag, to be processed as soon as possible */
 }
 
 void (*functions[])() = {
-  &f_halt,
-  f_call, f_ret,
-  f_start, f_end,
-  f_jump, f_jump_eq,
-  f_jump_neq, f_jump_gt, f_jump_lt,
+  f_halt,
+  f_call, f_ret, f_load_param,
+  f_start, f_stop,
+  f_jump, f_jump_false,
+  f_cmp_eq, f_cmp_neq, f_cmp_gt, f_cmp_lt,
   //Binary operators
   f_add, f_sub, f_div,
-  f_mul, f_and, f_or,
+  f_mul, f_op_and, f_op_or,
   //Unary operators
-  f_neg,
+  f_op_not,
   //Stack operations
   f_push, f_pop, f_dup,
-// Memory operations
+  // Memory operations
   f_store, f_load,
-// Input/Output operations
+  // Input/Output operations
   f_read, f_write
 };
 
@@ -223,18 +258,14 @@ void print_stack() {
 }
 
 void run_thread() {
-  running = 1;
-  while (running) {
-    instr = *ip;
+  while (ip) {
+    pc.getc();
+    instr = *ip++;
     op_code = (0xff00 & instr) >> 8;
     inm = 0x00ff & instr;
-    if (inm == 0x00ff) { ip++; inm = *ip; }
-    pc.printf("%02x %d\n", op_code, inm);
-    pc.getc();
     (functions[op_code])();
-    ip++;
+    pc.printf(" [TOS=%d, IP=%04x]\n", *sp, ip);
   }
-  ip = 0;
 }
 
 

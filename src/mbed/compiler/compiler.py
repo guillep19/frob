@@ -111,7 +111,7 @@ def generate_bytecode(node,
     bytecode = generate_bytecode(node.value,
                                  function_parameters,
                                  inside_function)
-    bytecode.append({'opcode':'return'})
+    bytecode.append({'opcode':'ret'})
   elif type(node) == ast.Compare:
     left_bytecode = generate_bytecode(node.left,
                                       function_parameters,
@@ -125,9 +125,9 @@ def generate_bytecode(node,
     bytecode.extend(right_bytecode)
     bytecode.extend(oper_bytecode)
   elif type(node) == ast.Lt:
-    bytecode = [{'opcode': 'lt'}]
+    bytecode = [{'opcode': 'cmp_lt'}]
   elif type(node) == ast.Gt:
-    bytecode = [{'opcode': 'gt'}]
+    bytecode = [{'opcode': 'cmp_gt'}]
   elif type(node) == ast.Num:
     bytecode = [{'opcode': 'push', 'arg': node.n}]
   elif type(node) == ast.Name:
@@ -152,7 +152,7 @@ def generate_bytecode(node,
     bytecode = generate_bytecode(node.operand)
     bytecode.extend(generate_bytecode(node.op))
   elif type(node) == ast.Not:
-    bytecode = [{'opcode': 'not'}]
+    bytecode = [{'opcode': 'op_not'}]
   elif type(node) == ast.Expr:
     bytecode = generate_bytecode(node.value)
   elif type(node) == ast.Call:

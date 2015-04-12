@@ -1,0 +1,30 @@
+
+
+Inputs:
+Signal Sensor_Distancia 1
+Signal Sensor_Color_Izq 2
+Signal Sensor_Color_Der 3
+
+
+Filter Contar_Casas(cuenta, viendo):
+  
+  
+
+  output Contar_Casas cuenta
+
+
+hay_casa :: Float -> Bool
+hay_casa _ = (_ < DISTANCIA_CASA)
+
+contar_casas :: (Float x Int x Bool) -> (Int x Bool)
+  (hay_casa(distancia) ?
+    cuenta < 1 ?
+      Contar_Casas(read(sensor_distancia), cuenta + 1, True)
+  delay contar_casas(
+
+contar_casas(cuenta=0, 
+
+
+status = State(
+main = do
+  
