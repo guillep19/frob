@@ -243,7 +243,7 @@ void print_code() {
 }
 
 void print_stack() {
-  pc.printf("Stack:\n");
+  pc.printf("Stack: ");
   WORD* p = (WORD*) stack;
   if (p != sp) {
     p++;
@@ -254,7 +254,7 @@ void print_stack() {
   } else {
     pc.printf("-x");
   }
-  pc.printf("\n------\n");
+  pc.printf("\n");
 }
 
 void run_thread() {
@@ -264,7 +264,8 @@ void run_thread() {
     op_code = (0xff00 & instr) >> 8;
     inm = 0x00ff & instr;
     (functions[op_code])();
-    pc.printf(" [TOS=%d, IP=%04x]\n", *sp, ip);
+    pc.printf(" [TOS=%d, IP=%d (%04x)]\n", *sp, ip - (WORD*) code, ip);
+    print_stack();
   }
 }
 
@@ -288,7 +289,7 @@ void read_input() {
     inputs[input_iterator] = 0;
     /*TODO; This code is a stub only to mimic a predictable input.REMOVE IT */
     WORD value = 0;
-    if (++helper_iterator == 4) value = 1;
+    if (++helper_iterator == 4) { value = 1; helper_iterator = 0;}
     sp++; *sp = value;
     pc.printf("TODO: read value from (%d), (stub) pushed %d\n", input_iterator, value);
     /* End of stub. TODO: Implement the real READ */

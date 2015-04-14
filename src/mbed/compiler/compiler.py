@@ -4,7 +4,8 @@ import ast
 import argparse
 from itertools import takewhile, dropwhile
 
-parser = argparse.ArgumentParser(description='Compiles a frob program to binary bytecode.')
+parser = argparse.ArgumentParser(description='Compiles a frob program'
+                                             ' to binary bytecode.')
 parser.add_argument('-c', type=str, help='input filename', required=True)
 args = parser.parse_args()
 
@@ -15,169 +16,173 @@ tree = ast.parse(source)
 uid_gen = iter(xrange(1024))
 restrictions = []
 
+
 def generate_bytecode(node,
                       function_parameters=[],
                       inside_function=False):
-  if type(node) == ast.Module:
-    bytecode = []
-    functions_bytecode = []
-    for child in node.body:
-      child_bytecode = generate_bytecode(child)
-      if type(child) == ast.FunctionDef:
-        functions_bytecode.extend(child_bytecode)
-      else:
-        bytecode.extend(child_bytecode)
-    bytecode.append({'opcode': 'halt'})
-    # El codigo de las funciones lo agrego al final, para que quede pronto
-    # para ejecutar.
-    bytecode.extend(functions_bytecode)
-  elif type(node) == ast.Assign:
-    opcode = 'local_store' if inside_function else 'store'
-    bytecode = generate_bytecode(node.value,
-                                 function_parameters,
-                                 inside_function)
-    bytecode.append(
-      {'opcode': opcode, 'arg': node.targets[0].id}
-    )
-  elif type(node) == ast.FunctionDef:
-    bytecode = [{'label': node.name, 'opcode': 'nop'}]
-    paramname_to_index = dict((p.id, i) for i, p in enumerate(node.args.args))
-    is_function = not node.name.startswith("task_")
-    for child in node.body:
-      child_bytecode = generate_bytecode(child,
-                                         function_parameters=paramname_to_index,
-                                         inside_function=is_function)
-      bytecode.extend(child_bytecode)
-    if len(bytecode) > 0:
-      bytecode[0]['label'] = node.name
-    else:
-      print "ERROR out of index!"
-    if not is_function:
-      bytecode.append({'label': 'end_%s' % node.name, 'opcode': 'halt'})
-  elif type(node) == ast.While:
-    uid = uid_gen.next()
-    l_start = 'start_while_%s' % uid
-    l_end = 'end_while_%s' % uid
-    bytecode = [{'label': l_start, 'opcode': 'nop'}]
-    bytecode.extend(generate_bytecode(node.test))
-    bytecode.append({'opcode': 'jump_false', 'arg': l_end})
-    for child in node.body:
-      child_bytecode = generate_bytecode(child,
-                                         function_parameters,
-                                         inside_function)
-      bytecode.extend(child_bytecode)
-    bytecode.append({'opcode': 'jump', 'arg': l_start})
-    bytecode.append({'label': l_end, 'opcode': 'nop'})
-  elif type(node) == ast.With:
-    event = node.context_expr
-    event_name = event.func.id
-    task_name = event.args[0].id
-    body_bytecode = []
-    for child in node.body:
-      child_bytecode = generate_bytecode(child,
-                                         function_parameters,
-                                         inside_function)
-      body_bytecode.extend(child_bytecode)
-    restrictions.append({'task': task_name,
-                         'event': event_name,
-                         'bytecode': body_bytecode})
-    # No retorno nada, ya que lo inserto luego
-    bytecode = []
-  elif type(node) == ast.If:
-    uid = uid_gen.next()
-    l_else = 'else_%s' % uid
-    l_end = 'end_if_%s' % uid
-    bytecode = generate_bytecode(node.test)
-    if node.orelse:
-      bytecode.append({'opcode': 'jump_false', 'arg': l_else})
-    else:
-      bytecode.append({'opcode': 'jump_false', 'arg': l_end})
-    for child in node.body:
-      child_bytecode = generate_bytecode(child,
-                                         function_parameters,
-                                         inside_function)
-      bytecode.extend(child_bytecode)
-    if node.orelse:
-      bytecode.append({'opcode': 'jump', 'arg': l_end})
-      else_code = [{'label': l_else, 'opcode': 'nop'}]
-      for child in node.orelse:
+    if type(node) == ast.Module:
+        bytecode = []
+        functions_bytecode = []
+        for child in node.body:
+            child_bytecode = generate_bytecode(child)
+            if type(child) == ast.FunctionDef:
+                functions_bytecode.extend(child_bytecode)
+            else:
+                bytecode.extend(child_bytecode)
+        bytecode.append({'opcode': 'halt'})
+        # El codigo de las funciones lo agrego al final, para que quede pronto
+        # para ejecutar.
+        bytecode.extend(functions_bytecode)
+    elif type(node) == ast.Assign:
+        opcode = 'local_store' if inside_function else 'store'
+        bytecode = generate_bytecode(node.value,
+                                     function_parameters,
+                                     inside_function)
+        bytecode.append(
+            {'opcode': opcode, 'arg': node.targets[0].id}
+        )
+    elif type(node) == ast.FunctionDef:
+        bytecode = [{'label': node.name, 'opcode': 'nop'}]
+        paramname_to_index = dict((p.id, i) for i, p in enumerate(node.args.args))
+        is_function = not node.name.startswith("task_")
+        for child in node.body:
+          child_bytecode = generate_bytecode(child,
+                                             function_parameters=paramname_to_index,
+                                             inside_function=is_function)
+          bytecode.extend(child_bytecode)
+        if len(bytecode) > 0:
+          bytecode[0]['label'] = node.name
+        else:
+          print "ERROR out of index!"
+        if not is_function:
+          bytecode.append({'label': 'end_%s' % node.name, 'opcode': 'halt'})
+    elif type(node) == ast.While:
+        uid = uid_gen.next()
+        l_start = 'start_while_%s' % uid
+        l_end = 'end_while_%s' % uid
+        bytecode = [{'label': l_start, 'opcode': 'nop'}]
+        bytecode.extend(generate_bytecode(node.test))
+        bytecode.append({'opcode': 'jump_false', 'arg': l_end})
+        for child in node.body:
+          child_bytecode = generate_bytecode(child,
+                                             function_parameters,
+                                             inside_function)
+          bytecode.extend(child_bytecode)
+        bytecode.append({'opcode': 'jump', 'arg': l_start})
+        bytecode.append({'label': l_end, 'opcode': 'nop'})
+    elif type(node) == ast.With:
+      event = node.context_expr
+      event_name = event.func.id
+      task_name = event.args[0].id
+      body_bytecode = []
+      for child in node.body:
         child_bytecode = generate_bytecode(child,
                                            function_parameters,
                                            inside_function)
-        else_code.extend(child_bytecode)
-      bytecode.extend(else_code)
-    bytecode.append({'label': l_end, 'opcode': 'nop'})
-  elif type(node) == ast.Return:
-    bytecode = generate_bytecode(node.value,
-                                 function_parameters,
-                                 inside_function)
-    bytecode.append({'opcode':'ret'})
-  elif type(node) == ast.Compare:
-    left_bytecode = generate_bytecode(node.left,
-                                      function_parameters,
-                                      inside_function)
-    oper_bytecode = generate_bytecode(node.ops[0])
-    right_bytecode = generate_bytecode(node.comparators[0],
-                                       function_parameters,
-                                       inside_function)
-    bytecode = []
-    bytecode.extend(left_bytecode)
-    bytecode.extend(right_bytecode)
-    bytecode.extend(oper_bytecode)
-  elif type(node) == ast.Lt:
-    bytecode = [{'opcode': 'cmp_lt'}]
-  elif type(node) == ast.Gt:
-    bytecode = [{'opcode': 'cmp_gt'}]
-  elif type(node) == ast.Num:
-    bytecode = [{'opcode': 'push', 'arg': node.n}]
-  elif type(node) == ast.Name:
-    if node.id in function_parameters:
-      bytecode = [
-        {'opcode':'load_param',
-         'arg': function_parameters[node.id]}]
-    elif node.id == 'False':
-      bytecode = [{'opcode': 'push', 'arg': 0}]
-    elif node.id == 'True':
-      bytecode = [{'opcode': 'push', 'arg': 1}]
+        body_bytecode.extend(child_bytecode)
+      restrictions.append({'task': task_name,
+                           'event': event_name,
+                           'bytecode': body_bytecode})
+      # No retorno nada, ya que lo inserto luego
+      bytecode = []
+    elif type(node) == ast.If:
+      uid = uid_gen.next()
+      l_else = 'else_%s' % uid
+      l_end = 'end_if_%s' % uid
+      bytecode = generate_bytecode(node.test)
+      if node.orelse:
+        bytecode.append({'opcode': 'jump_false', 'arg': l_else})
+      else:
+        bytecode.append({'opcode': 'jump_false', 'arg': l_end})
+      for child in node.body:
+        child_bytecode = generate_bytecode(child,
+                                           function_parameters,
+                                           inside_function)
+        bytecode.extend(child_bytecode)
+      if node.orelse:
+        bytecode.append({'opcode': 'jump', 'arg': l_end})
+        else_code = [{'label': l_else, 'opcode': 'nop'}]
+        for child in node.orelse:
+          child_bytecode = generate_bytecode(child,
+                                             function_parameters,
+                                             inside_function)
+          else_code.extend(child_bytecode)
+        bytecode.extend(else_code)
+      bytecode.append({'label': l_end, 'opcode': 'nop'})
+    elif type(node) == ast.Return:
+      bytecode = generate_bytecode(node.value,
+                                   function_parameters,
+                                   inside_function)
+      bytecode.append({'opcode':'ret'})
+    elif type(node) == ast.Compare:
+      left_bytecode = generate_bytecode(node.left,
+                                        function_parameters,
+                                        inside_function)
+      oper_bytecode = generate_bytecode(node.ops[0])
+      right_bytecode = generate_bytecode(node.comparators[0],
+                                         function_parameters,
+                                         inside_function)
+      bytecode = []
+      bytecode.extend(left_bytecode)
+      bytecode.extend(right_bytecode)
+      bytecode.extend(oper_bytecode)
+    elif type(node) == ast.Lt:
+      bytecode = [{'opcode': 'cmp_lt'}]
+    elif type(node) == ast.Gt:
+      bytecode = [{'opcode': 'cmp_gt'}]
+    elif type(node) == ast.Num:
+      bytecode = [{'opcode': 'push', 'arg': node.n}]
+    elif type(node) == ast.Name:
+      if node.id in function_parameters:
+        bytecode = [
+          {'opcode':'load_param',
+           'arg': function_parameters[node.id]}]
+      elif node.id == 'False':
+        bytecode = [{'opcode': 'push', 'arg': 0}]
+      elif node.id == 'True':
+        bytecode = [{'opcode': 'push', 'arg': 1}]
+      else:
+        bytecode = [{'opcode': 'load', 'arg': node.id}]
+        # TODO: verificar scope (FALTA VARIABLES LOCALES probar con ejemplo fib)
+    elif type(node) == ast.BinOp:
+      bytecode = generate_bytecode(node.left)
+      bytecode.extend(generate_bytecode(node.right))
+      bytecode.extend(generate_bytecode(node.op))
+    elif type(node) == ast.Add:
+      bytecode = [{'opcode': 'add'}]
+    elif type(node) == ast.UnaryOp:
+      bytecode = generate_bytecode(node.operand)
+      bytecode.extend(generate_bytecode(node.op))
+    elif type(node) == ast.Not:
+      bytecode = [{'opcode': 'op_not'}]
+    elif type(node) == ast.Expr:
+      bytecode = generate_bytecode(node.value)
+    elif type(node) == ast.Call:
+      function_name = node.func.id
+      if function_name == 'stop' or function_name == 'start':
+        bytecode = []
+        for arg in node.args:
+          bytecode.append({'opcode': function_name, 'arg': arg.id})
+      elif function_name == 'read':
+        bytecode = []
+        for arg in node.args:
+          bytecode.append({'opcode': function_name, 'arg': arg.id})
+      elif function_name == 'write':
+        bytecode = generate_bytecode(node.args[1])
+        bytecode.append({'opcode': function_name, 'arg': node.args[0].id})
+      else:
+        bytecode = []
+        for arg in node.args:
+          arg_bytecode = generate_bytecode(arg)
+          bytecode.extend(arg_bytecode)
+        bytecode.extend([
+            {'opcode': 'push', 'arg': len(node.args)},
+            {'opcode': 'call', 'arg': function_name}
+        ])
     else:
-      bytecode = [{'opcode': 'load', 'arg': node.id}]
-      # TODO: verificar scope (FALTA VARIABLES LOCALES probar con ejemplo fib)
-  elif type(node) == ast.BinOp:
-    bytecode = generate_bytecode(node.left)
-    bytecode.extend(generate_bytecode(node.right))
-    bytecode.extend(generate_bytecode(node.op))
-  elif type(node) == ast.Add:
-    bytecode = [{'opcode': 'add'}]
-  elif type(node) == ast.UnaryOp:
-    bytecode = generate_bytecode(node.operand)
-    bytecode.extend(generate_bytecode(node.op))
-  elif type(node) == ast.Not:
-    bytecode = [{'opcode': 'op_not'}]
-  elif type(node) == ast.Expr:
-    bytecode = generate_bytecode(node.value)
-  elif type(node) == ast.Call:
-    function_name = node.func.id
-    if function_name == 'stop' or function_name == 'start':
+      print 'ERROR: No reconoci el nodo:', node
       bytecode = []
-      for arg in node.args:
-        bytecode.append({'opcode': function_name, 'arg': arg.id})
-    elif function_name == 'read':
-      bytecode = []
-      for arg in node.args:
-        bytecode.append({'opcode': function_name, 'arg': arg.id})
-    elif function_name == 'write':
-      bytecode = generate_bytecode(node.args[1])
-      bytecode.append({'opcode': function_name, 'arg': node.args[0].id})
-    else:
-      bytecode = []
-      for arg in node.args:
-        arg_bytecode = generate_bytecode(arg)
-        bytecode.extend(arg_bytecode)
-      bytecode.append({'opcode': 'call', 'arg': function_name})
-  else:
-    print 'ERROR: No reconoci el nodo:', node
-    bytecode = []
-  return bytecode
+    return bytecode
 
 
 def print_bytecode(bytecode):
@@ -298,7 +303,7 @@ def replace_labels(labels, global_index, bytecode):
 
 # Generate bytecode and restrictions from tree
 bytecode = generate_bytecode(tree)
-# 
+#
 bytecode_wr = insert_restrictions(restrictions, bytecode)
 (bytecode_opt, labels, global_index) = optimize_and_calculate_labels(bytecode_wr)
 #print labels
