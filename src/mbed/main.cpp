@@ -131,12 +131,12 @@ void f_cmp_neq() {
 }
 void f_cmp_gt() {
   aux = *sp--;
-  if (aux > *sp--) *++sp = 1; else *++sp = 0;
+  if (*sp-- > aux) *++sp = 1; else *++sp = 0;
   pc.printf("cmp_gt:");
 }
 void f_cmp_lt() {
   aux = *sp--;
-  if (aux < *sp--) *++sp = 1; else *++sp = 0;
+  if (*sp-- < aux) *++sp = 1; else *++sp = 0;
   pc.printf("cmp_lt:");
 }
 //Binary
@@ -259,7 +259,7 @@ void print_stack() {
 
 void run_thread() {
   while (ip) {
-    pc.getc();
+    //pc.getc();
     instr = *ip++;
     op_code = (0xff00 & instr) >> 8;
     inm = 0x00ff & instr;
@@ -289,7 +289,7 @@ void read_input() {
     inputs[input_iterator] = 0;
     /*TODO; This code is a stub only to mimic a predictable input.REMOVE IT */
     WORD value = 0;
-    if (++helper_iterator == 4) { value = 1; helper_iterator = 0;}
+    if (++helper_iterator == 4) { value = 101; helper_iterator = 0;}
     sp++; *sp = value;
     pc.printf("TODO: read value from (%d), (stub) pushed %d\n", input_iterator, value);
     /* End of stub. TODO: Implement the real READ */
