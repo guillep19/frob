@@ -2,49 +2,9 @@
 //#include <stdint.h>
 
 #include "mbed.h"
-DigitalOut myled(LED1);
+#include "FrobDefinitions.h"
+#include "IOInterface.h"
 Serial pc(USBTX, USBRX); // tx, rx
-
-//VM ops
-#define halt       0x00
-//Functions
-#define call       0x01
-#define ret        0x02
-#define load_param 0x03
-//Tasks
-#define start      0x04 //ip_buffer[last++] = *++ip
-#define stop       0x05 //running[inmediate] = 0
-//Jumps
-#define jump       0x06 //ip = *sp--;
-#define jump_false 0x07 //ip = *sp--;
-//Binary Boolean comparators
-#define cmp_eq     0x08 //a=*sp--;*sp = (a == *sp--)
-#define cmp_neq    0x09 //a=*sp--; *sp = (a != *sp--)
-#define cmp_gt     0x0a //a=*sp--;*sp = (a > *sp--)
-#define cmp_lt     0x0b //a=*sp--;*sp = (a < *sp--)
-//Binary operators
-#define add        0x0C //a=*sp--;*sp += a;
-#define sub        0x0D //a=*sp--;*sp -= a;
-#define div        0x0E //a=*sp--;*sp = *sp / a;
-#define mul        0x0F //a=*sp--;*sp = *sp * a;
-#define op_and     0x10 //a=*sp--;*sp = *sp & a;
-#define op_or      0x11 //a=*sp--;*sp = *sp | a;
-//Unary Boolean operators
-#define op_not     0x12 //*sp = !(*sp)
-//Stack operations
-#define push       0x13 //*++sp = inmediate (0..255)
-#define pop        0x14 //sp--
-#define dup        0x15 //sp--
-//Memory operations
-#define store      0x16 //globals[inm] = *sp--
-#define load       0x17 //*++sp = globals[inm]
-//Input/Output operations
-#define read       0x18 //inputs[inmediate] = ip++
-#define write      0x19 //outputs[inmediate] = *sp--
-
-typedef uint8_t BYTE;
-typedef int16_t WORD;
-typedef const WORD CODE[];
 
 #include "vmcode.c"
 
@@ -203,9 +163,7 @@ void f_read() {
 void f_write() {
   outputs[inm] = *sp--;
   pc.printf("write: outputs[%d] == %d", inm, outputs[inm]);
-  if (inm == 1) {
-    myled = outputs[inm];
-  };
+  write_output(inm, outputs[inm]);
 }
 
 void (*functions[])() = {
