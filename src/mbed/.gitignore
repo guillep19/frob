@@ -1,4 +1,4 @@
-main.d
+*.d
 mbed_frob.bin
 mbed_frob.elf
 mbed_frob.hex
