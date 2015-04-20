@@ -241,16 +241,13 @@ void read_input() {
   do {
     input_iterator = (input_iterator + 1) % MAX_INPUTS;
     ip = inputs[input_iterator];
-    pc.printf("ip == inputs[%d] == %p\n", input_iterator, ip);
+    //pc.printf("ip == inputs[%d] == %p\n", input_iterator, ip);
   } while ((!ip) && (input_iterator != started));
   if (ip) {
     inputs[input_iterator] = 0;
-    /*TODO; This code is a stub only to mimic a predictable input.REMOVE IT */
-    WORD value = 0;
-    if (++helper_iterator == 4) { value = 101; helper_iterator = 0;}
-    sp++; *sp = value;
-    pc.printf("TODO: read value from (%d), (stub) pushed %d\n", input_iterator, value);
-    /* End of stub. TODO: Implement the real READ */
+    WORD value = read_input(input_iterator);
+    *++sp = value;
+    pc.printf("Read value from (%d), pushed %d\n", input_iterator, value);
   }
 }
 

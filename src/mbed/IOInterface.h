@@ -5,6 +5,6 @@
 
 void write_output(WORD index, WORD value);
 
-void read_input(WORD index);
+WORD read_input(WORD index);
 
 #endif /* IOINTERFACE_H */

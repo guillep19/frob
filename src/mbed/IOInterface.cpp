@@ -7,7 +7,7 @@
 #define FROB_LED 1
 DigitalOut led(LED1);
 
-#define FROB_TIME 1
+#define FROB_TIME 0
 Timer t;
 
 #define FROB_DISTANCE_SENSOR 1
@@ -23,12 +23,16 @@ void write_output(WORD index, WORD value) {
   }
 }
 
-void read_input(WORD index) {
+WORD read_input(WORD index) {
+  WORD value = 0;
   if (index == FROB_TIME) {
     float taken_time = t.read();
     //pc.printf("<TIME> %f \n", taken_time);
+    value = (WORD) taken_time;
   } else if (index == FROB_DISTANCE_SENSOR) {
     long dist = distance_sensor.distance();
     //pc.printf("<DIST> %d \n", distance);
+    value = (WORD) dist;
   }
+  return value;
 }
