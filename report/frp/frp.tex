@@ -1,0 +1,88 @@
+
+
+
+
+\section{Programación Funcional Reactiva}
+
+Acá voy a hablar de programación funcional reactiva.
+
+Tradicionalmente los programas son formados a partir de
+una secuencia de acciones imperativas. Los programas
+reactivos suelen formarse por eventos y código iterativo
+que se corre cuando un evento ocurre.
+
+Dicho código iterativo suele hacer referencia y manipular
+variables compartidas con diferentes rutinas. Ésto lleva a que
+como un valor puede ser manipulado desde diferentes lugares,
+puedan producirse problemas de concurrencia y algunos valores
+pueden quedar en un estado inconsistente.
+
+En el paradigma FRP no existen valores compartidos, sinó que
+dichos valores dependientes del tiempo, tienen una representación
+llamada Comportamiento y la única forma de modificarlos, es
+a partir de como fueron definidos.
+
+Por ejemplo en una cuenta de un banco, el saldo se puede definir
+como un comportamiento, el cuál solo se modifica cuando ocurre
+un movimiento. Un movimiento puede ser depositar dinero o extraer
+dinero de la cuenta. Es claro que no es posible asignar un valor
+sin que sea por medio de su propia definición.
+
+movimiento = Input()
+
+saldo :: Behaviour Number
+
+  Saldo <= Saldo + Movimiento
+
+
+\begin{definicion}
+Comportamientos (Behaviours).\\
+Un comportamiento es un valor contínuo que depende del paso del tiempo.
+Los comportamientos se pueden definir, combinar, pasarlos como
+argumentos a funciones, retornarlos.
+Un comportamiento puede ser un valor constante, el tiempo mismo (un reloj),
+o puede formarse combinando otros comportamientos, por ejemplo secuencialmente
+o paralelamente.
+\end{definicion}
+
+\begin{definicion}
+Eventos (Streams).\\
+Son valores discretos dependientes del tiempo, que forman
+una secuencia finita o infinita de ocurrencias. Cada ocurrencia
+está formada por el valor y el instante de tiempo.
+\end{definicion}
+
+La principal diferencia entre Comportamientos y Eventos, es que los
+comportamientos son valores contínuos y los eventos son discretos.
+
+Los comportamientos representan cualquier valor en función del tiempo,
+por ejemplo:
+\begin{itemize}
+\item \textit{entrada} sensor de distancia, temperatura, video
+\item \textit{salida} velocidad, voltaje
+\item \textit{valores} intermedios calculados
+\end{itemize}
+
+Las operaciones que se pueden realizar sobre los comportamientos incluyen:
+\begin{itemize}
+\item \textit{Operaciones genéricas} Aritmética, integración, diferenciación
+\item \textit{Operaciones específicas de un dominio} como escalar video, aplicar filtros, detección de patrones.
+\end{itemize}
+
+Los eventos pueden ser sensores específicos de un dominio, por ejemplo un
+botón, un click, una interrupción o mensaje asincrónico.
+También puede ser generado a partir de valores de un comportamiento,
+como ser \emph{Temperatura alta}, \emph{Batería baja}.
+
+Las operaciones que se pueden realizar sobre los eventos incluyen:
+\begin{itemize}
+\item fmap, filter
+\item Modificar un \emph{Comportamiento} reactivo
+\end{itemize}
+
+
+
+
+
+%state = State(state, [input])
+%Output(state)

@@ -1,0 +1,42 @@
+
+
+El proyecto consiste en la creación de un lenguaje de programación
+para robots, cuyas capacidades de cómputo son limitadas.
+Para esto se escogió el paradigma de Programación Funcional Reactiva
+(\emph{FRP}) el cuál permite expresar naturalmente reacciones a
+valores que varían en función del tiempo.
+
+El objetivo es utilizarlo con fines educativos,
+por lo tanto debe ser simple y fácil de usar por usuarios
+inexpertos y no familiarizados con la electrónica y la informática.
+
+Para resolver el problema, se dividió en dos etapas.
+
+La primera consiste en la implementación de
+un compilador que traduce el lenguaje cuyo nivel es alto a
+un lenguaje de bajo nivel (\emph{Bytecode}) más simple e interpretable.
+
+La segunda etapa consiste en implementar una máquina virtual, que
+sea capaz de interpretar el lenguaje de bajo nivel.
+Por cada plataforma objetivo, es posible realizar una implementación de
+la máquina, lo que permite ejecutar los mismos
+programas en alto nivel, en diferentes plataformas.
+
+El lenguaje se implementará como un DSL embebido en Haskell.
+
+El diseño de la máquina consiste de un núcleo común capaz de interpretar
+instrucciones, y módulos bien definidos de
+entrada/salida los cuáles varían de una plataforma a otra.
+Ésto permite mayor portabilidad y extensibilidad.
+
+Debe ser posible ejecutar programas en dicho lenguaje dentro de plataformas
+de hardware reducido.
+Considerando ésto el lenguaje de programación elegido para la
+implementación de la máquina virtual es C/C++.
+
+De ésta forma se implementación de un lenguaje reactivo con las
+características deseadas, y una implementación modelo de una máquina
+virtual que permite
+su ejecución en una arquitectura objetivo deseada.
+La misma es fácil de mantener, portable y cuenta con suficiente
+flexibilidad para ser extendida.

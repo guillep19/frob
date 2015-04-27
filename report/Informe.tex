@@ -1,0 +1,108 @@
+% Definimos el estilo del documento
+\documentclass[12pt,a4paper,spanish]{book}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{ amssymb }
+\usepackage{ amsmath }
+\usepackage{ amsthm }
+\usepackage{ wasysym }
+\usepackage{ verbatim }
+
+\usepackage{ appendix }
+\renewcommand{\appendixname}{Apéndices}
+\renewcommand{\appendixtocname}{Apéndices}
+\renewcommand{\appendixpagename}{Apéndices}
+ 
+%\usepackage[dvips]{graphicx}
+%\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+
+\usepackage{graphicx}
+
+\usepackage{hyperref}
+\hypersetup{colorlinks=false}
+
+\usepackage{proof}
+
+\newtheorem{definicion}{Definición}
+
+%Empieza el documento
+\begin{document}
+
+% Definimos titulo, autor, fecha.
+\title{FROB: Un lenguaje de programación funcional reactivo para robots con bajas capacidades de cómputo}
+\author{Guillermo Pacheco}
+\date{\today}
+
+% Generamos titulo e indice de contenidos
+\maketitle
+
+
+% Resumen
+\chapter*{Resumen}
+\addcontentsline{toc}{chapter}{Resumen}
+\markboth{RESUMEN}{RESUMEN}
+\input{resumen/resumen.tex}
+
+
+% Indice general
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Índice general} % para que aparezca en el indice de contenidos
+\tableofcontents
+
+% Indice de figuras
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Índice de figuras} % para que aparezca en el indice de contenidos
+\listoffigures
+
+% indice de tablas
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Índice de tablas} % para que aparezca en el indice de contenidos
+\listoftables
+
+
+\chapter{Introducción}
+\input{intro/intro.tex}
+
+\chapter{Programación Funcional Reactiva}
+\input{frp/frp.tex}
+
+%\chapter{Autómatas de Büchi}
+%\input{buchi/Buchi.tex}
+
+%\chapter{Lógica Temporal Lineal}
+%\input{ltl/LTL.tex}
+
+%\chapter{Lógica de Árbol Computacional}
+%\input{ctl/CTL.tex}
+
+%\chapter{Implementación del verificador}
+%\input{mc/MC.tex}
+
+\chapter{Conclusiones}
+%\input{conclusiones/conclusiones.tex}
+
+
+% Bibliografia
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Bibliografía}
+\begin{thebibliography}{99}
+\input{bibliografia/biblio.tex}
+\end{thebibliography}
+
+
+% Apendices
+\appendix
+\cleardoublepage
+\addappheadtotoc
+\appendixpage
+
+%\chapter{Manual de usuario}
+%\input{manual/manual.tex}
+%
+%\chapter{Archivos \textit{GraphML}}
+%\input{graphml/graphml.tex}
+
+
+% Termina el documento
+\end{document}
