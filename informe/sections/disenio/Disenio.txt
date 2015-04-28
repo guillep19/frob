@@ -47,8 +47,8 @@ Type ColorSensor : Sensor {
   }
 }
 
-Function hayCasa (Distance d): Bool
-  return (d.get_meters() < 10.0)
+Function hayCasa (Float d): Bool
+  return (d < 10.0)
 
 Tarea contarCasas() {
   property cuenta = 0;

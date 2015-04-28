@@ -1,0 +1,76 @@
+Como se mencionó anteriormente se utilizó el formato de archivo \textit{GraphML} para
+ representar los sistemas de transiciones.
+Los estados son representados por el elemento \texttt{node} mientras que las transiciones
+ son representadas por el elemento \texttt{edge}.
+
+El formato \textit{GraphML} no establece como representar las etiquetas tanto en los nodos
+ como en las aristas.
+Para esto existe el atributo \texttt{data}, que proporciona flexibilidad
+ para agregar atributos no contemplados por el formato.
+Esto tiene un desventaja, y es que los atributos no contemplados por el formato no se
+ representan de forma estándar, y por lo tanto su representación depende del editor
+ utilizado.
+En este caso el editor utilizado es \textit{yEd}.
+
+Para los estados se guarda la siguiente información:
+\begin{itemize}
+\item Identificador
+
+Este valor se guarda en el atributo \texttt{id} de cada nodo.
+Es el identificador del estado, por lo que debe ser único.
+
+Cuando se genera un sistema de transiciones mediante el verificador este genera los identificadores
+ de cada estado automáticamente.
+
+\item Proposiciones
+
+Representan el conjunto de las proposiciones válidas en cada estado.
+
+Se guardan en el atributo \texttt{y:NodeLabel}.
+Este atributo es se encuentra dentro del atributo \texttt{data}, ya que no se encuentra
+ especificado en el formato.
+
+En caso de haber varias proposiciones, estas deben estar separadas por comas.
+
+\end{itemize}
+
+Además de esta información se debe indicar cuales son los estados iniciales.
+
+Para las transiciones se debe guardar la siguiente información:
+\begin{itemize}
+\item Origen
+
+Representa el estado de origen de la transición. Se guarda en el atributo \texttt{source}.
+
+\item Destino
+
+Representa el estado de destino de la transición. Se guarda en el atributo \texttt{target}.
+
+\item Acción
+
+Representa la acción que corresponde al cambio de estado.
+
+Se guardan en el atributo \texttt{y:EdgeLabel}.
+
+Este atributo es se encuentra dentro del atributo \texttt{data}, ya que no se encuentra
+ especificado en el formato.
+
+\end{itemize}
+
+El parser de \textit{GraphML} a sistemas de transiciones se encuentra implementado en
+ el objeto \texttt{ParserGraphML} del paquete \textit{Sistemas de transiciones}.
+
+Como se mencionó anteriormente hay atributos que no están especificados en el formato y
+ por lo tanto su interpretación depende del editor utilizado. Estos atributos son especificados
+ en el parser mediante sub clases.
+En este caso se utiliza el \textit{yEd Graph Editor}, para el cual fue implementado el objeto
+ \texttt{ParserGraphML\_yEd}.
+Este objeto es un parser de \textit{GraphML} que además interpreta la información dentro del
+ atributo \texttt{data} como las etiquetas de los estados y transiciones.
+
+A continuación se muestra un ejemplo de un sistema de transiciones y su correspondiente
+ representación en \textit{GraphML}.
+
+\paragraph{Ejemplo de sistema de transiciones en \textit{GraphML}} 
+
+

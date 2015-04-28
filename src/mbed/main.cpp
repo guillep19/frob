@@ -33,7 +33,7 @@ WORD aux2 = 0;
 //VM ops
 void f_halt() {
   ip = 0;
-  pc.printf("halt");
+  //pc.printf("halt");
 }
 //Functions
 void f_call() {
@@ -43,7 +43,7 @@ void f_call() {
   *++sp = (WORD) (++ip - (WORD*) code); //store oldip
   fp = (WORD) (sp - stack); //create new frame
   ip = (WORD*) code + fun_location; //jump to function
-  pc.printf("call:");
+  //pc.printf("call:");
 }
 void f_ret() {
   WORD ret_value = *sp;
@@ -53,116 +53,116 @@ void f_ret() {
   aux = *sp--; //get count to pop arguments
   sp -= aux; //remove arguments
   *++sp = ret_value; //push result to return
-  pc.printf("ret:");
+  //pc.printf("ret:");
 }
 void f_load_param() {
   *++sp = stack[fp - inm - 3]; //3 because of count,oldfp,oldip
-  pc.printf("load_param: inm=%d", inm);
+  //pc.printf("load_param: inm=%d", inm);
 }
 //Tasks
 void f_start() {
   aux = *ip++;
   ip_buffer[ip_buffer_last++] = (WORD*) code + aux;
-  pc.printf("start: taskpos=%d", aux);
+  //pc.printf("start: taskpos=%d", aux);
 }
 void f_stop() {
-  pc.printf("stop NOT IMPLEMENTED");
+  //pc.printf("stop NOT IMPLEMENTED");
 }
 //Jumps
 void f_jump() {
   aux = *ip;
   ip = (WORD*) code + aux;
-  pc.printf("jump: pos=%d", aux);
+  //pc.printf("jump: pos=%d", aux);
 }
 void f_jump_false() {
   aux = *ip++;
   if (!*sp--) ip = (WORD*) code + aux;
-  pc.printf("jump_false: pos=%d", aux);
+  //pc.printf("jump_false: pos=%d", aux);
 }
 void f_cmp_eq() {
   aux = *sp--;
   if (aux == *sp--) *++sp = 1; else *++sp = 0;
-  pc.printf("cmp_eq:");
+  //pc.printf("cmp_eq:");
 }
 void f_cmp_neq() {
   aux = *sp--;
   if (aux != *sp--) *++sp = 1; else *++sp = 0;
-  pc.printf("cmp_neq:");
+  //pc.printf("cmp_neq:");
 }
 void f_cmp_gt() {
   aux = *sp--;
   if (*sp-- > aux) *++sp = 1; else *++sp = 0;
-  pc.printf("cmp_gt:");
+  //pc.printf("cmp_gt:");
 }
 void f_cmp_lt() {
   aux = *sp--;
   if (*sp-- < aux) *++sp = 1; else *++sp = 0;
-  pc.printf("cmp_lt:");
+  //pc.printf("cmp_lt:");
 }
 //Binary
 void f_add() {
   aux = *sp--; *sp = *sp + aux;
-  pc.printf("add:");
+  //pc.printf("add:");
 }
 
 void f_sub() {
   aux = *sp--; *sp = *sp - aux;
-  pc.printf("sub:");
+  //pc.printf("sub:");
 }
 void f_div() {
   aux = *sp--; *sp = *sp / aux;
-  pc.printf("div:");
+  //pc.printf("div:");
 }
 void f_mul() {
   aux = *sp--; *sp = *sp * aux;
-  pc.printf("mul:");
+  //pc.printf("mul:");
 }
 void f_op_and() {
   aux = *sp--; *sp = *sp & aux;
-  pc.printf("and:");
+  //pc.printf("and:");
 }
 void f_op_or() {
   aux = *sp--; *sp = *sp | aux;
-  pc.printf("or:");
+  //pc.printf("or:");
 }
 //Unary operators
 void f_op_not() {
   *sp = !(*sp);
-  pc.printf("lnot:");
+  //pc.printf("lnot:");
 }
 //Stack operations
 void f_push() {
   *++sp = *ip++;
-  pc.printf("push:");
+  //pc.printf("push:");
 }
 void f_pop() {
   sp--;
-  pc.printf("pop:");
+  //pc.printf("pop:");
 }
 void f_dup() {
   sp++;
   *sp = *(sp-1);
-  pc.printf("dup:");
+  //pc.printf("dup:");
 }
 //Memory operations
 void f_store() {
   globals[inm] = *sp--;
-  pc.printf("store: globals[%d]=%d", inm, globals[inm]);
+  //pc.printf("store: globals[%d]=%d", inm, globals[inm]);
 }
 void f_load() {
   *++sp = globals[inm];
-  pc.printf("load: globals[%d]", inm);
+  //pc.printf("load: globals[%d]", inm);
 }
 //Input/Output operations
 void f_read() {
   inputs[globals[inm]] = ip;
   ip = 0;
-  pc.printf("read: inputs[globals[%d]==%d] == %p", 
-            inm, globals[inm], inputs[globals[inm]]);
+  //pc.printf("read: inputs[globals[%d]==%d] == %p", 
+            //inm, globals[inm], inputs[globals[inm]]);
 }
 void f_write() {
   outputs[inm] = *sp--;
-  pc.printf("write: outputs[%d] == %d", inm, outputs[inm]);
+  //pc.printf("write: outputs[%d] == %d", inm, outputs[inm]);
   write_output(inm, outputs[inm]);
 }
 
@@ -188,31 +188,31 @@ void (*functions[])() = {
 void print_instruction(WORD instruction) {
   BYTE high = (0xff00 & instruction) >> 8;
   BYTE low = 0x00ff & instruction;
-  pc.printf("%02x %02x\n", high, low);
+  //pc.printf("%02x %02x\n", high, low);
 }
 
 void print_code() {
-  pc.printf("Code:\n---------------\n");
+  //pc.printf("Code:\n---------------\n");
   WORD* ip;
   for(ip = (WORD*) code; *ip ; ip++) {
     print_instruction(*ip);
   };
-  pc.printf("---------------\n");
+  //pc.printf("---------------\n");
 }
 
 void print_stack() {
-  pc.printf("Stack: ");
+  //pc.printf("Stack: ");
   WORD* p = (WORD*) stack;
   if (p != sp) {
     p++;
     for (; p != sp; p++) {
-      pc.printf("-> [%d] ", *p);
+      //pc.printf("-> [%d] ", *p);
     };
-    pc.printf("-> [%d] -x", *sp);
+    //pc.printf("-> [%d] -x", *sp);
   } else {
-    pc.printf("-x");
+    //pc.printf("-x");
   }
-  pc.printf("\n");
+  //pc.printf("\n");
 }
 
 void run_thread() {
@@ -222,7 +222,7 @@ void run_thread() {
     op_code = (0xff00 & instr) >> 8;
     inm = 0x00ff & instr;
     (functions[op_code])();
-    pc.printf(" [TOS=%d, IP=%d (%04x)]\n", *sp, ip - (WORD*) code, ip);
+    //pc.printf(" [TOS=%d, IP=%d (%04x)]\n", *sp, ip - (WORD*) code, ip);
     print_stack();
   }
 }
@@ -247,32 +247,32 @@ void read_input() {
     inputs[input_iterator] = 0;
     WORD value = read_input(input_iterator);
     *++sp = value;
-    pc.printf("Read value from (%d), pushed %d\n", input_iterator, value);
+    //pc.printf("Read value from (%d), pushed %d\n", input_iterator, value);
   }
 }
 
 void run_vm() {
-  pc.printf("Running vm....\n");
+  //pc.printf("Running vm....\n");
   ip = (WORD*) code;
   while (ip) {
     run_thread();
     if (!ip) {
-      pc.printf("Looking for a ready thread...\n");
+      //pc.printf("Looking for a ready thread...\n");
       //Maybe I could have assumed ip = null..
       if (ip_buffer_first != ip_buffer_last) {
         //There are threads ready to run
         ip = ip_buffer[ip_buffer_first++];
-        pc.printf("Thread %d took control.\n", ip_buffer_first - 1);
+        //pc.printf("Thread %d took control.\n", ip_buffer_first - 1);
       } else {
-        pc.printf("No threads ready to run.\n");
+        //pc.printf("No threads ready to run.\n");
       }
     }
     if (!ip) {
-      pc.printf("Searching for a thread waiting to read...\n");
+      //pc.printf("Searching for a thread waiting to read...\n");
       read_input();
     }
   }
-  pc.printf("Finished\n");
+  //pc.printf("Finished\n");
 }
 
 int main() {

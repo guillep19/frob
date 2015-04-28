@@ -1,0 +1,1 @@
+> python MC.py ltl <archivo.graphml> <formula LTL>

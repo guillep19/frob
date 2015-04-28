@@ -1,0 +1,121 @@
+\subsection{Sintaxis de LTL}
+
+Las fórmulas de LTL son construídas según la siguiente gramática
+\[ \varphi ::= true | a | \varphi \wedge \varphi | \lnot \varphi | \bigcirc \varphi | \square \varphi | \lozenge \varphi | \varphi \cup \varphi \]
+
+Los operadores temporales permiten establecer relaciones entre las etiquetas
+ de los estados del sistema en una ejecución. Estos nuevos operadores son:
+
+\begin{itemize}
+
+\item $\lozenge p \longrightarrow $ eventually $p$ : 
+inevitablemente en el futuro se cumplirá $p$
+
+\item $\square p \longrightarrow $ always $p$ : 
+ahora y en el futuro se cumple $p$
+
+\item $\bigcirc p \longrightarrow $ next $p$ : 
+en el siguiente paso se cumple p
+
+\item $p \cup q \longrightarrow $ $p$ until $q$ : 
+$q$ se cumplirá inevitablemente en el futuro, y mientras tanto se cumple $p$
+
+\end{itemize}
+
+%ejemplo 5.2 (mutua exclusión):
+
+\paragraph{Ejemplo.}
+Tomando como ejemplo el problema de mutua exclusión entre dos proceso $P_1$ y $P_2$,
+ donde los procesos son modelados por tres estados:
+\begin{itemize}
+\item[(1)] sección no crítica
+\item[(2)] espera para entrar a la sección crítica
+\item[(3)] sección crítica
+\end{itemize}
+
+Sean las proposiciones $wait_i$ y $crit_i$ que representan los estados de espera y sección crítica
+ respectivamente para el proceso $P_i$, se pueden representar las siguientes propiedades con LTL.
+\begin{itemize}
+\item $P_1$ y $P_2$ nunca acceden simultaneamente a la sección crítica
+\[ \square (\neg crit_1 \vee \neg crit_2) \]
+\item $P_1$ y $P_2$ acceden infinitas veces a la sección crítica
+\[ (\square \lozenge crit_1) \wedge (\square \lozenge crit_2) \]
+\end{itemize}
+
+
+\subsection{Semántica de LTL}
+La satisfacibilidad en LTL se basa en la satisfacibilidad de trazas, o más precisamente de fragmentos
+de traza.
+A continuación se definen los conceptos de \textit{traza} y \textit{satisfacibilidad} para
+ una fórmula LTL.
+
+\begin{definicion}
+Trazas.\\
+Sea un sistema de transiciones
+ $\text{TS} = (\text{S}, \text{Act}, {\to}, \text{I}, \text{AP}, \text{L})$ y un fragmento de
+ camino $\pi = s_0 s_1 s_2 ...$. La traza correspondiente a $\pi$ es
+ $\text{Traza}(\pi) = L(s_0) L(s_1) L(s_2) ...$
+
+Además se definen las trazas de un sistema de transiciones como:
+\[ \text{Trazas}(\text{TS}) = \{ \text{Traza}(\pi) | \pi \text{ es un camino de TS} \} \]
+\end{definicion}
+
+
+\begin{definicion}
+Satisfacibilidad en LTL para trazas.\\
+Dada una traza $\sigma = A_0 A_1 A_2 ...$ y dos fórmulas LTL $\varphi$, $\psi$.
+\begin{itemize}
+\item $\sigma \models \textit{true}$
+\item $\sigma \models a$ si y solo si $a \in A_0$
+\item $\sigma \models \neg \varphi $ si y solo si $\sigma \not\models \varphi $
+\item $\sigma \models \varphi \wedge \psi $ si y solo si $\sigma \models \varphi $ y $\sigma \models \psi $
+\item $\sigma \models \bigcirc \varphi $ si y solo si $\sigma [1...] \models \varphi$
+\item $\sigma \models \lozenge \varphi $ si y solo si $\exists j \ge 0, \sigma [j...] \models \varphi$
+\item $\sigma \models \square \varphi $ si y solo si $\forall j \ge 0, \sigma [j...] \models \varphi$
+\item $\sigma \models \varphi \cup \psi $ si y solo si $\exists j \ge 0, \sigma [j...] \models \psi $ y $\forall 0 \le i < j, \sigma [i...] \models \varphi $
+\end{itemize}
+\end{definicion}
+
+Una vez definida la satisfacibilidad para trazas, se define la satisfacibilidad
+ para un sistema de transiciones.
+ 
+\begin{definicion}
+Satisfacibilidad en LTL para un sistema de trasiciones.\\
+Dado un sistema se transiciones $TS = (S, Act, \rightarrow, I, AP, L)$ y una fórmula LTL $\varphi$.
+
+La relación de satisfacibilidad para un sistema de transiciones se define como 
+\[ \text{TS} \models \varphi \text{ si y sólo si } \sigma \models \varphi, \forall \sigma \in \text{Trazas} (\text{TS}) \]
+\end{definicion}
+
+
+
+
+
+
+
+\subsection{Propiedades}
+Las siguientes propiedades son necesarias para poder expresar cualquier fórmula de LTL utilizando
+ un conjunto reducido de operadores ($true, \lnot, \land, \bigcirc, \cup$).
+
+\begin{itemize}
+\item $p \lor q = \lnot (\lnot p \land \lnot q)$
+\item $p \rightarrow q = \lnot (p \land \lnot q)$
+\item $p \leftrightarrow q = \lnot (p \land \lnot q) \land \lnot (\lnot p \land q)$
+\item $\lozenge p = true \cup p$
+\item $\square p = \lnot (true \cup \lnot p)$
+\end{itemize}
+
+
+\begin{definicion}
+Conjunto funcionalmente completo de conectivos.\\
+Sea un conjunto de conectivos $C$. Decimos que $C$ es funcionalmente completo si todas las fórmulas
+tienen una fórmula equivalente que utiliza unicamente conectivos de $C$.
+\end{definicion}
+
+
+A partir de las propiedades anteriores se puede afirmar que el conjunto {$true, \lnot, \land, \bigcirc, \cup$}
+ es un conjunto funcionalmente completo.
+
+
+De esta forma se normalizará cada fórmula LTL a una equivalente pero con un conjunto reducido de operadores
+ a fin de facilitar los prosesos posteriores.

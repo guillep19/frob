@@ -1,0 +1,43 @@
+Una vez que se tiene el sistema de transiciones en formato \textit{GraphML} se puede comenzar
+ a verificar propiedades sobre dicho sistema.
+Para esto de debe tener en cuenta que hay dos lenguajes implementados para representar propiedades,
+ estos son LTL y CTL.
+A continuación se muestra la ejecución del verificador para cada uno de estos lenguajes.
+
+\subsection{Propiedades en LTL}
+Para verificar las propiedades en LTL se debe ejecutar el verificador de la siguiente forma:
+
+\fbox{\parbox{\textwidth}{\scriptsize\verbatiminput{manual/comandos/comandoLTL.txt}}}
+
+Donde \texttt{archivo.graphml} es el archivo donde se encuentra representado el sistema de
+ transiciones y \texttt{formula LTL} es la fórmula LTL expresada según la sección \ref{cap:imp_ltl}.
+
+
+\subsection{Propiedades en CTL}
+Para verificar las propiedades en CTL se debe ejecutar el verificador de la siguiente forma:
+
+\fbox{\parbox{\textwidth}{\scriptsize\verbatiminput{manual/comandos/comandoCTL.txt}}}
+
+Donde \texttt{archivo.graphml} es el archivo donde se encuentra representado el sistema de
+ transiciones y \texttt{formula CTL} es la fórmula CTL expresada según la sección \ref{cap:imp_ctl}.
+
+\subsection{Resultados de la ejecución}
+Para la verificación de una propiedad existen dos posibles resultados, estas son que el sistema
+cumpla la propiedad, o que no la cumpla.
+En caso de que el sistema cumpla la propiedad se muestra el siguiente mensaje:
+\fbox{\parbox{\textwidth}{\scriptsize\verbatiminput{manual/salidas/cumple.txt}}}
+
+Mientras que si el sistema no cumple la propiedad se muestra el mensaje:
+\fbox{\parbox{\textwidth}{\scriptsize\verbatiminput{manual/salidas/no_cumple.txt}}}
+
+\subsubsection{Testigo o contrajemplo}
+Además de indicar si el sistema cumple o no la propiedad, el verificador proporciona
+ en caso de ser necesario una ejecución testigo de la respuesta dada.
+
+Si se está verificando una propiedad LTL se proporciona una contraejemplo en caso de
+ que el sistema no cumpla la propiedad.
+
+Para el caso de CTL si se está verificando una propiedad cuyo cuantificador es universal
+ se proporciona un contraejemplo en caso de que la propiedad no se cumpla, mientras que
+ si el cuantificador de la propiedad es existencial se proporciona un testigo en caso
+ de que la misma se cumpla.

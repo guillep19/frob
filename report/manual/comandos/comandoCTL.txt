@@ -1,0 +1,1 @@
+> python MC.py ctl <archivo.graphml> <formula CTL>

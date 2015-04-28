@@ -1,0 +1,162 @@
+Para simplificar la verificación se trabajará con un conjunto reducido y funcionalmente
+ completo de operadores. Para esto son de utilidad las propiedades del lenguaje vistas
+ anteriormente, que nos permiten transformar cualquier fórmula CTL en una fórmula
+ equivalente que utilice únicamente los conectivos de este conjunto.
+
+El enfoque de verificación utilizado para CTL es distinto al que se utiliza para LTL.
+Su diferencia más visible es que mientras el algoritmo de verificación de LTL se basa
+ en la construcción y análisis de autómatas, el algoritmo para CTL se realiza el
+ cálculo de satisfacibilidad de una fórmula para cada estado sin alterar el sistema
+ de transiciones original.
+Este algoritmo de verificación se basa en el cálculo del conjunto de satisfacibilidad
+ de la fórmula a verificar.
+Por esto también se analiza el algoritmo que permite este cálculo.
+
+
+
+\subsection{Cálculo del conjunto de satisfacibilidad}
+%Como ya se definió, el conjunto de satisfacibilidad de una fórmula es el conjunto
+El conjunto de satisfacibilidad de una fórmula es el conjunto
+ de los estados de un sistema de transiciones que satisfacen la fórmula.
+
+ % Theorem 6.23
+Dado un sistema de transiciones $TS = (S, Act, \rightarrow, I, AP, L)$, el conjunto de
+ satisfacibilidad se calcula como:
+\begin{itemize}
+\item $Sat(True) = S$
+\item $Sat(a) = \{ s \in S | a \in L(s) \}$, con $a \in AP$
+\item $Sat(\varphi \wedge \psi) = Sat(\varphi) \cap Sat(\psi)$
+\item $Sat(\neg \varphi) = S \ Sat(\varphi)$
+\item $Sat(\exists \bigcirc \varphi) = \{ s \in S | Posts(s) \cap Sat(\varphi) \neq \emptyset \}$
+\item $Sat(\exists (\varphi \cup \psi)) = ? $
+\item $Sat(\exists \square \varphi) = ? $
+
+\end{itemize}
+
+Ahora resta definir el cálculo del conjunto de satisfacción para los operadores Until y Always.
+
+\subsubsection{Cálculo del conjunto de satisfacibilidad para el operador Until}
+% definición
+Dada la siguiente ley de expansión para el operador Until
+\[
+\exists (\varphi \cup \psi) = \psi \lor (\varphi \land \exists \bigcirc \exists (\varphi \cup \psi))
+\]
+
+El cálculo del conjunto de satisfacibilidad se basa en la ecuación de punto fijo, a partir de 
+ la ley de expansión.
+
+\[
+Sat(\exists (\varphi \cup \psi)) = Sat(\psi \lor (\varphi \land \exists \bigcirc \exists (\varphi \cup \psi)))
+\]
+
+Aplicando la definición de la función $Sat$ obtenemos que:
+\[
+Sat(\exists (\varphi \cup \psi)) = Sat(\psi) \cup \{ s \in Sat(\varphi) | Post(s) \cap Sat(\exists (\varphi \cup \psi)) \neq \emptyset \}
+\]
+
+Por lo que el conjunto de satisfacibilidad de $\exists (\varphi \cup \psi)$ es el
+ menor conjunto $T \subseteq S$ que cumple:
+
+\begin{itemize}
+\item $Sat(\psi) \subseteq T$
+\item si $s \in Sat(\psi)$ y $Post(s) \cap T \neq \emptyset$ entonces $s \in T$
+
+\end{itemize}
+
+Este conjunto se puede calcular mediante la siguiente recursión
+\begin{itemize}
+\item $T_0 = Sat(\psi)$
+\item $T_{i+1} = T_i \cup \{ s \in Sat(\varphi) | Post(s) \cap T_i \neq \emptyset \} $
+
+\end{itemize}
+
+Esta sucesión converge al conjunto $Sat(\exists (\varphi \cup \psi))$.
+
+
+\subsubsection{Cálculo del conjunto de satisfacibilidad para el operador Always}
+Dada la siguiente ley de expansión para el operador Always
+\[
+\exists \square \varphi = \varphi \land \exists \bigcirc \exists \square \varphi
+\]
+
+El cálculo del conjunto de satisfacibilidad se basa en la ecuación de punto fijo, a partir de 
+ la ley de expansión.
+
+\[
+Sat(\exists \square \varphi) = Sat(\varphi \land \exists \bigcirc \exists \square \varphi)
+\]
+
+Aplicando la definición de la función $Sat$ obtenemos que:
+\[
+Sat(\exists \square \varphi) = \{ s \in Sat(\varphi) | Post(s) \cap Sat(\exists \square \varphi) \neq \emptyset \}
+\]
+
+Por lo que el conjunto de satisfacibilidad de $\exists \square \varphi$ es el
+ menor conjunto $T \subseteq S$ que cumple:
+
+\begin{itemize}
+\item $T \subseteq Sat(\varphi)$
+\item si $s \in T$ entonces $T \cap Post(s) \neq \emptyset$
+
+\end{itemize}
+
+Este conjunto se puede calcular mediante la siguiente recursión
+\begin{itemize}
+\item $T_0 = Sat(\varphi)$
+\item $T_{i+1} = T_i \cap \{ s \in Sat(\varphi) | Post(s) \cap T_i \neq \emptyset \} $
+
+\end{itemize}
+
+Esta sucesión converge al conjunto $Sat(\exists \square \varphi)$.
+
+\subsection{Algoritmo principal}
+El algoritmo prncipal de verificación es quién responde a la pregunta:
+\[ TS \models \varphi \]
+
+Donde $TS$ es un sistema de transiciones y $\varphi$ es una fórmula CTL.
+
+Por definición $TS \models \varphi $ si y solo si todo estado inicial $s$ de $TS$
+ cumple $s \models \varphi$.
+ 
+Por lo que una vez calculado $Sat(\varphi)$ el problema simplemente corresponde
+a resolver
+\[ I \subseteq Sat(\varphi) \]
+Donde $I$ el conjunto de estados iniciales de $TS$.
+
+
+\subsection{Mejora de implementación}
+Al calcular el conjunto se satisfacibilidad de una fórmula recursivamente es posible
+ que se esten repitiendo cálculos ya que se aplica la recursión para cada subfórmula
+ de forma independiente.
+
+\paragraph{Ejemplo.} ~\\
+Sea la fórmula CTL
+\[ \varphi = \psi \wedge \psi \]
+Entonces el cálculo del conjunto de satisfacibilidad para $\varphi$ se realiza de
+ la siguiente forma
+\[ Sat(\varphi) = Sat(\psi) \cap Sat(\psi) \]
+
+
+En el ejemplo anterior si el conjunto de satisfacibilidad es calculado recursivamente
+ se repetirán cálculos, ya que $Sat(\psi)$ se estará calculando dos veces.
+Una forma de evitar esto es implementar la solución mediante un enfoque \textit{bottom-up}.
+Las recursiones vistas anteriormente se calculan de forma iterativa.
+
+Primero se resuelven los pasos base, o sea, se calcula el conjunto de
+ satisfacibilidad para las fórmulas atómicas.
+A medida que avanza el algoritmo se guardan los resultados en tablas para poder
+ acceder a los mismo posteriormente y evitar cálculos repetidos.
+Luego se procede calculándolo para las fórmulas más complejas de forma tal que
+ para el paso a resolver, sus llamadas recursivas ya fueron calculadas.
+Estos cálculos se encontrarán almacenados en tablas, por lo que la resolución
+ del paso actual a partir de sus llamadas recursivas es inmediata.
+
+Para el ejemplo visto antriormente, primero se realiza el cálculo
+\[ S_\psi = Sat(\psi) \]
+
+Luego se procede a calcular
+\[ Sat(\varphi) = S_\psi \cap S_\psi \]
+
+En donde $S_\psi$ es el conjunto previamente calculado, por lo que no es
+ necesario volver a calcularlo y simplemente se realiza la intersección.
+ 

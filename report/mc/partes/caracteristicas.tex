@@ -1,0 +1,112 @@
+\section{Lenguaje de programación}
+El lenguaje utilizado para desarrollar el verificador fue \textit{Python 2.7}. Esto se debe a que sus
+ atributos se adaptaban a las necesidades del verificador.
+
+\textit{Python} es un lenguaje de alto nivel con características de lenguaje funcional,
+ y esto ayuda a que la implementación de
+ algoritmos requiera menos instrucciones y que a su vez estas instrucciones sean de alto
+ nivel, generando un código simple y fácil de entender por lo que es perfectamente
+ mantenible por otras personas.
+ 
+Además es un lenguaje extremadamente flexible, lo que permite reutilizar un algoritmo
+ implementado permitiendo aplicarlo sobre distintas estructuras sin necesidad de adaptarlo o
+ reescribirlo. Esto es de mucha utilidad ya que se manejan estructuras similares como ser
+ fórmulas de distintas lógicas y sus estructuras quedan encapsuladas dentro de sus respectivos
+ módulos, pudiendo aplicar el resto de los algoritmos sin necesidad de modificaciones.
+
+Otro de los atributos importantes de este lenguaje es que soporta la programación orientada
+ a objetos. Esto reafirma la idea de flexibilidad, modularidad y reutilización de código,
+ por lo que fue otro de los atributos que se tuvieron en cuenta al momento de seleccionar
+ el lenguaje de programación.
+
+
+
+\section{Librerías auxiliares}
+En la implementación del verificador se utilizaron dos librerías auxiliares.
+La primera de ellas es \textit{Expat} que provee herramientas para
+ parsear xml en objetos. La otra librería es \textit{Python Lex-Yacc}, una implementación
+ de \textit{Yacc} para Python es utilizada para generar el parser correspondiente a cada lógica.
+
+En esta sección se detallan las librerías mencionadas.
+
+\subsection{Expat}
+La librería \texttt{xml.parsers.expat} es una interfaz para el parser de XML \textit{Expat}.
+Esta librería provee la clase \texttt{xmlparser}, el cual contiene entre otros los siguientes
+ métodos
+
+\begin{itemize}
+\item \texttt{ParserCreate()}
+
+Retorna una nueva instancia de la clase \texttt{xmlparser}.
+
+\item \texttt{ParseFile(file)}
+
+Parsea el contenido XML desde el archivo \textit{file}.
+
+\item \texttt{StartElementHandler(name, attributes)}
+
+Define la rutina que se invoca cada vez que comienza un nuevo elemento XML.
+
+\textit{name} indica el nombre del elemento y \textit{attributes} es un hash
+ conteniendo los atributos del elemento con sus respectivos valores.
+
+\item \texttt{EndElementHandler(name)}
+
+Define la rutina a invocar cuando se cierra un elemento XML.
+
+\textit{name} indica el nombre del elemento a cerrar.
+
+\end{itemize}
+
+Esta librería fue utilizada para parsear los sistemas de transiciones desde \textit{GraphML}.
+Este lenguaje se describe más adelante.
+
+\subsection{Python Lex-Yacc}
+\textit{Python Lex-Yacc} (PLY) es una implementación para \textit{Python} de las herramientas
+ \textit{Lex} y \textit{Yacc}.
+
+Es un paquete implementado puramente en \textit{Python} que permite generar parsers facilmente.
+Este paquete está compuesto por los módulos \texttt{lex.py} y \texttt{yacc.py}.
+El primero de ellos, \texttt{lex.py}, es utilizado para separar el texto a parsear en
+ un conjunto de marcas llamados \textit{tokens} a partir de expresiones regulares definidas
+ para cada uno de estos \textit{tokens}.
+
+Una vez obtenido este conjunto de \textit{tokens} el módulo \texttt{yacc.py} reconoce los
+ elementos del lenguaje previamente definidos mediante una gramática libre de contexto y
+ construye el árbol sintáctico correspondiente.
+
+Las expresiones regulares así como las gramáticas libres de contexto utilizadas para los
+ lenguajes de LTL y CTL se encuentran definidas en la sección \ref{sec:ply}.
+
+\section{GraphML}
+\textit{GraphML} es un método para describir estructuras de grafos basado en el lenguaje
+ de marcas XML.
+No es un lenguaje en sí mismo, sino que define elementos y atributos en XML que permiten
+ representar varios tipos de estructuras de grafos, como ser grafos dirigidos, no dirigidos,
+ hipergrafos entre otros.
+
+Los elementos básicos en \textit{GraphML} son
+\begin{itemize}
+\item \texttt{graph}
+
+Este elemento representa el grafo en sí, conteniendo atributos como \texttt{edgedefault}
+ que indica si sus aristas son dirigidas o no.
+
+\item \texttt{node}
+
+Contiene la información de cada nodo como su identificador.
+
+\item \texttt{edge}
+
+Representa cada arista, indicando su origen y destino en los atributos \texttt{source} y
+ \texttt{target} respectivamente.
+
+\end{itemize}
+
+Al estar definido sobre un lenguaje tan simple y utilizado como XML se convierte en un método
+ fácilmente parseable.
+
+Además este método es altamente flexible para agregar nuevos elementos y atributos según
+ la necesidad de cada aplicación específicamente.
+
+En este proyecto \textit{GraphML} es utilizado para representar los sistemas de transiciones.

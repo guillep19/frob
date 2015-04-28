@@ -1,0 +1,102 @@
+En esta sección se muestra la utilización del verificador en dos casos de estudios distintos.
+En estos casos de estudio se verifican propiedades expresadas en LTL y en CTL para distintos
+sistemas modelados por sistemas de transiciones.
+
+%\subsection{Luces de tránsito}
+%A continuación se muestra el ejemplo de las luces de tránsito.
+%Para este ejemplo se considera un sistema de transiciones con los estados \textit{red},
+% \textit{yellow} y \textit{green} como se puede apreciar en el archivo \textit{GraphML}
+% de la figura \ref{fig:luces.gml}.
+%
+%\begin{figure}[hbtp]
+%\begin{center}
+%\caption{Archivo \textit{GraphML} para sistema de transiciones de luces de tránsito}
+%\fbox{\parbox{\textwidth}{\tiny\verbatiminput{mc/graphml/luces.graphml}}}
+%\label{fig:luces.gml}
+%\end{center}
+%\end{figure}
+%
+%Se desea verificar que el sistema cumple con las siguientes propiedades expresadas en LTL:
+%\begin{itemize}
+%\item Cuando la luz está en rojo, la luz verde no debe ser la siguiente
+%\[ \square (\text{red} \to \lnot \bigcirc \text{green}) \]
+%El resultado de la verificación de esta propiedad es:
+%
+%\fbox{\parbox{\textwidth}{\scriptsize\verbatiminput{mc/salidas/salidaLTL_1.txt}}}
+%
+%\item Una vez que la luz está en verde, debe cambiar posteriormente a amarillo y quedarse en amarillo
+% hasta cambiar a rojo
+%\[ \square (\text{green} \to \bigcirc (\text{green} \cup (\text{yellow} \land \bigcirc (\text{yellow} \cup \text{red})))) \]
+%El resultado de la verificación de esta propiedad es:
+%
+%\fbox{\parbox{\textwidth}{\scriptsize\verbatiminput{mc/salidas/salidaLTL_2.txt}}}
+%
+%\end{itemize}
+
+\subsection{Mutua exclusión con árbitro}
+A continuación se muestra el ejemplo de mutua exclusión con árbitro, visto en
+ capítulos anteriores.
+En la figura \ref{fig:arbitro_sincronizados} se muestra el sistemas de transiciones
+ correspondiente.
+El archivo en formato \textit{GraphML} para este caso de estudio se encuentra en la
+ sección \ref{cap:graphml_arbitro} ubicada en los apéndices.
+
+
+%\begin{figure}[hbtp]
+%\begin{center}
+%\caption{Archivo \textit{GraphML} para sistema de transiciones de mutua exclusión con árbitro}
+%\fbox{\parbox{\textwidth}{\tiny\verbatiminput{mc/graphml/Handshaking.graphml}}}
+%\label{fig:handshaking.gml}
+%\end{center}
+%\end{figure}
+
+Se desea verificar que los sistemas en cuestión cumplen con las siguientes propiedades en CTL:
+\begin{itemize}
+\item Los procesos nunca acceden simultaneamente en la sección crítica
+\[ \forall \square (\lnot \text{crit}_1 \lor \lnot \text{crit}_2) \]
+El resultado de la verificación de esta propiedad es:
+
+\fbox{\parbox{\textwidth}{\scriptsize\verbatiminput{mc/salidas/salidaCTL_1.txt}}}
+
+\item Cada proceso accede infinitas veces a la sección crítica
+\[ (\forall \square \forall \lozenge \text{crit}_1) \land (\forall \square \forall \lozenge \text{crit}_2) \]
+El resultado de la verificación de esta propiedad es:
+
+\fbox{\parbox{\textwidth}{\scriptsize\verbatiminput{mc/salidas/salidaCTL_2.txt}}}
+
+\end{itemize}
+
+
+\subsection{Ascensor}
+A continuación se muestra el ejemplo del ascensor, también visto en
+ capítulos anteriores.
+En la figura \ref{fig:HS_ascensor} se muestra el sistemas de transiciones
+ correspondiente.
+El archivo en formato \textit{GraphML} para este caso de estudio se encuentra en la
+ sección \ref{cap:graphml_ascensor} ubicada en los apéndices.
+
+%\begin{figure}[hbtp]
+%\begin{center}
+%\caption{Archivo \textit{GraphML} para sistema de transiciones de ascensor con puertas}
+%\fbox{\parbox{\textwidth}{\tiny\verbatiminput{mc/graphml/ascensor_1.graphml}}}
+%\label{fig:handshaking.gml}
+%\end{center}
+%\end{figure}
+%
+%\begin{figure}[hbtp]
+%\begin{center}
+%%\caption{Archivo \textit{GraphML} para sistema de transiciones de ascensor con puertas (2)}
+%\fbox{\parbox{\textwidth}{\tiny\verbatiminput{mc/graphml/ascensor_2.graphml}}}
+%%\label{fig:handshaking.gml}
+%\end{center}
+%\end{figure}
+
+Se desea verificar que los sistemas en cuestión cumplen con la siguiente propiedad en LTL:
+\begin{itemize}
+\item Si el ascensor está subiendo o bajando entonces ambas puertas están cerradas
+\[ \square ((\text{subiendo} \lor \text{bajando}) \to (\text{arriba.cerrada} \land \text{abajo.cerrada})) \]
+El resultado de la verificación de esta propiedad es:
+
+\fbox{\parbox{\textwidth}{\scriptsize\verbatiminput{mc/salidas/salidaLTL_1.txt}}}
+
+\end{itemize}

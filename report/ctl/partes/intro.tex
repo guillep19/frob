@@ -1,0 +1,23 @@
+En los capítulos anteriores se analizó la verificación de un sistema mediante propiedades expresadas
+ en LTL.
+LTL es una lógica lineal, esto se debe a que la noción de tiempo se basa en caminos.
+Las distintas ejecuciones se tratan como secuencias de estados, en donde cada estado
+ tiene un único sucesor posible.
+
+En este capítulo se trata la lógica arborecente CTL, introducida en \cite{clarke}
+ por Clarke y Emerson.
+A diferencia de LTL, en CTL el conjunto de ejecuciones se representa
+ con un único árbol en donde los nodos representan los estados y las aristas representan
+ las distintas decisiones posibles en cada estado.
+
+Debido a esto, LTL y CTL son lógicas incompatibles entre si.
+Esto significa que existen fórmulas en LTL para las que no existe una fórmula equivalente
+ en CTL y viceversa.
+ 
+En este capítulo se introducirán los conceptos básicos de CTL, su sintaxis, semántica, y
+ propiedades básicas que serán de utilidad en los capítulos posteriores.
+Además se mostrará su incompatibilidad con LTL.
+
+Finalmente se construirá un algoritmo que permite verificar si el modelo del sistema en cuestión
+ satisface la propiedad planteada en términos de CTL mostrando ejemplos y contraejemplos según
+ corresponda.

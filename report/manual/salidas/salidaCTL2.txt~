@@ -1,0 +1,11 @@
+############# PRUEBA CTL #############
+##############genero ts1##############
+##############genero ts2##############
+##############genero ts3##############
+##############intercalado##############
+##############producto syn##############
+##############imprimir##############
+((NOT ( EXISTE TRUE UNTIL (EXISTE ALWAYS (NOT crit_1)))) AND (NOT ( EXISTE TRUE UNTIL (EXISTE ALWAYS (NOT crit_2)))))
+El sistema NO cumple la propiedad.
+Contraejemplo:
+['noncrit_1', 'noncrit_2', 'unlock']

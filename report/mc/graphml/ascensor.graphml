@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:y="http://www.yworks.com/xml/graphml" xmlns:yed="http://www.yworks.com/xml/yed/3" 
+xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
+  <graph edgedefault="directed" id="G">
+	<node id="n0">
+      <data>
+        <y:ShapeNode>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" 
+fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="internal" 
+visible="true">INI_abajo,arriba_bloqueada,arriba_cerrada,abajo_cerrada</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+	<node id="n1">
+      <data>
+        <y:ShapeNode>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" 
+fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="internal" 
+visible="true">subiendo,arriba_bloqueada,arriba_cerrada,abajo_bloqueada,abajo_cerrada</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+	<node id="n2">
+      <data>
+        <y:ShapeNode>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" 
+fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="internal" 
+visible="true">abajo,arriba_bloqueada,arriba_cerrada,abajo_abierta</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+	<node id="n3">
+      <data>
+        <y:ShapeNode>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" 
+fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="internal" 
+visible="true">arriba,arriba_cerrada,abajo_bloqueada,abajo_cerrada</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+	<node id="n4">
+      <data>
+        <y:ShapeNode>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" 
+fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="internal" 
+visible="true">bajando,arriba_bloqueada,arriba_cerrada,abajo_bloqueada,abajo_cerrada</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+	<node id="n5">
+      <data>
+        <y:ShapeNode>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" 
+fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" modelName="internal" 
+visible="true">arriba,arriba_abierta,abajo_bloqueada,abajo_cerrada</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+	<edge id="e0" source="n0" target="n1">
+      <data>
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel>subir</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+	<edge id="e1" source="n0" target="n2">
+      <data>
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel></y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+	<edge id="e2" source="n1" target="n3">
+      <data>
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel>llego_arriba</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+	<edge id="e3" source="n2" target="n1">
+      <data>
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel>subir</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+	<edge id="e4" source="n2" target="n0">
+      <data>
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel></y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+	<edge id="e5" source="n3" target="n4">
+      <data>
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel>bajar</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+	<edge id="e6" source="n3" target="n5">
+      <data>
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel></y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+	<edge id="e7" source="n4" target="n0">
+      <data>
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel>llego_abajo</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+	<edge id="e8" source="n5" target="n4">
+      <data>
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel>bajar</y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+	<edge id="e9" source="n5" target="n3">
+      <data>
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel></y:EdgeLabel>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+  </graph>
+</graphml>
