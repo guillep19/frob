@@ -22,18 +22,7 @@ dichos valores dependientes del tiempo, tienen una representación
 llamada Comportamiento y la única forma de modificarlos, es
 a partir de como fueron definidos.
 
-Por ejemplo en una cuenta de un banco, el saldo se puede definir
-como un comportamiento, el cuál solo se modifica cuando ocurre
-un movimiento. Un movimiento puede ser depositar dinero o extraer
-dinero de la cuenta. Es claro que no es posible asignar un valor
-sin que sea por medio de su propia definición.
-
-movimiento = Input()
-
-saldo :: Behaviour Number
-
-  Saldo <= Saldo + Movimiento
-
+ 
 
 \begin{definicion}
 Comportamientos (Behaviours).\\
@@ -79,6 +68,44 @@ Las operaciones que se pueden realizar sobre los eventos incluyen:
 \item fmap, filter
 \item Modificar un \emph{Comportamiento} reactivo
 \end{itemize}
+
+
+\section{Ejemplo}
+
+Para entender un poco más las ideas de Comportamiento y Evento, se puede
+plantear el siguiente ejemplo.
+
+  En una cuenta de un banco, el saldo se puede definir
+como un comportamiento, el cuál solo se modifica cuando ocurre
+un movimiento.
+  Un movimiento puede ser depositar dinero o extraer
+dinero de la cuenta.
+  Un dato importante a ver, es que no es posible asignar un valor
+sin que sea por medio de su propia definición, por lo que nadie
+podría realizar la asignación $saldo = 1000000$.
+  La misma operación sería posible creando un movimiento, el cuál
+afectaría al saldo.
+
+  Usaremos la notación $<nombre> :: Event <tipo>$ para definir
+eventos y la notación $<nombre> :: Behaviour <tipo>$ para
+definir comportamientos.
+
+\begin{verbatim}
+movimiento :: Event Number
+movimiento = read(0)
+
+saldo :: Behaviour Number
+saldo = movimiento
+
+alert :: Event Bool
+alert = saldo > 1000
+
+on alert:
+  write(0, 'El saldo es mayor a 1000')
+
+\end{verbatim}
+
+Un comportamiento, solo se modifica cuando cambian sus componentes,
 
 
 
