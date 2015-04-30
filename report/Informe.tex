@@ -8,6 +8,7 @@
 \usepackage{ amsthm }
 \usepackage{ wasysym }
 \usepackage{ verbatim }
+\usepackage{ url }
 
 \usepackage{ appendix }
 \renewcommand{\appendixname}{Apéndices}
@@ -30,7 +31,7 @@
 \begin{document}
 
 % Definimos titulo, autor, fecha.
-\title{FROB: Un lenguaje de programación funcional reactivo para robots con bajas capacidades de cómputo}
+\title{GROB: Programación funcional reactiva para robots con bajas capacidades de cómputo}
 \author{Guillermo Pacheco}
 \date{\today}
 
@@ -60,24 +61,20 @@
 \addcontentsline{toc}{chapter}{Índice de tablas} % para que aparezca en el indice de contenidos
 \listoftables
 
-
 \chapter{Introducción}
 \input{intro/intro.tex}
 
 \chapter{Programación Funcional Reactiva}
 \input{frp/frp.tex}
 
-%\chapter{Autómatas de Büchi}
-%\input{buchi/Buchi.tex}
+\chapter{Diseño}
+\input{design/design.tex}
 
-%\chapter{Lógica Temporal Lineal}
-%\input{ltl/LTL.tex}
+\chapter{Implementación}
+\input{implementacion/implementacion.tex}
 
-%\chapter{Lógica de Árbol Computacional}
-%\input{ctl/CTL.tex}
-
-%\chapter{Implementación del verificador}
-%\input{mc/MC.tex}
+\chapter{Casos de estudio}
+\input{cases/cases.tex}
 
 \chapter{Conclusiones}
 %\input{conclusiones/conclusiones.tex}
@@ -86,9 +83,14 @@
 % Bibliografia
 \cleardoublepage
 \addcontentsline{toc}{chapter}{Bibliografía}
-\begin{thebibliography}{99}
-\input{bibliografia/biblio.tex}
-\end{thebibliography}
+
+%\begin{thebibliography}{99}
+%\input{bibliografia/biblio.tex}
+
+\bibliographystyle{unsrt}
+\bibliography{Informe}
+
+%\end{thebibliography}
 
 
 % Apendices

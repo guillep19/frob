@@ -1,0 +1,82 @@
+En esta seccion se describe el diseño del lenguaje, su semántica,
+así como el diseño del lenguaje de bajo nivel, y cómo es interpretado.
+
+\section{Lenguaje de alto nivel}
+
+\subsection{Sintaxis}
+
+\subsection{Semántica}
+
+\section{Lenguaje de bajo nivel}
+
+ Para presentar el lenguaje, primero defino las estructuras
+necesarias para explicar la semántica de cada instrucción.
+
+\begin{enumerate}
+
+\item \emph{Inputs}
+
+  
+  Es utilizado para almacenar todos los eventos de una aplicación.
+  Es una cola de eventos.
+
+  
+
+  Los valores leídos en las entradas de hardware se mapean
+en esta lista. Por ejemplo si el hardware cuenta con un botón,
+y el identificador del botón es $i$,
+su valor se representará con la notación:
+
+  $Inputs_i$
+
+  A cada entrada se le asocia un conjunto de
+rutinas que deben invocarse cuando se tenga un
+valor disponible en la entrada. El mismo puede ser vacío si
+no hay rutinas esperando por su valor. Queda a criterio de quien
+implementa la máquina si éstos valores deben ser guardados o
+descartados. 
+  A éste conjunto de rutinas lo denotamos cómo:
+
+  $Callbacks_i$
+
+\item \emph{Events}
+
+
+\item Stack
+
+Es una pila global, se utiliza para ejecutar operaciones,
+realizar cálculos, es único
+y global, y los hilos de ejecución no pueden guardar valores
+persistentes en él.
+
+Usaremos el símbolo $TOS$ para referirnos al elemento en el tope
+de la pila y $Stack$ para referirnos a la pila.
+
+\item Ready
+
+Es una \emph{cola} que contiene punteros a hilos de ejecución
+listos para ser ejecutados.
+
+\end{enumerate}
+
+\subsection{Instrucciones}
+
+Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semántica.
+
+\begin{itemize}
+\item Recv inm
+
+ $nextip = ip + 1$
+
+ $CallBacks_{inm} := CallBacks_{inm} \cup nextip$
+ 
+ $ip = 0$
+
+\item Send inm value
+
+ Length: 2
+
+ $Events_{inm} := Events_{inm} : \{inm, value, now\}$
+
+\item Output inm value
+\end{itemize}

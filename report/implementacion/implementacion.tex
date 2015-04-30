@@ -1,0 +1,36 @@
+
+En este capitulo se detalla la implementación de el compilador
+y la máquina virtual diseñadas para utilizar el lenguaje
+\emph{grob} en la plataforma elegida.
+También se explica cuál sería el mecanismo para portar la
+implementación a otra plataforma.
+
+
+%TODO: Completar la intro luego de tener los caps.
+
+\section{Compilador}
+
+  El lenguaje utilizado para desarrollar el compilador fue \textit{Haskell}.
+El compilador se divide en dos fases, la primera implementa un
+parser que recibe como entrada el programa en lenguaje {FROB} y genera un árbol de sintaxis abstracta (\emph{AST}). En Haskell
+se define el \emph{AST} como un tipo de datos.
+  Luego se recorre el \emph{AST} y se genera como salida un archivo
+con las instrucciones en bajo nivel.
+
+\section{Máquina virtual}
+
+  El lenguaje de programación para el desarrollo de la máquina virtual
+es \textit{C++} ya que es posible compilarlo para casi cualquier plataforma
+objetivo.
+  Existen dos limitaciones importantes a tener en cuenta, la primera es que
+el espacio de memoria varía en diferentes plataformas, por lo que se desea
+sea posible compilar la máquina aún con un espacio muy reducido.
+  La segunda es que las plataformas varían en capacidades
+de \textit{Entrada/Salida}, es importante que quien compila la máquina y
+arma un entorno tenga conocimiento de cómo disponer las mismas y qué
+limitaciones existen, por ejemplo: Cantidad de pines digitales o analógicos.
+
+  La implementación modelo, se hizo utilizando la plataforma \textit{MBED LPC1768},
+se puede encontrar documentación de la misma en \cite{mbed-LPC1768} 
+y en \cite{mbed}.
+

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# script:  watch
+# author:  Mike Smullin <mike@smullindesign.com>
+# license: GPLv3
+# description:
+#   watches the given path for changes
+#   and executes a given command when changes occur
+# usage:
+#   watch <path> <cmd...>
+#
+ 
+shift
+build() {
+  echo -en " building...\n\n"
+  make
+  echo -en "\n-->"
+}
+trap build SIGINT
+trap exit SIGQUIT
+ 
+echo -e  "--> Press Ctrl+C to force build, Ctrl+\\ to exit."
+while true; do
+  build
+  sleep 5
+done
