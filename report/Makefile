@@ -3,8 +3,12 @@ todo:
 	bibtex Informe.aux
 	pdflatex Informe.tex
 clean:
-	rm Informe.aux
-	rm Informe.dvi
-	rm Informe.log
-	rm Informe.bbl
-	rm Informe.blg
+	rm -f Informe.aux
+	rm -f Informe.dvi
+	rm -f Informe.log
+	rm -f Informe.bbl
+	rm -f Informe.blg
+	rm -f Informe.lof
+	rm -f Informe.lot
+	rm -f Informe.toc
+	rm -f Informe.out

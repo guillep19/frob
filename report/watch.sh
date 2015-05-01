@@ -9,10 +9,9 @@
 #   watch <path> <cmd...>
 #
  
-shift
 build() {
   echo -en " building...\n\n"
-  make
+  timeout 10 make
   echo -en "\n-->"
 }
 trap build SIGINT
