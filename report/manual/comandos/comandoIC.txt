@@ -1,1 +1,0 @@
-> python MC.py ic <TS1.graphml> <TS2.graphml> <intercalado.graphml>

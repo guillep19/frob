@@ -1,1 +1,0 @@
-> python MC.py hs <TS1.graphml> <TS2.graphml> <handshaking.graphml>

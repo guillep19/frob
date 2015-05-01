@@ -1,9 +1,0 @@
-############# PRUEBA CTL #############
-##############genero ts1##############
-##############genero ts2##############
-##############genero ts3##############
-##############intercalado##############
-##############producto syn##############
-##############imprimir##############
-(NOT ( EXISTE TRUE UNTIL (crit_1 AND crit_2)))
-El sistema cumple la propiedad.
