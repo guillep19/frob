@@ -6,6 +6,28 @@ implementación.
 
 \section {Solución}
 
+\begin{verbatim}
+distance :: Event Number
+color_r :: Event Number
+color_l :: Event Number
+
+type Status = Following, 
+
+delivery = {
+  speed_l = 0,
+  speed_r = 0,
+  faltan_casas
+
+rises :: Event Number -> Event Number
+rises = lift fst $ foldE (\(_, last) new -> if last < new then (1, new) else (0, new)) (0,0)
+
+main = let viendo_casa = mapE (hay_casa) distance,
+           nueva_casa = rises viendo_casa,
+           cuenta = foldE (+) 0 nueva_casa,
+           llegue = mapE (>= CASA_ENTREGAR) cuenta,
+
+\end{verbatim}
+
 \section {Conclusiones del caso}
 
 

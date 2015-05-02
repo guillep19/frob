@@ -4,8 +4,6 @@
 
 \section{Programación Funcional Reactiva}
 
-Acá voy a hablar de programación funcional reactiva.
-
 Tradicionalmente los programas son formados a partir de
 una secuencia de acciones imperativas. Los programas
 reactivos suelen formarse por eventos y código iterativo
@@ -22,7 +20,15 @@ dichos valores dependientes del tiempo, tienen una representación
 llamada Comportamiento y la única forma de modificarlos, es
 a partir de como fueron definidos.
 
- 
+\begin{definicion}
+Programa reactivo.\\
+Es aquel que interactúa con el ambiente, intercalando entradas
+y salidas dependientes del tiempo. Por ejemplo un reproductor
+de música, video juegos o controladores robóticos.
+
+Difiere de los programas \emph{transformacionales} los cuáles
+toman una entrada al inicio de la ejecución y producen una salida
+completa al final. Por ejemplo un compilador.
 
 \begin{definicion}
 Comportamientos (Behaviours).\\
@@ -88,12 +94,16 @@ afectaría al saldo.
 
   Usaremos la notación \texttt{<nombre> :: Event <tipo>} para definir
 fuentes de eventos.
-  Asumo conocida la fuente \emph{movimientos} que por cada movimiento
+  Asumo conocida la fuente de eventos \emph{movimientos} que por
+cada movimiento
 emite su valor.
 
 \begin{verbatim}
 movimientos :: Event Number
 \end{verbatim}
+
+  Ahora puedo expresar el saldo a partir de los mismos, y construir
+un programa que muestre el saldo.
 
 \begin{verbatim}
 main = let saldos = (foldlE (+) SALDO_INICIAL movimientos) in
@@ -104,10 +114,8 @@ main = let saldos = (foldlE (+) SALDO_INICIAL movimientos) in
 éste se compone a partir del \texttt{SALDO\_INICIAL} y la suma de
 los movimientos (positivos o negativos).
 
-Leer y citar este artículo \cite{peterson99:lambdainmotion} y también este otro
-\cite{evanczaplicki2012:Elm}.
+TODO: Mejorar esta sección explicando: Signal y SF (Signal Functions),
+Arrows, Behaviours y Event, Event, time leaks.
 
-
-
-%state = State(state, [input])
-%Output(state)
+Leer y citar \cite{peterson99:lambdainmotion} y también este otro
+\cite{evanczaplicki2012:Elm} y \cite{yampa}.
