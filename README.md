@@ -7,6 +7,26 @@ Proyecto de grado - Guillermo Pacheco - Facultad de Ingeniería - UdelaR
 Noticias
 --------
 
+* Lunes 27-04-2015 a Sábado 02-05-2015:
+  - Creo documentación en latex.
+  - Agrego secciones: Resumen, Introducción, Programación funcional.
+    reactiva, diseño, implementación, casos de estudio y conclusiones.
+  - Redacto resumen e introduccion, frp, algo de diseño e implementación.
+  - Comienzo a redactar caso de estudio.
+  - Planifico mejoras de diseño e implementación.
+  - Agrego algunas referencias y bibliografia.
+  - Documentación accesible en: https://github.com/guillep19/frob/blob/master/report/Informe.pdf
+* Sábado 18-04-2015 a Domingo 19-04-2015:
+  - Funciona ejemplo básico example3 que vincula sensor de distancia
+    filtra de acuerdo a la distancia y enciende un led cuando la misma
+    es menor a una distancia dada.
+  - El mismo es compilado a bytecode y lo corre la VM en el mbed. Se 
+    agregó la abstracción de "Sensor de distancia" a la MBEDInterface
+    que implementa IOInterface.
+  - Armo sensores de luz y color.
+  - Video: https://www.youtube.com/watch?v=q8zfUJGZRxE
+* 15-04-2015:
+  - Organizo implementación de VM. Creo IOInterface para abstraer kits.
 * Domingo 22-03-2015:
   - Implemento 90% del compilador. Faltan detalles.
   - Probado con ejemplo2.frob.
