@@ -2,6 +2,7 @@ todo:
 	latex Informe.tex
 	bibtex Informe.aux
 	pdflatex Informe.tex
+	pdflatex Informe.tex
 clean:
 	rm -f Informe.aux
 	rm -f Informe.dvi
