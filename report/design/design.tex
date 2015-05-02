@@ -7,6 +7,33 @@ así como el diseño del lenguaje de bajo nivel, y cómo es interpretado.
 
 \subsection{Semántica}
 
+
+\subsection{Ejemplo}
+
+En el siguiente ejemplo se muestra como haría para detener un
+robot cuando su sensor de distancia muestra un valor menor a un mínimo.
+Se asume definido \emph{distance},
+una fuente de eventos de tipo \emph{Event Number}.
+
+\begin{verbatim}
+MINIMO = 30
+INPUT_DISTANCE = 1
+OUTPUT_LED = 1
+
+estaCerca :: Number -> Bool
+estaCerca n = n < MINIMO
+
+distance :: Event Number
+distance = read(1)
+
+write_led :: Bool -> IO()
+write_led value = output LED value
+
+main :: IO()
+main = mapE write_led (mapE (estaCerca) distance)
+
+\end{verbatim}
+
 \section{Lenguaje de bajo nivel}
 
  Para presentar el lenguaje, primero defino las estructuras
