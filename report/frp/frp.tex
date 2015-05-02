@@ -86,30 +86,26 @@ podría realizar la asignación $saldo = 1000000$.
   La misma operación sería posible creando un movimiento, el cuál
 afectaría al saldo.
 
-  Usaremos la notación $<nombre> :: Event <tipo>$ para definir
-eventos y la notación $<nombre> :: Behaviour <tipo>$ para
-definir comportamientos.
+  Usaremos la notación \texttt{<nombre> :: Event <tipo>} para definir
+fuentes de eventos.
+  Asumo conocida la fuente \emph{movimientos} que por cada movimiento
+emite su valor.
 
 \begin{verbatim}
-movimiento :: Event Number
-movimiento = read(0)
-
-saldo :: Behaviour Number
-saldo = movimiento
-
-alert :: Event Bool
-alert = saldo > 1000
-
-on alert:
-  write(0, 'El saldo es mayor a 1000')
-
+movimientos :: Event Number
 \end{verbatim}
 
-Un comportamiento, solo se modifica cuando cambian sus componentes,...
+\begin{verbatim}
+main = let saldos = (foldlE (+) SALDO_INICIAL movimientos) in
+     mapE show saldos
+\end{verbatim}
 
+  En el ejemplo se ve que es imposible asignar un valor al saldo,
+éste se compone a partir del \texttt{SALDO\_INICIAL} y la suma de
+los movimientos (positivos o negativos).
 
 Leer y citar este artículo \cite{peterson99:lambdainmotion} y también este otro
-\cite{evanczaplicki2012:Elm}....
+\cite{evanczaplicki2012:Elm}.
 
 
 

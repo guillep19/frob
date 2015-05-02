@@ -12,27 +12,54 @@ así como el diseño del lenguaje de bajo nivel, y cómo es interpretado.
 
 En el siguiente ejemplo se muestra como haría para detener un
 robot cuando su sensor de distancia muestra un valor menor a un mínimo.
-Se asume definido \emph{distance},
-una fuente de eventos de tipo \emph{Event Number}.
 
 \begin{verbatim}
 MINIMO = 30
 INPUT_DISTANCE = 1
-OUTPUT_LED = 1
+OUTPUT_MOTOR = 1
 
-estaCerca :: Number -> Bool
-estaCerca n = n < MINIMO
-
-distance :: Event Number
-distance = read(1)
-
-write_led :: Bool -> IO()
-write_led value = output LED value
+distanceToSpeed :: Number -> Number
+distanceToSpeed n =
+   if (n < MINIMO) 0 else 100
 
 main :: IO()
-main = mapE write_led (mapE (estaCerca) distance)
+main = let distance = read(INPUT_DISTANCE) in
+   output OUTPUT_MOTOR (mapE (distanceToSpeed) distance)
 
 \end{verbatim}
+
+Primero se definió una fuente de eventos llamada \emph{distance},
+de tipo \emph{Event Number}.
+
+\begin{verbatim}
+let distance = read(INPUT_DISTANCE)
+\end{verbatim}
+
+La misma emitirá un evento con la distancia en \emph{cm} leída
+por un sensor en el robot.
+
+  Luego, se quiere que cuando la distancia sea menor al valor
+\emph{MINIMO} dado, el robot se detenga completamente, ésto
+quiere decir, que la velocidad sea $0$, en otro caso el mismo
+se mueve a velocidad $100$, la cuál asumimos es una velocidad
+apropiada.
+  Para ésto se crea una nueva fuente de eventos, definida a partir
+de \emph{distance}, aplicandole la función \texttt{distanceToSpeed} 
+a cada valor para obtener la velocidad.
+
+\begin{verbatim}
+(mapE (distanceToSpeed) distance)
+\end{verbatim}
+
+  Ésta expresión, también es una fuente de eventos
+de tipo \emph{Event Number}.
+
+  Finalmente, se aplica la función nativa \texttt{output} cuyo
+primer parámetro es el $id$ de la salida, en éste caso es \texttt{OUTPUT\_MOTOR}
+y su segundo parámetro es una fuente de eventos,
+en éste caso son velocidades.
+
+
 
 \section{Lenguaje de bajo nivel}
 
