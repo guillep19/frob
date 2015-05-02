@@ -1,68 +1,39 @@
 
-Este documento desarrolla la construcción de herramientas
+  Este documento desarrolla el proceso de construcción de
+herramientas
 que permitan programar robots utilizando el paradigma de
 programación funcional reactiva.
 
-Para ello se define el lenguaje \emph{Frob} de alto nivel,
+  Para ello se define el lenguaje \frob\ de alto nivel,
 que permite expresar los comportamientos de un robot y sus
 interacciones.
-El lenguaje permite expresar los mismos en base a
-\emph{Comportamientos} y \emph{Eventos}.
+  El lenguaje permite expresar los mismos en base a
+\emph{Eventos} y relaciones entre ellos, que permiten
+capturar la naturaleza reactiva del dominio.
 
-Los eventos son 
+  Éste lenguaje fue construído con fines académicos y de
+investigación, uno de los objetivos es que sea simple de
+utilizar e intuitivo.
 
+  Otro objetivo planteado es que debe ser posible programar
+con él sistemas robóticos embebidos en plataformas de
+hardware de baja capacidad de cómputo, y en lo posible
+bajo costo.
 
+  En los siguientes capítulos se introduce el concepto de
+programación funcional reactiva, junto con sus variantes y
+algunos ejemplos.
+  Luego de decidir cuál de éstas variantes es más útil
+en nuestro dominio, se muestra la definición del lenguaje
+\frob\ y cuál es el proceso desde que se escribe un programa
+hasta que es ejecutado dentro de una plataforma.
 
+  Para cumplir con el objetivo de que la implementación sea
+portable, se separó la misma en dos fases. Los programas son
+compilados a código de menor abstracción, el cuál es
+ejecutado por una máquina virtual que definiremos.
+  La misma puede ser portada a distintas plataformas.
 
-
-%Este documento desarrolla la construcción de una herramienta para
-% verificar propiedades sobre distintos sistemas.
-%Estas propiedades son expresadas en distintas lógicas basadas en proposiciones
-%mientras que los sistemas son representados por grafos etiquetados a los que
-% llamaremos sistemas de transiciones.
-%Esta herramienta es llamada verificador de modelos.
-% 
-%Este verificador es construído con fines académicos.
-%Su objetivo es que sea fácil de utilizar,
-% utilizando herramientas conocidas para modelar sistemas y
-% lenguajes intuitivos para expresar propiedades.
-%A su vez debe ser fácil de mantener y flexible para agregar otros
-% tipos de lógica para expresar propiedades.
-%
-%En los siguientes capítulos se introducen herramientas para modelar
-% sistemas reactivos así como distintos lenguajes para expresar
-% propiedades sobre estos sistemas.
-%
-%Una vez que se tienen tanto el modelo del sistema representado por un
-% sistema de transiciones $TS$, como la propiedad $\varphi$
-% especificada formalmente en alguno de los lenguajes vistos, se utiliza
-% un verificador de modelos para resolver el problema
-%
-%\[ TS \models \varphi \]
-%
-%Esto significa que el sistema de transiciones $TS$ cumple con la
-% propiedad~$\varphi$.
-%
-%Los lenguajes seleccionados en este documento para especificar las
-% propiedades utilizan distintos paradigmas de verificación.
-%El algoritmo de verificación para LTL, uno de los lenguajes utilizados,
-% construye un autómata que representa la propiedad y se basa en el
-% reconocimiento de palabras para los autómatas.
-%En este caso se realizan operaciones tanto sobre los autómatas como
-% sobre el sistema de transiciones que representa el sistema reactivo.
-%Por otro lado el algoritmo utilizado para CTL, el otro lenguaje
-% utilizado en este proyecto, se basa en el análisis de satisfacibilidad de la
-% propiedad por cada estado del sistema de transiciones.
-%En este caso no se realiza ninguna operación sobre el sistema de
-% transiciones, por lo que no se modifica el modelo original del
-% sistema.
-% 
-%El verificador de modelos implementado contiene la sintaxis de cada
-% lenguaje así como la implementación de sus respectivos algoritmos
-% de verificación de forma modular.
-%De esta forma se mantiene cierta flexibilidad para agregar nuevos
-% lengujes utilizando los algoritmos de verificación ya implementados.
-% 
-%Para finalizar se tratan algunos casos de estudio completos.
-%Estos consisten en el modelado de un sistema, la especificación
-% de propiedades y el análisis de su satisfacibilidad.
+  Para finalizar se trata un caso de estudio completo, en el
+que se implementa un desafío robótico utilizado en la competencia
+SumoUY.
