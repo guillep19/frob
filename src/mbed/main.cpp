@@ -276,6 +276,7 @@ void run_vm() {
 }
 
 int main() {
+  initialize_iointerface();
   print_stack();
   print_code();
   run_vm();
