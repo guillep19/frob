@@ -5,6 +5,8 @@ así como el diseño del lenguaje de bajo nivel, y cómo es interpretado.
 
 \subsection{Sintaxis}
 
+
+
 \subsection{Semántica}
 
 
@@ -14,17 +16,18 @@ En el siguiente ejemplo se muestra como haría para detener un
 robot cuando su sensor de distancia muestra un valor menor a un mínimo.
 
 \begin{verbatim}
-MINIMO = 30
 INPUT_DISTANCE = 1
 OUTPUT_MOTOR = 1
 
-distanceToSpeed :: Number -> Number
-distanceToSpeed n =
-   if (n < MINIMO) 0 else 100
+MIN_DISTANCE = 30
+FULL_SPEED = 100
+STOP = 0
+
+distanceToSpeed n = if (n < MIN_DISTANCE) STOP else FULL_SPEED
 
 main :: IO()
-main = let distance = read(INPUT_DISTANCE) in
-   output OUTPUT_MOTOR (mapE (distanceToSpeed) distance)
+main = let distance = read INPUT_DISTANCE in
+   output OUTPUT_MOTOR (lift distanceToSpeed distance)
 
 \end{verbatim}
 
@@ -32,7 +35,7 @@ Primero se definió una fuente de eventos llamada \emph{distance},
 de tipo \emph{Event Number}.
 
 \begin{verbatim}
-let distance = read(INPUT_DISTANCE)
+let distance = read INPUT_DISTANCE
 \end{verbatim}
 
 La misma emitirá un evento con la distancia en \emph{cm} leída
@@ -48,7 +51,7 @@ de \emph{distance}, aplicandole la función \texttt{distanceToSpeed}
 a cada valor para obtener la velocidad.
 
 \begin{verbatim}
-(mapE (distanceToSpeed) distance)
+(lift distanceToSpeed distance)
 \end{verbatim}
 
   Ésta expresión, también es una fuente de eventos
@@ -60,7 +63,6 @@ y su segundo parámetro es una fuente de eventos,
 en éste caso son velocidades.
 
 
-
 \section{Lenguaje de bajo nivel}
 
  Para presentar el lenguaje, primero defino las estructuras
@@ -69,12 +71,6 @@ necesarias para explicar la semántica de cada instrucción.
 \begin{enumerate}
 
 \item \emph{Inputs}
-
-  
-  Es utilizado para almacenar todos los eventos de una aplicación.
-  Es una cola de eventos.
-
-  
 
   Los valores leídos en las entradas de hardware se mapean
 en esta lista. Por ejemplo si el hardware cuenta con un botón,
@@ -88,15 +84,24 @@ rutinas que deben invocarse cuando se tenga un
 valor disponible en la entrada. El mismo puede ser vacío si
 no hay rutinas esperando por su valor. Queda a criterio de quien
 implementa la máquina si éstos valores deben ser guardados o
-descartados. 
+descartados.
   A éste conjunto de rutinas lo denotamos cómo:
 
   $Callbacks_i$
 
-\item \emph{Events}
+\item \emph{Nodes}
 
+  Es utilizado para almacenar todas las transformaciones.
+  Cada aplicación de \texttt{lift} o \texttt{lift2} será mapeada en un nodo.
+  Cada nodo $Node_i$ tiene una lista de nodos adyacentes
+que dependen de él.
 
-\item Stack
+\item \emph{Outputs}
+
+  Mapea valores en salidas de hardware, los valores
+  son asignados con la operación \texttt{output}.
+
+\item \emph{Stack}
 
 Es una pila global, se utiliza para ejecutar operaciones,
 realizar cálculos, es único
@@ -106,10 +111,25 @@ persistentes en él.
 Usaremos el símbolo $TOS$ para referirnos al elemento en el tope
 de la pila y $Stack$ para referirnos a la pila.
 
-\item Ready
+\item \emph{Ready}
 
 Es una \emph{cola} que contiene punteros a hilos de ejecución
 listos para ser ejecutados.
+
+
+\item Dispatcher
+
+El dispatcher, es quien implementa las acciones de la máquina.
+El mismo se encarga de recibir valores de los sensores, mapearlos
+a eventos en las entradas $Input_i$.
+Éstos eventos, serán recibidos por los nodos $Nodes$, cada $Node_i$
+que espera por eventos, entrará en estado activo cuando todos los nodos
+por los que espera le envíen un evento.
+A su vez, el nodo en estado activo calcula un resultado y notifica a
+todos sus nodos adyacentes.
+
+Como $Nodes$ es un grafo acíclico, éste proceso termina, y cada
+salida cuenta con un valor, que será mapeado a los actuadores.
 
 \end{enumerate}
 
