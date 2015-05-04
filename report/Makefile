@@ -1,5 +1,5 @@
 todo:
-	latex Informe.tex
+	pdflatex Informe.tex
 	bibtex Informe.aux
 	pdflatex Informe.tex
 	pdflatex Informe.tex
