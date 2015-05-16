@@ -1,0 +1,16 @@
+#frob
+# Este programa de prueba muestra con un led si se esta frente a una casa.
+
+#Inputs
+sensor_distancia = 1
+
+#Outputs
+led = 1
+
+hay_casa = \distancia -> (distancia < 100)
+
+signal_distancia = read(sensor_distancia)
+
+signal_viendo = lift hay_casa sensor_distancia
+
+write led signal_viendo

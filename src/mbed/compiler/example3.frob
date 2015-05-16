@@ -1,21 +1,15 @@
-#frob
-# Este programa de prueba muestra con un led si se esta frente a una casa.
 
-#Inputs
-sensor_distancia = 1
 
-#Outputs
-led = 1
+run_main()
 
-DISTANCIA_CASA = 100
+run_ready_tasks()  //se bloquean por inputs o signals
 
-def hay_casa(distancia):
-  return distancia < DISTANCIA_CASA
+collect_inputs() //read inputs
 
-def task_ver_casa():
-  while True:
-    distancia = read(sensor_distancia)
-    viendo = hay_casa(distancia)
-    write(led, viendo)
+1 -> 2 -> 3 
 
-start(task_ver_casa)
+Graph:
+  1 -> 2 -> -x
+  2 -> 3 -> -x
+  3 -> -x
+
