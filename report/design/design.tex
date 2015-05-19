@@ -5,9 +5,27 @@ así como el diseño del lenguaje de bajo nivel, y cómo es interpretado.
 
 \subsection{Sintaxis}
 
-Definición:
+bool := "True" | "False"
+float := [-+]?[0-9]*\.?[0-9]+
+int := [-+]?[0-9]*\.?[0-9]+
 
-name arglist = expr
+value := float | int | bool
+
+binop := '+' | '-' | '/' | '*' | '||' | '&&'
+
+expr := expr expr 
+      | value
+      | expr binop expr
+      | "if" expr "then" expr "else" expr
+      | "let" name "=" expr "in" expr
+      | "\\"
+
+func = 
+
+
+Definición de funciones:
+
+func := name [arglist] = expr
 
 Let:
 
@@ -59,7 +77,7 @@ MIN_DISTANCE = 30
 FULL_SPEED = 100
 STOP = 0
 
-distanceToSpeed n = if (n < MIN_DISTANCE) STOP else FULL_SPEED
+distanceToSpeed n = if (n < MIN_DISTANCE) then STOP else FULL_SPEED
 
 main :: IO()
 main = let distance = read INPUT_DISTANCE in
@@ -174,19 +192,200 @@ salida cuenta con un valor, que será mapeado a los actuadores.
 Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semántica.
 
 \begin{itemize}
-\item Recv inm
+\item lift
 
- $nextip = ip + 1$
+ $lift id source_id function_pointer$
 
- $CallBacks_{inm} := CallBacks_{inm} \cup nextip$
- 
- $ip = 0$
+ Crea un nodo que recibe valores de la fuente de
+ eventos $source_id$,
+ les aplica la función $function_pointer$ y emite el resultado
+ en la fuente de eventos $id$.
 
-\item Send inm value
+\item lift2
 
- Length: 2
+ $lift2 id source-id_1 source-id_2 function_pointer$
 
- $Events_{inm} := Events_{inm} : \{inm, value, now\}$
+ Crea un nodo que recibe valores de $source-id_1$ y
+ $source-id_2$,
+ les aplica la función $function_pointer$ y emite el resultado
+ en la fuente de eventos $id$.
 
-\item Output inm value
+\item \texttt{read id input-id}
+
+ Crea un nodo que recibe valores de una entrada,
+ y emite el resultado en la fuente de eventos $id$.
+
+\item halt
+
+  Detiene el hilo de ejecución actual.
+
+  \texttt{ip = 0} 
+
+\item call function
+
+  Invoca la funcion $function$.
+
+  \texttt{stack.push(fp)}
+
+  \texttt{stack.push(ip)}
+
+  \texttt{fp = sp}
+
+  \texttt{goto function}
+
+\item ret
+
+  Elimina el frame y coloca el resultado en el stack.
+
+  \texttt{value = stack.pop()}
+
+  \texttt{stack.pop_frame();}
+
+  \texttt{ip = code[stack.pop()]}
+
+  \texttt{fp = stack.pop()}
+
+  \texttt{stack.pop_args()}
+
+  \texttt{stack.push(value)}
+
+\item load_param
+
+  \texttt{a = stack[fp - inm - 3]}
+
+  \texttt{stack.push(a)}
+
+\item jump
+
+  \texttt{goto position}
+
+\item jump_false position
+
+  \texttt{a = stack.pop()}
+
+  \texttt{if not a: goto position}
+
+\item cmp_eq
+
+  \texttt{a = stack.pop()}
+
+  \texttt{b = stack.pop()}
+
+  \texttt{stack.push(a == b)}
+
+\item cmp_neq
+
+  \texttt{a = stack.pop()}
+
+  \texttt{b = stack.pop()}
+
+  \texttt{stack.push(a != b)}
+
+\item cmp_gt
+
+  \texttt{a = stack.pop()}
+
+  \texttt{b = stack.pop()}
+
+  \texttt{stack.push(a > b)}
+
+\item cmp_lt
+
+  \texttt{a = stack.pop()}
+
+  \texttt{b = stack.pop()}
+
+  \texttt{stack.push(a < b)}
+
+\item add
+
+  \texttt{a = stack.pop()}
+
+  \texttt{b = stack.pop()}
+
+  \texttt{stack.push(a & b)}
+
+\item sub
+
+  \texttt{a = stack.pop()}
+
+  \texttt{b = stack.pop()}
+
+  \texttt{stack.push(a - b)}
+
+\item div
+  
+  \texttt{a = stack.pop()}
+
+  \texttt{b = stack.pop()}
+
+  \texttt{stack.push(a / b)}
+
+\item mul
+
+  \texttt{a = stack.pop()}
+
+  \texttt{b = stack.pop()}
+
+  \texttt{stack.push(a * b)}
+
+\item op_and
+
+  \texttt{a = stack.pop()}
+
+  \texttt{b = stack.pop()}
+
+  \texttt{stack.push(a and b)}
+
+\item op_or
+
+  \texttt{a = stack.pop()}
+
+  \texttt{b = stack.pop()}
+
+  \texttt{stack.push(a or b)}
+
+\item op_not
+
+  Coloca un valor constante en el stack.
+
+  \texttt{stack.push(word)}
+
+\item push word
+
+  Coloca un valor constante en el stack.
+
+  \texttt{stack.push(word)}
+
+\item pop
+
+  Elimina el tope del stack.
+
+  \texttt{stack.pop()}
+
+\item dup
+
+  Duplica el tope del stack.
+
+  \texttt{stask.push(stack.tos())}
+
+\item store inm
+
+  Guarda el tope del stack en la variable $inm$.
+
+  \texttt{var[inm] = stack.pop()}
+
+\item load inm
+
+  Carga la variable $inm$ en el stack.
+
+  \texttt{stack.push(var[inm])}
+
+\item write inm
+
+  Toma el ultimo valor del stack y lo coloca en la 
+  salida $inm$.
+
+  \texttt{outputs(inm, stack.pop())}
+
 \end{itemize}
