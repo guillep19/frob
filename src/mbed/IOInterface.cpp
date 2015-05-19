@@ -6,17 +6,20 @@
 
 #define FROB_LED 1
 DigitalOut led(LED1);
-//DigitalOut led_verde(p11);
+DigitalOut led_externo(p11);
 
 #define FROB_TIME 0
 Timer t;
 
 #define FROB_DISTANCE_SENSOR 1
-HCSR04 distance_sensor(p7, p8);
+HCSR04 distance_sensor(p7, p8); //trig, echo
+
+#define FROB_LIGHT_SENSOR 2
+I2C iic(p28, p27); //sda scl
 
 void initialize_iointerface() {
   t.start();
-  //led_verde = 1;
+  led_externo = 1;
 }
 
 void write_output(WORD index, WORD value) {
@@ -36,6 +39,9 @@ WORD read_input(WORD index) {
     long dist = distance_sensor.distance();
     //pc.printf("<DIST> %d \n", distance);
     value = (WORD) dist;
+  } else if (index == FROB_LIGHT_SENSOR) {
+    //value = (WORD) iic.read();
+    value = 19;
   }
   return value;
 }

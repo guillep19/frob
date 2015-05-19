@@ -65,9 +65,6 @@ void f_start() {
   ip_buffer[ip_buffer_last++] = (WORD*) code + aux;
   //pc.printf("start: taskpos=%d", aux);
 }
-void f_stop() {
-  //pc.printf("stop NOT IMPLEMENTED");
-}
 //Jumps
 void f_jump() {
   aux = *ip;
@@ -169,7 +166,7 @@ void f_write() {
 void (*functions[])() = {
   f_halt,
   f_call, f_ret, f_load_param,
-  f_start, f_stop,
+  f_start, f_start,
   f_jump, f_jump_false,
   f_cmp_eq, f_cmp_neq, f_cmp_gt, f_cmp_lt,
   //Binary operators
@@ -247,7 +244,7 @@ void read_input() {
     inputs[input_iterator] = 0;
     WORD value = read_input(input_iterator);
     *++sp = value;
-    //pc.printf("Read value from (%d), pushed %d\n", input_iterator, value);
+    pc.printf("Read value from (%d), pushed %d\n", input_iterator, value);
   }
 }
 
