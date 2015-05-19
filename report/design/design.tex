@@ -100,7 +100,7 @@ Primero se definió una fuente de eventos llamada \emph{distance},
 de tipo \emph{Event Number}.
 
 \begin{verbatim}
-let distance = read INPUT_DISTANCE
+  distance <- read INPUT_DISTANCE
 \end{verbatim}
 
 La misma emitirá un evento con la distancia en \emph{cm} leída
@@ -116,7 +116,7 @@ de \emph{distance}, aplicandole la función \texttt{distanceToSpeed}
 a cada valor para obtener la velocidad.
 
 \begin{verbatim}
-(lift distanceToSpeed distance)
+  speed <- lift distanceToSpeed distance
 \end{verbatim}
 
   Ésta expresión, también es una fuente de eventos
