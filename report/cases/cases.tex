@@ -78,30 +78,30 @@ velocidad_casa = \num -> if (num >= 5) then 0 else 100
 es_linea = \gris -> gris > MIN_NEGRO
 calc_mul = \linea -> if (not linea) then 1/2 else 1
 
-main = do {
-           distance = read INPUT_DISTANCE,
-           color_izq = read INPUT_COLOR_LEFT,
-           color_der = read INPUT_COLOR_RIGHT,
+do {
+    distance <- read INPUT_DISTANCE,
+    color_izq <- read INPUT_COLOR_LEFT,
+    color_der <- read INPUT_COLOR_RIGHT,
 
-           viendo_casa = lift hay_casa distance,
-           nueva_casa = rises viendo_casa,
-           cuenta = accumulate nueva_casa,
-           velocidad = lift velocidad_casa cuenta,
+    viendo_casa <- lift hay_casa distance,
+    nueva_casa <- rises viendo_casa,
+    cuenta <- accumulate nueva_casa,
+    velocidad <- lift velocidad_casa cuenta,
 
-           en_linea_izq = lift es_linea color_izq,
-           en_linea_der = lift es_linea color_der,
-           multip_izq = lift calc_mul en_linea_der,
-           multip_der = lift calc_mul en_linea_izq,
+    en_linea_izq <- lift es_linea color_izq,
+    en_linea_der <- lift es_linea color_der,
+    multip_izq <- lift calc_mul en_linea_der,
+    multip_der <- lift calc_mul en_linea_izq,
 
-           speed_left = lift2 (*) (velocidad multip_izq),
-           speed_right = lift2 (*) (velocidad multip_der),
-        
-           output [MOTOR_IZQ speed_left,
-                   MOTOR_DER speed_right]
-       }
+    speed_left <- lift2 (*) (velocidad multip_izq),
+    speed_right <- lift2 (*) (velocidad multip_der),
+
+    output MOTOR_IZQ speed_left,
+    output MOTOR_DER speed_right
+}
 
 \end{verbatim}
 
 \section {Conclusiones del caso}
 
-Bla bla
+ ...

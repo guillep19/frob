@@ -3,34 +3,6 @@ así como el diseño del lenguaje de bajo nivel, y cómo es interpretado.
 
 \section{Lenguaje de alto nivel}
 
-\subsection{Sintaxis}
-
-\begin{verbatim}
-bool := "True" | "False"
-float := [-+]?[0-9]*\.?[0-9]+
-int := [-+]?[0-9]*\.?[0-9]+
-
-value := float | int | bool
-
-binop := '+' | '-' | '/' | '*' | '||' | '&&'
-
-expr := expr expr 
-      | value
-      | expr binop expr
-      | "if" expr "then" expr "else" expr
-      | "let" name "=" expr "in" expr
-      | "\\"
-
-Definición de funciones:
-func := name [arglist] = expr
-
-Let:
-
-"let" name = expr1 in expr2
-
-\end{verbatim}
-
-
 \subsection{Combinadores de FRP}
 
 La función \texttt{lift} combina una función y un valor
@@ -61,6 +33,46 @@ combinador es análogo a la operación \texttt{fold} sobre listas.\\
 
 $foldE :: (a \rightarrow b \rightarrow b) \rightarrow b \rightarrow Signal\ a \rightarrow Signal\ b$\\
 
+\subsection{Sintaxis}
+
+
+La gramática del lenguaje es la siguiente:
+
+\begin{verbatim}
+
+bool := "True" | "False"
+float := [-+]?[0-9]*\.?[0-9]+
+int := [-+]?[0-9]*\.?[0-9]+
+
+name := [a-z_A-Z]+
+
+value := float | int | bool
+
+binop := '+' | '-' | '/' | '*'
+       | 'or' | 'and' | '==' | '<='
+       | '>' | '<' | '<>' | '>=';
+
+arg_list := name ',' arg_list | name;
+
+expr := value
+      | expr binop expr
+      | "if" expr "then" expr "else" expr
+      | "let" name "=" expr "in" expr
+      | "\" arg_list "->" expr;
+
+assign := name "<-" expr;
+
+assign_list = assign assign_list | assign;
+
+definitions := name "=" expr;
+
+main_block := "do {" assign_list "}";
+
+program := definitions main_block;
+
+\end{verbatim}
+
+
 \subsection{Ejemplo}
 
 En el siguiente ejemplo se muestra como haría para detener un
@@ -76,9 +88,11 @@ STOP = 0
 
 distanceToSpeed n = if (n < MIN_DISTANCE) then STOP else FULL_SPEED
 
-main :: IO()
-main = let distance = read INPUT_DISTANCE in
-   output OUTPUT_MOTOR (lift distanceToSpeed distance)
+do { 
+  distance <- read INPUT_DISTANCE,
+  speed <- lift distanceToSpeed distance,
+  output OUTPUT_MOTOR speed
+}
 
 \end{verbatim}
 
@@ -118,6 +132,8 @@ en éste caso son velocidades.
 
  Para presentar el lenguaje, primero defino las estructuras
 necesarias para explicar la semántica de cada instrucción.
+
+(TODO: Revisar ésta seccion que cambié las estructuras)
 
 \begin{enumerate}
 
@@ -382,3 +398,43 @@ Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semánt
   \texttt{output(inm, stack.pop())}
 
 \end{itemize}
+
+
+\pagebreak
+\subsection{Traducción de alto nivel a bajo nivel}
+
+Dado el siguiente programa de ejemplo en alto nivel:
+
+\begin{verbatim}
+# Este programa de prueba muestra con un led si se esta frente a una casa.
+
+#Inputs
+sensor_distancia = 1
+#Outputs
+led = 1
+
+hay_casa = \distancia -> (distancia < 100)
+
+do {
+  signal_distancia = read sensor_distancia,
+  signal_viendo = lift hay_casa sensor_distancia,
+  write led signal_viendo
+}
+\end{verbatim}
+
+El mismo se representaría en bajo nivel de la siguiente forma:
+
+\begin{verbatim}
+01:  push 1
+02:  store 0 //sensor_distancia = 1
+03:  push 1
+04:  store 1 //led = 1
+05:  read 0 0 //signal_distancia = read 0
+06:  lift 1 0 hay_casa //signal_viendo = lift hay_casa sensor_distancia
+07:  write 1 1 //write led signal_viendo
+08:  halt
+09:  load_arg 0 //hay_casa:
+10:  push 100
+11:  cmp_le //distancia < 100
+12:  return
+\end{verbatim}
