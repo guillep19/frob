@@ -5,6 +5,7 @@ así como el diseño del lenguaje de bajo nivel, y cómo es interpretado.
 
 \subsection{Sintaxis}
 
+\begin{verbatim}
 bool := "True" | "False"
 float := [-+]?[0-9]*\.?[0-9]+
 int := [-+]?[0-9]*\.?[0-9]+
@@ -20,16 +21,15 @@ expr := expr expr
       | "let" name "=" expr "in" expr
       | "\\"
 
-func = 
-
-
 Definición de funciones:
-
 func := name [arglist] = expr
 
 Let:
 
 "let" name = expr1 in expr2
+
+\end{verbatim}
+
 
 \subsection{Combinadores de FRP}
 
@@ -60,9 +60,6 @@ que cuando recibe los valores de la señal, los combina y acumula. Éste
 combinador es análogo a la operación \texttt{fold} sobre listas.\\
 
 $foldE :: (a \rightarrow b \rightarrow b) \rightarrow b \rightarrow Signal\ a \rightarrow Signal\ b$\\
-
-\subsection{Semántica}
-
 
 \subsection{Ejemplo}
 
@@ -192,18 +189,14 @@ salida cuenta con un valor, que será mapeado a los actuadores.
 Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semántica.
 
 \begin{itemize}
-\item lift
-
- $lift id source_id function_pointer$
+\item \texttt{lift id source\_id function\_pointer}
 
  Crea un nodo que recibe valores de la fuente de
  eventos $source_id$,
  les aplica la función $function_pointer$ y emite el resultado
  en la fuente de eventos $id$.
 
-\item lift2
-
- $lift2 id source-id_1 source-id_2 function_pointer$
+\item \texttt{lift2 id source-id\_1 source-id\_2 function\_pointer}
 
  Crea un nodo que recibe valores de $source-id_1$ y
  $source-id_2$,
@@ -215,13 +208,13 @@ Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semánt
  Crea un nodo que recibe valores de una entrada,
  y emite el resultado en la fuente de eventos $id$.
 
-\item halt
+\item \texttt{halt}
 
   Detiene el hilo de ejecución actual.
 
   \texttt{ip = 0} 
 
-\item call function
+\item \texttt{call function}
 
   Invoca la funcion $function$.
 
@@ -233,39 +226,39 @@ Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semánt
 
   \texttt{goto function}
 
-\item ret
+\item \texttt{ret}
 
   Elimina el frame y coloca el resultado en el stack.
 
   \texttt{value = stack.pop()}
 
-  \texttt{stack.pop_frame();}
+  \texttt{stack.pop\_frame();}
 
   \texttt{ip = code[stack.pop()]}
 
   \texttt{fp = stack.pop()}
 
-  \texttt{stack.pop_args()}
+  \texttt{stack.pop\_args()}
 
   \texttt{stack.push(value)}
 
-\item load_param
+\item \texttt{load\_param}
 
-  \texttt{a = stack[fp - inm - 3]}
+  \texttt{a = stack.get\_arg(inm)}
 
   \texttt{stack.push(a)}
 
-\item jump
+\item \texttt{jump}
 
   \texttt{goto position}
 
-\item jump_false position
+\item \texttt{jump\_false position}
 
   \texttt{a = stack.pop()}
 
   \texttt{if not a: goto position}
 
-\item cmp_eq
+\item \texttt{cmp\_eq}
 
   \texttt{a = stack.pop()}
 
@@ -273,7 +266,7 @@ Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semánt
 
   \texttt{stack.push(a == b)}
 
-\item cmp_neq
+\item \texttt{cmp\_neq}
 
   \texttt{a = stack.pop()}
 
@@ -281,7 +274,7 @@ Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semánt
 
   \texttt{stack.push(a != b)}
 
-\item cmp_gt
+\item \texttt{cmp\_gt}
 
   \texttt{a = stack.pop()}
 
@@ -289,7 +282,7 @@ Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semánt
 
   \texttt{stack.push(a > b)}
 
-\item cmp_lt
+\item \texttt{cmp\_lt}
 
   \texttt{a = stack.pop()}
 
@@ -297,15 +290,15 @@ Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semánt
 
   \texttt{stack.push(a < b)}
 
-\item add
+\item \texttt{add}
 
   \texttt{a = stack.pop()}
 
   \texttt{b = stack.pop()}
 
-  \texttt{stack.push(a & b)}
+  \texttt{stack.push(a + b)}
 
-\item sub
+\item \texttt{sub}
 
   \texttt{a = stack.pop()}
 
@@ -313,7 +306,7 @@ Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semánt
 
   \texttt{stack.push(a - b)}
 
-\item div
+\item \texttt{div}
   
   \texttt{a = stack.pop()}
 
@@ -321,7 +314,7 @@ Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semánt
 
   \texttt{stack.push(a / b)}
 
-\item mul
+\item \texttt{mul}
 
   \texttt{a = stack.pop()}
 
@@ -329,7 +322,7 @@ Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semánt
 
   \texttt{stack.push(a * b)}
 
-\item op_and
+\item \texttt{op\_and}
 
   \texttt{a = stack.pop()}
 
@@ -337,7 +330,7 @@ Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semánt
 
   \texttt{stack.push(a and b)}
 
-\item op_or
+\item \texttt{op\_or}
 
   \texttt{a = stack.pop()}
 
@@ -345,47 +338,47 @@ Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semánt
 
   \texttt{stack.push(a or b)}
 
-\item op_not
+\item \texttt{op\_not}
 
   Coloca un valor constante en el stack.
 
   \texttt{stack.push(word)}
 
-\item push word
+\item \texttt{push word}
 
   Coloca un valor constante en el stack.
 
   \texttt{stack.push(word)}
 
-\item pop
+\item \texttt{pop}
 
   Elimina el tope del stack.
 
   \texttt{stack.pop()}
 
-\item dup
+\item \texttt{dup}
 
   Duplica el tope del stack.
 
   \texttt{stask.push(stack.tos())}
 
-\item store inm
+\item \texttt{store inm}
 
   Guarda el tope del stack en la variable $inm$.
 
   \texttt{var[inm] = stack.pop()}
 
-\item load inm
+\item \texttt{load inm}
 
-  Carga la variable $inm$ en el stack.
+  Carga la variable $inm \in {0..255}$ en el stack.
 
   \texttt{stack.push(var[inm])}
 
-\item write inm
+\item \texttt{write inm}
 
-  Toma el ultimo valor del stack y lo coloca en la 
-  salida $inm$.
+  Toma el último valor del stack y lo coloca en la 
+  salida número $inm \in {0..255}$.
 
-  \texttt{outputs(inm, stack.pop())}
+  \texttt{output(inm, stack.pop())}
 
 \end{itemize}
