@@ -13,22 +13,18 @@ Serial pc(USBTX, USBRX); // tx, rx
 
 WORD stack[128] = {0}; //256 bytes
 WORD globals[64]; //128 bytes
-WORD* inputs[MAX_INPUTS] = {0}; //32 bytes
-WORD outputs[16]; //32 bytes
-WORD* ip_buffer[MAX_IP_BUFFER] = {0}; //64 bytes
-BYTE ip_buffer_first = 0;
-BYTE ip_buffer_last = 0;
 //Total:1/2 kb (arduino nano tiene 2kb)
 WORD* sp = stack;
 WORD fp = 0;
 WORD* ip;
-
 
 WORD instr = 0;
 BYTE op_code = 0;
 WORD inm = 0;
 WORD aux = 0;
 WORD aux2 = 0;
+
+Graph graph;
 
 //VM ops
 void f_halt() {
@@ -59,12 +55,94 @@ void f_load_param() {
   *++sp = stack[fp - inm - 3]; //3 because of count,oldfp,oldip
   //pc.printf("load_param: inm=%d", inm);
 }
-//Tasks
-void f_start() {
-  aux = *ip++;
-  ip_buffer[ip_buffer_last++] = (WORD*) code + aux;
-  //pc.printf("start: taskpos=%d", aux);
+//FRP combinators
+void f_lift() {
+  //lift inm=id word=source word=function_loc
+  WORD id = inm;
+  WORD source = *ip++;
+  WORD function_loc = *ip++;
+  WORD iter_s = 0;
+  pc.printf("lift: source=%d id=%d fun=%d\n", source, id, function_loc);
+  while ((iter_s < graph.count) && (graph.nodes[iter_s].id != source)) iter_s++;
+  if (iter_s == graph.count) {
+    pc.printf("ERROR: unexistant source=%d\n", source);
+    return;
+  }
+  WORD iter_d = 0;
+  while ((iter_d < graph.count) && (graph.nodes[iter_d].id != id)) iter_d++;
+  if (iter_d != graph.count) {
+    pc.printf("ERROR: destination already exists=%d\n", inm);
+    return;
+  }
+  graph.nodes[iter_s].fwd[graph.nodes[iter_s].fwd_count] = iter_d;
+  graph.nodes[iter_s].fwd_place[graph.nodes[iter_s].fwd_count++] = 0;
+  graph.nodes[graph.count].id = id; //define signal id
+  graph.nodes[graph.count].arg_count = 1;
+  graph.nodes[graph.count].function_loc = function_loc;
+  graph.nodes[graph.count].fwd_count = 0;
+  graph.count++;
 }
+void f_lift2() {
+  BYTE s1 = *ip++;
+  BYTE s2 = *ip++;
+  WORD iter1 = 0;
+  WORD iter2 = 0;
+  WORD function_loc = *ip++;
+  while ((iter1 < graph.count) && (graph.nodes[iter1].id != s1)) iter1++;
+  while ((iter2 < graph.count) && (graph.nodes[iter2].id != s2)) iter2++;
+  if ((iter1 == graph.count)||(iter2 == graph.count)) {
+    pc.printf("lift2: source_1=%d source_2=%d dest=%d\n", s1, s2, inm);
+    pc.printf("ERROR: unexistant source\n");
+    return;
+  }
+  WORD iter_d = 0;
+  while ((iter_d < graph.count) && (graph.nodes[iter_d].id != inm)) iter_d++;
+  if (iter_d != graph.count) {
+    pc.printf("lift2: source_1=%d source_2=%d dest=%d\n", s1, s2, inm);
+    pc.printf("ERROR: destination already exists=%d\n", inm);
+    return;
+  }
+  graph.nodes[iter1].fwd[graph.nodes[iter1].fwd_count] = iter_d;
+  graph.nodes[iter1].fwd_place[graph.nodes[iter1].fwd_count++] = 0;
+  graph.nodes[iter2].fwd[graph.nodes[iter2].fwd_count] = iter_d;
+  graph.nodes[iter2].fwd_place[graph.nodes[iter2].fwd_count++] = 1;
+  graph.nodes[graph.count].id = inm;  //define signal inm
+  graph.nodes[graph.count].arg_count = 1;
+  graph.nodes[graph.count].function_loc = function_loc;
+  graph.nodes[graph.count].fwd_count = 0;
+  graph.count++;
+  pc.printf("lift2: source_1=%d source_2=%d dest=%d\n", s1, s2, inm);
+}
+void f_folds() {
+  BYTE s1 = *ip++;
+  pc.printf("folds: source=%d dest=%d\n", s1, inm);
+}
+//IO
+void f_read() {
+  //read inm=id word=source
+  WORD id = inm;
+  WORD source = *ip++;
+  BYTE count = graph.inputs[globals[source]].fwd_count;
+  graph.inputs[globals[source]].fwd[count++] = graph.count;
+  graph.inputs[globals[source]].fwd_count = count;
+
+  //add graph node
+  graph.nodes[graph.count].id = id;
+  graph.nodes[graph.count].arg_count = 1;
+  graph.nodes[graph.count].function_loc = -1; //id
+  graph.nodes[graph.count].fwd_count = 0;
+  graph.count++;
+
+  pc.printf("read: input=%d destnode=%d\n", inm, aux);
+}
+void f_write() {
+  //write inm=outputid word=source
+  WORD output = inm;
+  WORD source = *ip++;
+  graph.outputs[output].source = source;
+  pc.printf("write: source=%d output=%d\n", source, output);
+}
+
 //Jumps
 void f_jump() {
   aux = *ip;
@@ -151,22 +229,16 @@ void f_load() {
   //pc.printf("load: globals[%d]", inm);
 }
 //Input/Output operations
-void f_read() {
-  inputs[globals[inm]] = ip;
-  ip = 0;
-  //pc.printf("read: inputs[globals[%d]==%d] == %p", 
-            //inm, globals[inm], inputs[globals[inm]]);
-}
-void f_write() {
-  outputs[inm] = *sp--;
-  //pc.printf("write: outputs[%d] == %d", inm, outputs[inm]);
-  write_output(inm, outputs[inm]);
-}
+
 
 void (*functions[])() = {
   f_halt,
+  //Functions
   f_call, f_ret, f_load_param,
-  f_start, f_start,
+  //FRP combinators
+  f_lift, f_lift2, f_folds,
+  // Input/Output operations
+  f_read, f_write,
   f_jump, f_jump_false,
   f_cmp_eq, f_cmp_neq, f_cmp_gt, f_cmp_lt,
   //Binary operators
@@ -177,25 +249,8 @@ void (*functions[])() = {
   //Stack operations
   f_push, f_pop, f_dup,
   // Memory operations
-  f_store, f_load,
-  // Input/Output operations
-  f_read, f_write
+  f_store, f_load
 };
-
-void print_instruction(WORD instruction) {
-  BYTE high = (0xff00 & instruction) >> 8;
-  BYTE low = 0x00ff & instruction;
-  //pc.printf("%02x %02x\n", high, low);
-}
-
-void print_code() {
-  //pc.printf("Code:\n---------------\n");
-  WORD* ip;
-  for(ip = (WORD*) code; *ip ; ip++) {
-    print_instruction(*ip);
-  };
-  //pc.printf("---------------\n");
-}
 
 void print_stack() {
   //pc.printf("Stack: ");
@@ -225,57 +280,104 @@ void run_thread() {
 }
 
 
-WORD input_iterator = 0;
-WORD started = 0;
-WORD helper_iterator = 0; //TODO: Remove this variable, its used as stub value for input.
-
-void read_input() {
+void read_inputs() {
   /* Finds out whether there is an input waiting to
      be read. If there is any, it reads it, pushes
      the result in the stack, and returns the ip
      stored in inputs[index], else returns NULL */
-  started = input_iterator;
-  do {
-    input_iterator = (input_iterator + 1) % MAX_INPUTS;
-    ip = inputs[input_iterator];
-    //pc.printf("ip == inputs[%d] == %p\n", input_iterator, ip);
-  } while ((!ip) && (input_iterator != started));
-  if (ip) {
-    inputs[input_iterator] = 0;
-    WORD value = read_input(input_iterator);
-    *++sp = value;
-    pc.printf("Read value from (%d), pushed %d\n", input_iterator, value);
+  WORD value, iter;
+  BYTE fwd_iter, fwd_count;
+  for (iter = 0; iter < 10; iter++) {
+    fwd_count = graph.inputs[iter].fwd_count;
+    if (fwd_count > 0) {
+      value = read_input(iter);
+      pc.printf("Read(%d) == %d\n", iter, value);
+      for (fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
+        graph.nodes[fwd_iter].arg[0] = value;
+        graph.nodes[fwd_iter].arg_new[0] = true;
+        //TODO: Mark as ready (unlock)
+      }
+    }
+  }
+}
+
+void write_outputs() {
+  WORD source, iter;
+  for (iter = 0; iter < 10; iter++) {
+    source = graph.outputs[iter].source;
+    write_output(inm, graph.nodes[source].value);
+  }
+}
+
+void create_graph() {
+  //Reset inputs
+  WORD iter;
+  for (iter = 0; iter < 10; iter++) {
+    graph.inputs[iter].fwd_count = 0;
+  }
+  //Reset nodes
+  graph.count = 0;
+  //Reset outputs
+  for (iter = 0; iter < 10; iter++) {
+    graph.outputs[iter].source = -1;
+  }
+}
+
+void update_signals() {
+
+}
+
+void print_graph() {
+  pc.printf("Inputs:");
+  WORD iter;
+  BYTE fwd_iter, fwd_count;
+  for (iter = 0; iter < 10; iter++) {
+    fwd_count = graph.inputs[iter].fwd_count;
+    if (fwd_count > 0) {
+      for (fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
+        pc.printf("Input %d -> Signal %d\n",
+                  iter, graph.nodes[graph.inputs[iter].fwd[fwd_iter]].id);
+      }
+    }
+  }
+  //Print Signal Functions
+  for (iter = 0; iter < graph.count; iter++) {
+    fwd_count = graph.nodes[iter].fwd_count;
+    Node source = graph.nodes[iter];
+    for (fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
+      Node dest = graph.nodes[source.fwd[fwd_iter]];
+      BYTE fwd_place = source.fwd_place[fwd_iter];
+      pc.printf("Signal %d -> Signal %d.%d (fun:%d)\n",
+                source.id, dest.id, fwd_place, dest.function_loc);
+    }
+  }
+  //Print output functions
+  for (iter = 0; iter < 10; iter++) {
+    WORD source = graph.outputs[iter].source;
+    if (source != -1) {
+      pc.printf("Signal %d -> Output %d\n",
+                graph.nodes[source].id, iter);
+    }
   }
 }
 
 void run_vm() {
-  //pc.printf("Running vm....\n");
+  create_graph();
+  pc.printf("Running vm....\n");
   ip = (WORD*) code;
-  while (ip) {
-    run_thread();
-    if (!ip) {
-      //pc.printf("Looking for a ready thread...\n");
-      //Maybe I could have assumed ip = null..
-      if (ip_buffer_first != ip_buffer_last) {
-        //There are threads ready to run
-        ip = ip_buffer[ip_buffer_first++];
-        //pc.printf("Thread %d took control.\n", ip_buffer_first - 1);
-      } else {
-        //pc.printf("No threads ready to run.\n");
-      }
-    }
-    if (!ip) {
-      //pc.printf("Searching for a thread waiting to read...\n");
-      read_input();
-    }
+  run_thread();
+  print_graph();
+  pc.getc();
+  while (1) {
+    read_inputs();
+    update_signals();
+    write_outputs();
   }
-  //pc.printf("Finished\n");
 }
 
 int main() {
   initialize_iointerface();
   print_stack();
-  print_code();
   run_vm();
   print_stack();
   return 0;

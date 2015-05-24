@@ -9,5 +9,5 @@
 [hay_casa]
   load_arg 0
   push 100
-  cmp_le //0 < 100
-  return
+  cmp_lt //0 < 100
+  ret
