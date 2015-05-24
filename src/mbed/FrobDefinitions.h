@@ -46,36 +46,4 @@ typedef uint8_t BYTE;
 typedef int16_t WORD;
 typedef const WORD CODE[];
 
-struct Node {
-  BYTE id;
-  WORD arg[2];
-  BYTE arg_new[2]; //arg is new or used
-  BYTE arg_count;
-  WORD function_loc;
-  WORD fwd[5]; //Nodes to fwd data
-  BYTE fwd_place[5]; //where to fwd
-  BYTE fwd_count;
-  WORD value;
-};
-
-struct Input {
-  WORD fwd[5];
-  BYTE fwd_count;
-};
-
-struct Output {
-  WORD source;
-};
-
-struct Graph {
-  Input inputs[10];
-  Output outputs[10];
-  Node nodes[20];
-  WORD count;
-  BYTE ready_nodes[20];
-  BYTE ready_next;
-  BYTE ready_end;
-};
-
-
 #endif /* FROBDEFINITIONS_H */

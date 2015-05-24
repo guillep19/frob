@@ -3,8 +3,8 @@
 /*
 *HCSR04.cpp
 */
-HCSR04::HCSR04(PinName t, PinName e) : trig(t), echo(e) {}
-
+HCSR04::HCSR04(PinName t, PinName e) : trig(t), echo(e) {
+}
 
 long HCSR04::echo_duration() {
   timer.reset();  //reset timer

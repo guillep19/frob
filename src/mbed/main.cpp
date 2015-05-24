@@ -4,6 +4,7 @@
 #include "mbed.h"
 #include "FrobDefinitions.h"
 #include "IOInterface.h"
+#include "graph.h"
 Serial pc(USBTX, USBRX); // tx, rx
 
 #include "vmcode.c"
@@ -313,27 +314,14 @@ void write_outputs() {
   for (iter = 0; iter < 10; iter++) {
     source = graph.outputs[iter].source;
     if (source != -1) {
-      //pc.printf("Output(%d) == %d\n", iter, graph.nodes[source].value);
-      write_output(iter, graph.nodes[source].value);
+      WORD value = graph.nodes[source].value;
+      pc.printf("Output(%d) == %d\n", iter, value);
+      //write_output(iter, value); TODO: Descomentando revienta antes!!
+      pc.printf("After output(%d) == %d\n", iter, value);
     }
   }
 }
 
-void create_graph() {
-  //Reset inputs
-  WORD iter;
-  for (iter = 0; iter < 10; iter++) {
-    graph.inputs[iter].fwd_count = 0;
-  }
-  //Reset nodes
-  graph.count = 0;
-  graph.ready_next = 0;
-  graph.ready_end = 0;
-  //Reset outputs
-  for (iter = 0; iter < 10; iter++) {
-    graph.outputs[iter].source = -1;
-  }
-}
 
 void propagate_signal(BYTE id) {
   BYTE fwd_count = graph.nodes[id].fwd_count;
@@ -430,22 +418,102 @@ void print_graph() {
   }
 }
 
+void* AllocateLargestFreeBlock(size_t* Size)
+{
+  size_t s0, s1;
+  void* p;
+
+  s0 = ~(size_t)0 ^ (~(size_t)0 >> 1);
+
+  while (s0 && (p = malloc(s0)) == NULL)
+    s0 >>= 1;
+
+  if (p)
+    free(p);
+
+  s1 = s0 >> 1;
+
+  while (s1)
+  {
+    if ((p = malloc(s0 + s1)) != NULL)
+    {
+      s0 += s1;
+      free(p);
+    }
+    s1 >>= 1;
+  }
+
+  while (s0 && (p = malloc(s0)) == NULL)
+    s0 ^= s0 & -s0;
+
+  *Size = s0;
+  return p;
+}
+
+size_t GetFreeSize(void)
+{
+  size_t total = 0;
+  void* pFirst = NULL;
+  void* pLast = NULL;
+
+  for (;;)
+  {
+    size_t largest;
+    void* p = AllocateLargestFreeBlock(&largest);
+
+    if (largest < sizeof(void*))
+    {
+      if (p != NULL)
+        free(p);
+      break;
+    }
+
+    *(void**)p = NULL;
+
+    total += largest;
+
+    if (pFirst == NULL)
+      pFirst = p;
+
+    if (pLast != NULL)
+      *(void**)pLast = p;
+
+    pLast = p;
+  }
+
+  while (pFirst != NULL)
+  {
+    void* p = *(void**)pFirst;
+    free(pFirst);
+    pFirst = p;
+  }
+
+  return total;
+}
+
+
+void __heapstats() {
+  pc.printf("Free memory: %d", GetFreeSize());
+}
+
 void run_vm() {
-  create_graph();
+  graph = create_graph();
   //pc.printf("Running vm....\n");
   ip = (WORD*) code;
   run_thread();
   print_graph();
   WORD iterations = 1;
   while (1) {
+    __heapstats();
     pc.printf("Alive to read..%d\n", iterations);
     read_inputs();
     pc.printf("Alive to update..%d\n", iterations);
     update_signals();
     pc.printf("Alive to write..%d\n", iterations);
     write_outputs();
+    pc.printf("Alive after write..%d\n", iterations);
     //pc.getc();
-    wait(0.2);
+    wait(0.1);
     iterations++;
   }
 }
