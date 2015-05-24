@@ -35,7 +35,7 @@ void call_function(WORD location, WORD return_ip) {
   *++sp = return_ip; //store oldip
   fp = (WORD) (sp - stack); //create new frame
   ip = (WORD*) code + location; //jump to function
-  pc.printf("call_function location=%d return_ip=%d:", location, return_ip);
+  //pc.printf("call_function location=%d return_ip=%d:\n", location, return_ip);
 }
 //Functions
 void f_call() {
@@ -294,7 +294,7 @@ void read_inputs() {
     fwd_count = graph.inputs[iter].fwd_count;
     if (fwd_count > 0) {
       value = read_input(iter);
-      pc.printf("Read(%d) == %d\n", iter, value);
+      //pc.printf("Read(%d) == %d\n", iter, value);
       for (fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
         // Give the waiting signal the value.
         WORD id = graph.inputs[iter].fwd[fwd_iter];
@@ -312,7 +312,10 @@ void write_outputs() {
   WORD source, iter;
   for (iter = 0; iter < 10; iter++) {
     source = graph.outputs[iter].source;
-    write_output(inm, graph.nodes[source].value);
+    if (source != -1) {
+      //pc.printf("Output(%d) == %d\n", iter, graph.nodes[source].value);
+      write_output(iter, graph.nodes[source].value);
+    }
   }
 }
 
@@ -336,7 +339,7 @@ void propagate_signal(BYTE id) {
   BYTE fwd_count = graph.nodes[id].fwd_count;
   if (fwd_count > 0) {
     WORD value = graph.nodes[id].value;
-    pc.printf("Propagate signal id=%d value=%d\n", id, value);
+    //pc.printf("Propagate signal id=%d value=%d\n", id, value);
     for (BYTE fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
       // Give the waiting signal the value.
       WORD fwd = graph.nodes[id].fwd[fwd_iter];
@@ -351,9 +354,11 @@ void propagate_signal(BYTE id) {
         }
       }
       if (ready) {
-        pc.printf("Node ready %d", fwd);
+        //pc.printf("Node ready %d\n", fwd);
         graph.ready_nodes[graph.ready_end++] = fwd;
         if (graph.ready_end == 20) graph.ready_end = 0;
+      } else {
+        //pc.printf("Node not ready %d\n", fwd);
       }
     }
   }
@@ -363,7 +368,6 @@ void update_signal(BYTE id) {
   WORD function_loc = graph.nodes[id].function_loc;
   if (function_loc == -1) { //no function (id)
     graph.nodes[id].value = graph.nodes[id].arg[0];
-    pc.printf("node[%d].value = %d\n", id, graph.nodes[id].value);
   } else {
     //push args and arg_count
     BYTE arg_count = graph.nodes[id].arg_count;
@@ -371,23 +375,23 @@ void update_signal(BYTE id) {
       graph.nodes[id].arg_new[iter] = 0;
       WORD value = graph.nodes[id].arg[iter];
       *++sp = value;
-      pc.printf("push value %d\n", value);
+      //pc.printf("push value %d\n", value);
     }
     *++sp = (WORD) arg_count;
-    pc.printf("push count %d\n", arg_count);
+    //pc.printf("push count %d\n", arg_count);
     call_function(function_loc, 0);
     run_thread();
-    pc.printf("node[%d].value = %d\n", id, *sp);
     graph.nodes[id].value = *sp--;
-    // Propagate signal
-    propagate_signal(id);
   }
+  //pc.printf("Signal %d = %d\n", id, graph.nodes[id].value);
+  // Propagate signal
+  propagate_signal(id);
 }
 
 void update_signals() {
-  pc.printf("update_signals %d to %d\n", graph.ready_next, graph.ready_end);
+  //pc.printf("update_signals %d to %d\n", graph.ready_next, graph.ready_end);
   while (graph.ready_next != graph.ready_end) {
-    pc.printf("update_signal %d\n", graph.ready_nodes[graph.ready_next]);
+    //pc.printf("update_signal %d\n", graph.ready_nodes[graph.ready_next]);
     update_signal(graph.ready_nodes[graph.ready_next++]);
     if (graph.ready_next == 20) graph.ready_next = 0;
   }
@@ -428,15 +432,21 @@ void print_graph() {
 
 void run_vm() {
   create_graph();
-  pc.printf("Running vm....\n");
+  //pc.printf("Running vm....\n");
   ip = (WORD*) code;
   run_thread();
   print_graph();
+  WORD iterations = 1;
   while (1) {
+    pc.printf("Alive to read..%d\n", iterations);
     read_inputs();
+    pc.printf("Alive to update..%d\n", iterations);
     update_signals();
-    //write_outputs();
-    pc.getc();
+    pc.printf("Alive to write..%d\n", iterations);
+    write_outputs();
+    //pc.getc();
+    wait(0.2);
+    iterations++;
   }
 }
 

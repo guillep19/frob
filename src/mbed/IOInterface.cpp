@@ -19,12 +19,12 @@ I2C iic(p28, p27); //sda scl
 
 void initialize_iointerface() {
   t.start();
-  led_externo = 1;
+  led = 1;
 }
 
 void write_output(WORD index, WORD value) {
   if (index == FROB_LED) {
-    led = value;
+    led_externo = value;
   }
 }
 
