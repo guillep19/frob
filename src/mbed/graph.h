@@ -37,4 +37,14 @@ struct Graph {
 
 Graph create_graph();
 
+WORD find_node(Graph &graph, BYTE id);
+
+WORD create_node(Graph &graph, BYTE id, WORD function_loc, BYTE arg_count);
+
+void link_nodes(Graph &graph, BYTE src, BYTE dest, BYTE arg_place);
+
+void link_input(Graph &graph, WORD input, BYTE id);
+
+void link_output(Graph &graph, WORD output, BYTE id);
+
 #endif /* GRAPH_H */

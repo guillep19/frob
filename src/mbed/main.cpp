@@ -65,57 +65,39 @@ void f_lift() {
   WORD id = inm;
   WORD source = *ip++;
   WORD function_loc = *ip++;
-  WORD iter_s = 0;
   pc.printf("lift: source=%d id=%d fun=%d\n", source, id, function_loc);
-  while ((iter_s < graph.count) && (graph.nodes[iter_s].id != source)) iter_s++;
-  if (iter_s == graph.count) {
+
+  WORD source_pos = find_node(graph, source);
+  if (source_pos == -1) {
     pc.printf("ERROR: unexistant source=%d\n", source);
     return;
   }
-  WORD iter_d = 0;
-  while ((iter_d < graph.count) && (graph.nodes[iter_d].id != id)) iter_d++;
-  if (iter_d != graph.count) {
-    pc.printf("ERROR: destination already exists=%d\n", inm);
+  if (find_node(graph, id) != -1) {
+    pc.printf("ERROR: destination already exists=%d\n", id);
     return;
   }
-  graph.nodes[iter_s].fwd[graph.nodes[iter_s].fwd_count] = iter_d;
-  graph.nodes[iter_s].fwd_place[graph.nodes[iter_s].fwd_count++] = 0;
-  graph.nodes[graph.count].id = id; //define signal id
-  graph.nodes[graph.count].arg_count = 1;
-  graph.nodes[graph.count].function_loc = function_loc;
-  graph.nodes[graph.count].fwd_count = 0;
-  graph.count++;
+  WORD dest_pos = create_node(graph, id, function_loc, 1);
+  link_nodes(graph, source_pos, dest_pos, 0);
 }
 void f_lift2() {
-  BYTE s1 = *ip++;
-  BYTE s2 = *ip++;
-  WORD iter1 = 0;
-  WORD iter2 = 0;
+  WORD id = inm;
+  WORD s1 = *ip++;
+  WORD s2 = *ip++;
   WORD function_loc = *ip++;
-  while ((iter1 < graph.count) && (graph.nodes[iter1].id != s1)) iter1++;
-  while ((iter2 < graph.count) && (graph.nodes[iter2].id != s2)) iter2++;
-  if ((iter1 == graph.count)||(iter2 == graph.count)) {
-    pc.printf("lift2: source_1=%d source_2=%d dest=%d\n", s1, s2, inm);
+  pc.printf("lift2: s1=%d s2=%d id=%d fun=%d\n", s1, s2, inm, function_loc);
+  WORD s1_pos = find_node(graph, s1);
+  WORD s2_pos = find_node(graph, s2);
+  if ((s1_pos == -1)||(s2_pos == -1)) {
     pc.printf("ERROR: unexistant source\n");
     return;
   }
-  WORD iter_d = 0;
-  while ((iter_d < graph.count) && (graph.nodes[iter_d].id != inm)) iter_d++;
-  if (iter_d != graph.count) {
-    pc.printf("lift2: source_1=%d source_2=%d dest=%d\n", s1, s2, inm);
-    pc.printf("ERROR: destination already exists=%d\n", inm);
+  if (find_node(graph, id) != -1) {
+    pc.printf("ERROR: destination already exists=%d\n", id);
     return;
   }
-  graph.nodes[iter1].fwd[graph.nodes[iter1].fwd_count] = iter_d;
-  graph.nodes[iter1].fwd_place[graph.nodes[iter1].fwd_count++] = 0;
-  graph.nodes[iter2].fwd[graph.nodes[iter2].fwd_count] = iter_d;
-  graph.nodes[iter2].fwd_place[graph.nodes[iter2].fwd_count++] = 1;
-  graph.nodes[graph.count].id = inm;  //define signal inm
-  graph.nodes[graph.count].arg_count = 1;
-  graph.nodes[graph.count].function_loc = function_loc;
-  graph.nodes[graph.count].fwd_count = 0;
-  graph.count++;
-  pc.printf("lift2: source_1=%d source_2=%d dest=%d\n", s1, s2, inm);
+  WORD dest_pos = create_node(graph, id, function_loc, 2);
+  link_nodes(graph, s1_pos, dest_pos, 0);
+  link_nodes(graph, s2_pos, dest_pos, 1);
 }
 void f_folds() {
   BYTE s1 = *ip++;
@@ -123,28 +105,26 @@ void f_folds() {
 }
 //IO
 void f_read() {
-  //read inm=id word=source
+  //read inm=id word=input
   WORD id = inm;
-  WORD source = *ip++;
-  BYTE count = graph.inputs[globals[source]].fwd_count;
-  graph.inputs[globals[source]].fwd[count++] = graph.count;
-  graph.inputs[globals[source]].fwd_count = count;
-
+  WORD input = globals[*ip++];
   //add graph node
-  graph.nodes[graph.count].id = id;
-  graph.nodes[graph.count].arg_count = 1;
-  graph.nodes[graph.count].function_loc = -1; //id
-  graph.nodes[graph.count].fwd_count = 0;
-  graph.count++;
-
-  pc.printf("read: input=%d destnode=%d\n", inm, aux);
+  WORD node_pos = create_node(graph, id, -1, 1);
+  //link input to node
+  link_input(graph, input, node_pos);
+  pc.printf("read: input=%d id=%d\n", input, id);
 }
 void f_write() {
-  //write inm=outputid word=source
-  WORD output = inm;
-  WORD source = *ip++;
-  graph.outputs[output].source = source;
-  pc.printf("write: source=%d output=%d\n", source, output);
+  //write inm=id word=output
+  WORD id = inm;
+  WORD output = *ip++;
+  WORD node_pos = find_node(graph, id);
+  pc.printf("write: node=%d output=%d\n", id, output);
+  if (node_pos == -1) {
+    pc.printf("ERROR: unexistant node %d\n", id);
+    return;
+  }
+  link_output(graph, output, id);
 }
 
 //Jumps
@@ -316,7 +296,7 @@ void write_outputs() {
     if (source != -1) {
       WORD value = graph.nodes[source].value;
       pc.printf("Output(%d) == %d\n", iter, value);
-      //write_output(iter, value); TODO: Descomentando revienta antes!!
+      write_output(iter, value);
       pc.printf("After output(%d) == %d\n", iter, value);
     }
   }
