@@ -158,15 +158,22 @@ descartados.
 
 \item \emph{Nodes}
 
-  Es utilizado para almacenar todas las transformaciones.
-  Cada aplicación de \texttt{lift} o \texttt{lift2} será mapeada en un nodo.
+  Es utilizado para almacenar todas las transformaciones de señales.
+  Cada nodo, tiene una lista de otros nodos que dependen de él y la
+  posición del argumento por el que esperan.
+  Además el nodo almacena el último valor calculado, y una lista
+  de argumentos que le serán pasados, si son nuevos o no.
+
+  Cada aplicación de \texttt{lift}, \texttt{lift2} o \texttt{folds}
+será mapeada en un nodo.
+
   Cada nodo $Node_i$ tiene una lista de nodos adyacentes
 que dependen de él.
 
 \item \emph{Outputs}
 
-  Mapea valores en salidas de hardware, los valores
-  son asignados con la operación \texttt{output}.
+  Mapea señales en salidas de hardware, los valores
+son asignados con la operación \texttt{output}.
 
 \item \emph{Stack}
 
@@ -180,22 +187,23 @@ de la pila y $Stack$ para referirnos a la pila.
 
 \item \emph{Ready}
 
-Es una \emph{cola} que contiene punteros a hilos de ejecución
+Es una \emph{cola} que contiene punteros a los nodos
 listos para ser ejecutados.
 
-
-\item Dispatcher
+\item \emph{Dispatcher}
 
 El dispatcher, es quien implementa las acciones de la máquina.
 El mismo se encarga de recibir valores de los sensores, mapearlos
 a eventos en las entradas $Input_i$.
+
 Éstos eventos, serán recibidos por los nodos $Nodes$, cada $Node_i$
 que espera por eventos, entrará en estado activo cuando todos los nodos
 por los que espera le envíen un evento.
 A su vez, el nodo en estado activo calcula un resultado y notifica a
 todos sus nodos adyacentes.
 
-Como $Nodes$ es un grafo acíclico, éste proceso termina, y cada
+El dispatcher, realizará implicitamente un orden topológico de los
+nodos, como $Nodes$ es un grafo acíclico, éste proceso es posible y termina, y cada
 salida cuenta con un valor, que será mapeado a los actuadores.
 
 \end{enumerate}
