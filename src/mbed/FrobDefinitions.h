@@ -72,6 +72,9 @@ struct Graph {
   Output outputs[10];
   Node nodes[20];
   WORD count;
+  BYTE ready_nodes[20];
+  BYTE ready_next;
+  BYTE ready_end;
 };
 
 
