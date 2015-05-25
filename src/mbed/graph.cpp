@@ -43,8 +43,27 @@ WORD create_node(Graph &graph, BYTE id, WORD function_loc, BYTE arg_count) {
   graph.nodes[position].arg_count = arg_count;
   graph.nodes[position].function_loc = function_loc;
   graph.nodes[position].fwd_count = 0;
+  graph.nodes[position].is_fold = 0;
   return position;
 }
+/*
+  Creates a fold node in the graph passed by reference.
+  The id of the node must not exist. (find_node(graph, id) == -1)
+  Returns the index of the node in the graph.
+  The initial value is stored at the attribute .value, and
+  node.is_fold == 1.
+*/
+WORD create_fold_node(Graph &graph, BYTE id, WORD function_loc, WORD initial) {
+  WORD position = graph.count++;
+  graph.nodes[position].id = id; //define signal id
+  graph.nodes[position].arg_count = 1;
+  graph.nodes[position].function_loc = function_loc;
+  graph.nodes[position].fwd_count = 0;
+  graph.nodes[position].is_fold = 1;
+  graph.nodes[position].value = initial;
+  return position;
+}
+
 
 /*
  * Creates a link between graph.nodes[src] and 

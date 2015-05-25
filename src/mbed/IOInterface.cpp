@@ -6,6 +6,7 @@
 
 #define FROB_LED 1
 DigitalOut led(LED1);
+#define FROB_LED_EXTERNO 2
 DigitalOut led_externo(p11);
 
 #define FROB_TIME 0
@@ -19,11 +20,12 @@ I2C iic(p28, p27); //sda scl
 
 void initialize_iointerface() {
   t.start();
-  led = 1;
 }
 
 void write_output(WORD index, WORD value) {
   if (index == FROB_LED) {
+    led = value;
+  } else if (index == FROB_LED_EXTERNO) {
     led_externo = value;
   }
 }

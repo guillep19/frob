@@ -5,11 +5,13 @@
 #include "FrobDefinitions.h"
 #include "IOInterface.h"
 #include "graph.h"
+#include "debug.h"
+
 Serial pc(USBTX, USBRX); // tx, rx
 
 #include "vmcode.c"
 
-WORD stack[128] = {0}; //256 bytes
+WORD stack[256] = {0}; //256 bytes
 WORD globals[64]; //128 bytes
 //Total:1/2 kb (arduino nano tiene 2kb)
 WORD* sp = stack;
@@ -27,7 +29,7 @@ Graph graph;
 //VM ops
 void f_halt() {
   ip = 0;
-  //pc.printf("halt");
+  //pc.printf("halt\n");
 }
 
 //helper to call a function
@@ -44,11 +46,15 @@ void f_call() {
   WORD fun_location = *ip;
   WORD old_ip = (WORD) (++ip - (WORD*) code);
   call_function(fun_location, old_ip);
+  //pc.printf("call: fun=%d", fun_location);
 }
 void f_ret() {
   WORD ret_value = *sp;
   sp = stack + fp; //remove current frame
-  ip = (WORD*) code + *sp--; //restore ip
+  WORD return_index = *sp--; 
+  ip = (WORD*) code + return_index; //restore ip
+  if (return_index == 0) ip = 0; //to stop run_thread when 
+                                 //return ip is 0. HACK
   fp = *sp--; //restore fp
   aux = *sp--; //get count to pop arguments
   sp -= aux; //remove arguments
@@ -65,7 +71,7 @@ void f_lift() {
   WORD id = inm;
   WORD source = *ip++;
   WORD function_loc = *ip++;
-  pc.printf("lift: source=%d id=%d fun=%d\n", source, id, function_loc);
+  //pc.printf("lift: source=%d id=%d fun=%d\n", source, id, function_loc);
 
   WORD source_pos = find_node(graph, source);
   if (source_pos == -1) {
@@ -100,8 +106,24 @@ void f_lift2() {
   link_nodes(graph, s2_pos, dest_pos, 1);
 }
 void f_folds() {
-  BYTE s1 = *ip++;
-  pc.printf("folds: source=%d dest=%d\n", s1, inm);
+  BYTE id = inm;
+  BYTE source = *ip++;
+  WORD acum = globals[*ip++];//paso un valor, estaria bueno q fuera
+                             //un nodo (habria q cambiar todo :D)
+  WORD function_loc = *ip++;
+  WORD source_pos = find_node(graph, source);
+  if (source_pos == -1) {
+    pc.printf("ERROR: unexistant source\n");
+    return;
+  }
+  if (find_node(graph, id) != -1) {
+    pc.printf("ERROR: destination already exists=%d\n", id);
+    return;
+  }
+  WORD node_pos = create_fold_node(graph, id, function_loc, acum);
+  link_nodes(graph, source_pos, node_pos, 0);
+  pc.printf("folds: source=%d dest=%d initial=%d fun=%d\n",
+            source, id, acum, function_loc);
 }
 //IO
 void f_read() {
@@ -237,32 +259,30 @@ void (*functions[])() = {
 };
 
 void print_stack() {
-  //pc.printf("Stack: ");
+  pc.printf("Stack: ");
   WORD* p = (WORD*) stack;
   if (p != sp) {
     p++;
     for (; p != sp; p++) {
-      //pc.printf("-> [%d] ", *p);
+      pc.printf("-> [%d] ", *p);
     };
-    //pc.printf("-> [%d] -x", *sp);
+    pc.printf("-> [%d] -x", *sp);
   } else {
-    //pc.printf("-x");
+    pc.printf("-x");
   }
-  //pc.printf("\n");
+  pc.printf("\n");
 }
 
 void run_thread() {
   while (ip) {
+    //pc.printf("Stopped at ip=%d\n", ip - (WORD*) code);
     //pc.getc();
     instr = *ip++;
     op_code = (0xff00 & instr) >> 8;
     inm = 0x00ff & instr;
     (functions[op_code])();
-    //pc.printf(" [TOS=%d, IP=%d (%04x)]\n", *sp, ip - (WORD*) code, ip);
-    print_stack();
   }
 }
-
 
 void read_inputs() {
   /* Finds out whether there is an input waiting to
@@ -297,7 +317,6 @@ void write_outputs() {
       WORD value = graph.nodes[source].value;
       pc.printf("Output(%d) == %d\n", iter, value);
       write_output(iter, value);
-      pc.printf("After output(%d) == %d\n", iter, value);
     }
   }
 }
@@ -339,17 +358,32 @@ void update_signal(BYTE id) {
   } else {
     //push args and arg_count
     BYTE arg_count = graph.nodes[id].arg_count;
+
+    if (graph.nodes[id].is_fold) { //ONLY FOR FOLD
+      *++sp = graph.nodes[id].value;
+    }
+
     for (BYTE iter = 0; iter < arg_count; iter++) {
       graph.nodes[id].arg_new[iter] = 0;
       WORD value = graph.nodes[id].arg[iter];
       *++sp = value;
-      //pc.printf("push value %d\n", value);
+      //pc.printf("Push value %d\n", value);
     }
+    
+    if (graph.nodes[id].is_fold) arg_count++; //ONLY FOR FOLD
+
     *++sp = (WORD) arg_count;
+
     //pc.printf("push count %d\n", arg_count);
     call_function(function_loc, 0);
+    //pc.printf("Before running the thread\n");
+    //print_stack();
+    //pc.printf("ip=%d\n", ip - (WORD*) code);
     run_thread();
+    //pc.printf("after running the thread\n");
+    //print_stack();
     graph.nodes[id].value = *sp--;
+    pc.printf("Signal %d -> %d\n", id, graph.nodes[id].value);
   }
   //pc.printf("Signal %d = %d\n", id, graph.nodes[id].value);
   // Propagate signal
@@ -398,82 +432,8 @@ void print_graph() {
   }
 }
 
-void* AllocateLargestFreeBlock(size_t* Size)
-{
-  size_t s0, s1;
-  void* p;
-
-  s0 = ~(size_t)0 ^ (~(size_t)0 >> 1);
-
-  while (s0 && (p = malloc(s0)) == NULL)
-    s0 >>= 1;
-
-  if (p)
-    free(p);
-
-  s1 = s0 >> 1;
-
-  while (s1)
-  {
-    if ((p = malloc(s0 + s1)) != NULL)
-    {
-      s0 += s1;
-      free(p);
-    }
-    s1 >>= 1;
-  }
-
-  while (s0 && (p = malloc(s0)) == NULL)
-    s0 ^= s0 & -s0;
-
-  *Size = s0;
-  return p;
-}
-
-size_t GetFreeSize(void)
-{
-  size_t total = 0;
-  void* pFirst = NULL;
-  void* pLast = NULL;
-
-  for (;;)
-  {
-    size_t largest;
-    void* p = AllocateLargestFreeBlock(&largest);
-
-    if (largest < sizeof(void*))
-    {
-      if (p != NULL)
-        free(p);
-      break;
-    }
-
-    *(void**)p = NULL;
-
-    total += largest;
-
-    if (pFirst == NULL)
-      pFirst = p;
-
-    if (pLast != NULL)
-      *(void**)pLast = p;
-
-    pLast = p;
-  }
-
-  while (pFirst != NULL)
-  {
-    void* p = *(void**)pFirst;
-    free(pFirst);
-    pFirst = p;
-  }
-
-  return total;
-}
-
-
 void __heapstats() {
-  pc.printf("Free memory: %d", GetFreeSize());
+  print_stack();
 }
 
 void run_vm() {
@@ -482,19 +442,13 @@ void run_vm() {
   ip = (WORD*) code;
   run_thread();
   print_graph();
-  WORD iterations = 1;
   while (1) {
-    __heapstats();
-    pc.printf("Alive to read..%d\n", iterations);
+    //__heapstats();
     read_inputs();
-    pc.printf("Alive to update..%d\n", iterations);
     update_signals();
-    pc.printf("Alive to write..%d\n", iterations);
     write_outputs();
-    pc.printf("Alive after write..%d\n", iterations);
     //pc.getc();
-    wait(0.1);
-    iterations++;
+    wait(0.2);
   }
 }
 
@@ -502,6 +456,5 @@ int main() {
   initialize_iointerface();
   print_stack();
   run_vm();
-  print_stack();
   return 0;
 }

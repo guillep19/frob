@@ -10,14 +10,15 @@ struct Node {
   BYTE arg_new[2]; //arg is new or used
   BYTE arg_count;
   WORD function_loc;
-  WORD fwd[5]; //Nodes to fwd data
-  BYTE fwd_place[5]; //where to fwd
+  WORD fwd[10]; //Nodes to fwd data
+  BYTE fwd_place[10]; //where to fwd
   BYTE fwd_count;
   WORD value;
+  BYTE is_fold;
 };
 
 struct Input {
-  WORD fwd[5];
+  WORD fwd[10];
   BYTE fwd_count;
 };
 
@@ -30,7 +31,7 @@ struct Graph {
   Output outputs[10];
   Node nodes[20];
   WORD count;
-  BYTE ready_nodes[20];
+  BYTE ready_nodes[25];
   BYTE ready_next;
   BYTE ready_end;
 };
@@ -40,6 +41,8 @@ Graph create_graph();
 WORD find_node(Graph &graph, BYTE id);
 
 WORD create_node(Graph &graph, BYTE id, WORD function_loc, BYTE arg_count);
+
+WORD create_fold_node(Graph &graph, BYTE id, WORD function_loc, WORD initial);
 
 void link_nodes(Graph &graph, BYTE src, BYTE dest, BYTE arg_place);
 
