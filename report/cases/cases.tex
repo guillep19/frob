@@ -67,16 +67,21 @@ se combinan los eventos, para lograr nuestro objetivo:
 
 \begin{verbatim}
 
-rises_last_update (_, last) new = if last < new then (1, new) else (0, new)
-rises_last = foldE rises_last_update (0,0)
-rises = lift fst $ rises_last
-accumulate = foldE (+) 0
 
 hay_casa = \d -> if (d < MIN) then 1 else 0
+distinto = \a b -> if (a /= b) then 1 else 0
+and = \a b -> if (a && b) then 1 else 0
+
 velocidad_casa = \num -> if (num >= 5) then 0 else 100
 
+suma = \a b -> (a + b)
+
 es_linea = \gris -> gris > MIN_NEGRO
-calc_mul = \linea -> if (not linea) then 1/2 else 1
+calc_mul = \linea -> if (linea) then 1 else 1/2
+
+color_a_vel = \gris -> calc_mul (es_linea gris)
+
+multiplicar = \a b -> (a * b)
 
 do {
     distance <- read INPUT_DISTANCE,
@@ -84,17 +89,16 @@ do {
     color_der <- read INPUT_COLOR_RIGHT,
 
     viendo_casa <- lift hay_casa distance,
-    nueva_casa <- rises viendo_casa,
-    cuenta <- accumulate nueva_casa,
+    cambio <- folds distinto viendo_casa,
+    nueva_casa <- lift2 and viendo_casa cambio,
+    cuenta <- folds suma 0 nueva_casa,
     velocidad <- lift velocidad_casa cuenta,
 
-    en_linea_izq <- lift es_linea color_izq,
-    en_linea_der <- lift es_linea color_der,
-    multip_izq <- lift calc_mul en_linea_der,
-    multip_der <- lift calc_mul en_linea_izq,
+    multip_izq <- lift color_a_vel color_izq,
+    multip_der <- lift color_a_vel color_der,
 
-    speed_left <- lift2 (*) (velocidad multip_izq),
-    speed_right <- lift2 (*) (velocidad multip_der),
+    speed_left <- lift2 multiplicar velocidad multip_izq,
+    speed_right <- lift2 multiplicar velocidad multip_der,
 
     output MOTOR_IZQ speed_left,
     output MOTOR_DER speed_right
@@ -104,4 +108,4 @@ do {
 
 \section {Conclusiones del caso}
 
- ...
+
