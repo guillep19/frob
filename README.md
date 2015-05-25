@@ -7,6 +7,14 @@ Proyecto de grado - Guillermo Pacheco - Facultad de Ingeniería - UdelaR
 Noticias
 --------
 
+* Sábado 23-05-2015 a Domingo 24-05-2015:
+  - Cambio implementación a version final con frp.
+  - Implemento ejemplo en bytecode a mano, falta poder compilar.
+  - Pruebas varias con sensor de distancia y leds. Procesar con
+    lift y contar 'casas' con folds.
+  - Refactor general de vm.
+* Domingo 18-05-2015:
+  - Actualizo informe, diseño, caso de estudio.
 * Lunes 27-04-2015 a Sábado 02-05-2015:
   - Creo documentación en latex.
   - Agrego secciones: Resumen, Introducción, Programación funcional.
