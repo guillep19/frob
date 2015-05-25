@@ -295,12 +295,13 @@ void read_inputs() {
     fwd_count = graph.inputs[iter].fwd_count;
     if (fwd_count > 0) {
       value = read_input(iter);
-      //pc.printf("Read(%d) == %d\n", iter, value);
+      pc.printf("Read(%d) == %d\n", iter, value);
       for (fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
         // Give the waiting signal the value.
         WORD id = graph.inputs[iter].fwd[fwd_iter];
         graph.nodes[id].arg[0] = value;
         graph.nodes[id].arg_new[0] = true;
+        pc.printf("Sending %d to node %d with fun=%d\n", value, id, graph.nodes[id].function_loc);
         // Mark the waiting signal as ready.
         graph.ready_nodes[graph.ready_end++] = id;
         if (graph.ready_end == 20) graph.ready_end = 0;
@@ -360,21 +361,27 @@ void update_signal(BYTE id) {
     BYTE arg_count = graph.nodes[id].arg_count;
 
     if (graph.nodes[id].is_fold) { //ONLY FOR FOLD
+      pc.printf("                      signal %d is fold\n", id);
       *++sp = graph.nodes[id].value;
+      pc.printf("                      push %d\n", graph.nodes[id].value);
+    } else {
+      pc.printf("                      signal %d is not fold\n", id);
     }
 
     for (BYTE iter = 0; iter < arg_count; iter++) {
       graph.nodes[id].arg_new[iter] = 0;
       WORD value = graph.nodes[id].arg[iter];
       *++sp = value;
-      //pc.printf("Push value %d\n", value);
+      pc.printf("                      push %d\n", value);
     }
     
     if (graph.nodes[id].is_fold) arg_count++; //ONLY FOR FOLD
 
     *++sp = (WORD) arg_count;
+    pc.printf("                      push %d (arg_count)\n", arg_count);
 
     //pc.printf("push count %d\n", arg_count);
+    pc.printf("                      call %d\n", function_loc);
     call_function(function_loc, 0);
     //pc.printf("Before running the thread\n");
     //print_stack();
@@ -383,9 +390,9 @@ void update_signal(BYTE id) {
     //pc.printf("after running the thread\n");
     //print_stack();
     graph.nodes[id].value = *sp--;
-    pc.printf("Signal %d -> %d\n", id, graph.nodes[id].value);
+    pc.printf("                      returned %d\n", graph.nodes[id].value);
   }
-  //pc.printf("Signal %d = %d\n", id, graph.nodes[id].value);
+  pc.printf("Signal %d -> %d\n", id, graph.nodes[id].value);
   // Propagate signal
   propagate_signal(id);
 }
