@@ -68,10 +68,10 @@
     <node id="n3">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="30.0" width="139.0" x="372.0" y="596.0"/>
+          <y:Geometry height="30.0" width="182.5" x="348.0" y="596.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="125.9921875" x="6.50390625" y="6.015625">speed_left = lift2 (*)<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="174.466796875" x="4.0166015625" y="6.015625">speed_left = lift2 multiplicar<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -85,10 +85,10 @@
     <node id="n4">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="30.0" width="163.0" x="616.0" y="596.0"/>
+          <y:Geometry height="30.0" width="182.5" x="608.5" y="596.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="134.541015625" x="14.2294921875" y="6.015625">speed_right = lift2 (*)<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="183.015625" x="-0.2578125" y="6.015625">speed_right = lift2 multiplicar<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -119,10 +119,10 @@
     <node id="n6">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="30.0" width="293.0" x="146.0" y="337.0"/>
+          <y:Geometry height="30.0" width="203.0" x="191.0" y="337.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="276.77734375" x="8.111328125" y="6.015625">nueva_casa = lift2 (and) viendo_casa cambio<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="151.275390625" x="25.8623046875" y="6.015625">nueva_casa = lift2 (and)<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -139,7 +139,7 @@
           <y:Geometry height="30.0" width="203.0" x="191.0" y="424.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="200.8046875" x="1.09765625" y="6.015625">cuenta = folds (+) 0 nueva_casa<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="126.384765625" x="38.3076171875" y="6.015625">cuenta = folds (+) 0<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -190,8 +190,7 @@
           <y:Geometry height="30.0" width="366.0" x="109.5" y="495.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="custom" textColor="#000000" visible="true" width="323.828125" x="21.0859375" y="-0.96875">let calc_vel cuenta = if cuenta &gt; 5 then 0 else 100 in
-  velocidad = lift (calc_vel) cuenta<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="197.640625" x="84.1796875" y="6.015625">  velocidad = lift velocidad_casa<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -203,30 +202,12 @@
       </data>
     </node>
     <node id="n11">
-      <data key="d4"/>
-      <data key="d6">
-        <y:UMLNoteNode>
-          <y:Geometry height="49.0" width="286.0" x="687.0" y="774.0"/>
-          <y:Fill color="#FFCC00" transparent="false"/>
-          <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="custom" textColor="#000000" visible="true" width="275.640625" x="5.1796875" y="8.53125">Nota: se define:
-let calc_mul x = if x == False then 1/2 else 1<y:LabelModel>
-              <y:SmartNodeLabelModel distance="4.0"/>
-            </y:LabelModel>
-            <y:ModelParameter>
-              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
-            </y:ModelParameter>
-          </y:NodeLabel>
-        </y:UMLNoteNode>
-      </data>
-    </node>
-    <node id="n12">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="30.0" width="232.5" x="298.0" y="234.0"/>
+          <y:Geometry height="30.0" width="188.0" x="298.0" y="234.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="230.212890625" x="1.1435546875" y="6.015625">cambio = folds (distinto) viendo_casa<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="152.458984375" x="17.7705078125" y="6.015625">cambio = folds (distinto)<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -237,7 +218,7 @@ let calc_mul x = if x == False then 1/2 else 1<y:LabelModel>
         </y:ShapeNode>
       </data>
     </node>
-    <node id="n13">
+    <node id="n12">
       <data key="d5"/>
       <data key="d6">
         <y:ShapeNode>
@@ -255,7 +236,7 @@ let calc_mul x = if x == False then 1/2 else 1<y:LabelModel>
         </y:ShapeNode>
       </data>
     </node>
-    <node id="n14">
+    <node id="n13">
       <data key="d5"/>
       <data key="d6">
         <y:ShapeNode>
@@ -336,7 +317,7 @@ let calc_mul x = if x == False then 1/2 else 1<y:LabelModel>
     <edge id="e6" source="n8" target="n4">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="-19.126623605078407" ty="-15.01629731114565"/>
+          <y:Path sx="0.0" sy="0.0" tx="-21.41477796274116" ty="-15.01629731114565"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:BendStyle smoothed="false"/>
@@ -353,7 +334,7 @@ let calc_mul x = if x == False then 1/2 else 1<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e8" source="n5" target="n12">
+    <edge id="e8" source="n5" target="n11">
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -364,7 +345,7 @@ let calc_mul x = if x == False then 1/2 else 1<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e9" source="n12" target="n6">
+    <edge id="e9" source="n11" target="n6">
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -397,7 +378,7 @@ let calc_mul x = if x == False then 1/2 else 1<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e12" source="n3" target="n13">
+    <edge id="e12" source="n3" target="n12">
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -408,7 +389,7 @@ let calc_mul x = if x == False then 1/2 else 1<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e13" source="n4" target="n14">
+    <edge id="e13" source="n4" target="n13">
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
