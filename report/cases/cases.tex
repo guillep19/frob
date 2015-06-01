@@ -78,15 +78,14 @@ MIN_GREY = 50
 
 hay_casa d = if (d < MIN_DISTANCE) then 1 else 0
 distinto a b = if (a /= b) then 1 else 0
-and a b = if (a && b) then 1 else 0
-
 velocidad_casa num = if (num >= 5) then 0 else 100
 
+and a b = if (a && b) then 1 else 0
 suma a b = (a + b)
+multiplicar a b = (a * b)
 
 color_a_vel gris = if (gris > MIN_GREY) 1 else 1/2
 
-multiplicar a b = (a * b)
 
 do {
     distance <- read INPUT_DISTANCE,
@@ -94,7 +93,7 @@ do {
     color_der <- read INPUT_COLOR_RIGHT,
 
     viendo_casa <- lift hay_casa distance,
-    cambio <- folds distinto viendo_casa,
+    cambio <- folds distinto 0 viendo_casa,
     nueva_casa <- lift2 and viendo_casa cambio,
     cuenta <- folds suma 0 nueva_casa,
     velocidad <- lift velocidad_casa cuenta,

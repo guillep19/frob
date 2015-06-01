@@ -16,7 +16,6 @@
 //I/O operations
 #define t_read       0x07
 #define t_write      0x08
-
 //Jumps
 #define t_jump       0x09 //ip = *sp--;
 #define t_jump_false 0x0a //ip = *sp--;
