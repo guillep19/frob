@@ -1,3 +1,4 @@
+
   push 1
   store 0 //sensor_distancia
   push 1

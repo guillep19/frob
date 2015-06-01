@@ -1,0 +1,27 @@
+push 1
+store 0
+push 1
+store 1
+read 0 0
+lift 1 0 hay_casa
+write 1 1
+push 1
+store 2
+folds 2 1 2 suma
+lift 3 2 mayor_a_5
+write 3 2
+halt
+[hay_casa] load_param 0
+push 100
+cmp_lt
+ret
+[suma]
+load_param 0
+load_param 1
+add
+ret
+[mayor_a_5]
+load_param 0
+push 5
+cmp_gt
+ret
