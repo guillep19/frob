@@ -1,63 +1,45 @@
-#frob
+#alf
 
 #Inputs
-sensor_distancia = 1
-sensor_color_izq = 2
-sensor_color_der = 3
-
+INPUT_DISTANCE = 1
+INPUT_COLOR_LEFT = 2
+INPUT_COLOR_RIGHT = 3
 #Outputs
-velocidad_motor_izq = 1
-velocidad_motor_der = 2
+OUTPUT_ENGINE_LEFT = 1
+OUTPUT_ENGINE_RIGHT = 2
 
 # Constantes
-# Al recibir un valor de distancia menor a DISTANCIA_CASA, se considera
-# que se esta frente a una.
-DISTANCIA_CASA = 100
-# Los valores del sensor de color menores e este valor se consideran BLANCO
-UMBRAL_DE_BLANCO = 50 
+# Al recibir un valor de distancia menor a MIN_DISTANCE, se considera
+# que se esta frente a una casa.
+MIN_DISTANCE = 100
+# Los valores del sensor de gris menores e este valor se consideran BLANCO
+MIN_GREY = 50 
 
-def hay_casa(distancia):
-  return distancia < DISTANCIA_CASA
+hay_casa d = if (d < MIN_DISTANCE) then 1 else 0
+distinto a b = if (a /= b) then 1 else 0
+and a b = if (a && b) then 1 else 0
+velocidad_casa num = if (num >= 5) then 0 else 100
+suma a b = (a + b)
+color_a_vel gris = if (gris > MIN_GREY) 1 else 1/2
+multiplicar a b = (a * b)
 
-def task_contar_casas():
-  cuenta = 0
-  viendo = False
+do {
+    distance <- read INPUT_DISTANCE
+    color_izq <- read INPUT_COLOR_LEFT
+    color_der <- read INPUT_COLOR_RIGHT
 
-  while cuenta < 2:
-    distancia = read(sensor_distancia)
-    if not hay_casa(distancia):
-      viendo = False
-    else:
-      viendo = True
-      cuenta = cuenta + 1
+    viendo_casa <- lift hay_casa distance
+    cambio <- folds distinto viendo_casa
+    nueva_casa <- lift2 and viendo_casa cambio
+    cuenta <- folds suma 0 nueva_casa
+    velocidad <- lift velocidad_casa cuenta
 
-def es_blanco(color):
-  return color < UMBRAL_DE_BLANCO
+    multip_izq <- lift color_a_vel color_izq
+    multip_der <- lift color_a_vel color_der
 
-## El camino es negro y el fondo es blanco,  
-## el robot debe tratar de seguir la linea sin
-## salirse.
-def task_seguir_linea():
-  while True:
-    color_izq = read(sensor_color_izq)
-    color_der = read(sensor_color_der)
-    vel_izq = 1
-    vel_der = 1
-    if es_blanco(color_izq):
-        vel_der = 0.5
-    if es_blanco(color_der):
-        vel_izq = 0.5
-    write(velocidad_motor_izq, vel_izq)
-    write(velocidad_motor_der, vel_der)
+    speed_left <- lift2 multiplicar velocidad multip_izq
+    speed_right <- lift2 multiplicar velocidad multip_der
 
-
-def task_stop_all():
-  write(velocidad_motor_izq, 0)
-  write(velocidad_motor_der, 0)
-
-start(task_contar_casas)
-start(task_seguir_linea)
-
-with on_finish(task_contar_casas):
-  stop(task_seguir_linea)
-  start(task_stop_all)
+    output MOTOR_IZQ speed_left
+    output MOTOR_DER speed_right
+}

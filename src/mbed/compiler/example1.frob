@@ -1,11 +1,8 @@
 
-button = 0
-led = 1
-i = 0
-while i <= 5:
-  i = i + 1
-  value = read(button)
-  if value == 1:
-    write(led, 1)
-  else:
-    write(led, 0)
+INPUT_BUTTON = 0
+OUTPUT_LED = 1
+
+do {
+  button <- read INPUT_BUTTON
+  output OUTPUT_LED button
+}
