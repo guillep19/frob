@@ -6,8 +6,12 @@
 
 #define FROB_LED 1
 DigitalOut led(LED1);
-#define FROB_LED_EXTERNO 2
+#define FROB_LED_EXTERNO 3
 DigitalOut led_externo(p11);
+#define FROB_MOTOR_IZQ 2
+PwmOut motor_izq(p21);
+#define FROB_MOTOR_DER 4
+PwmOut motor_der(p22);
 
 #define FROB_TIME 0
 Timer t;
@@ -27,6 +31,10 @@ void write_output(WORD index, WORD value) {
     led = value;
   } else if (index == FROB_LED_EXTERNO) {
     led_externo = value;
+  } else if (index == FROB_MOTOR_IZQ) {
+    float val = value * 0.1;
+    while (val > 1) val--;
+    motor_izq = val;
   }
 }
 

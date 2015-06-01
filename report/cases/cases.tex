@@ -67,21 +67,26 @@ se combinan los eventos, para lograr nuestro objetivo:
 
 \begin{verbatim}
 
+INPUT_DISTANCE = 1
+INPUT_COLOR_LEFT = 2
+INPUT_COLOR_RIGHT = 3
+OUTPUT_ENGINE_LEFT = 1
+OUTPUT_ENGINE_RIGHT = 2
 
-hay_casa = \d -> if (d < MIN) then 1 else 0
-distinto = \a b -> if (a /= b) then 1 else 0
-and = \a b -> if (a && b) then 1 else 0
+MIN_DISTANCE = 100
+MIN_GREY = 50
 
-velocidad_casa = \num -> if (num >= 5) then 0 else 100
+hay_casa d = if (d < MIN_DISTANCE) then 1 else 0
+distinto a b = if (a /= b) then 1 else 0
+and a b = if (a && b) then 1 else 0
 
-suma = \a b -> (a + b)
+velocidad_casa num = if (num >= 5) then 0 else 100
 
-es_linea = \gris -> gris > MIN_NEGRO
-calc_mul = \linea -> if (linea) then 1 else 1/2
+suma a b = (a + b)
 
-color_a_vel = \gris -> calc_mul (es_linea gris)
+color_a_vel gris = if (gris > MIN_GREY) 1 else 1/2
 
-multiplicar = \a b -> (a * b)
+multiplicar a b = (a * b)
 
 do {
     distance <- read INPUT_DISTANCE,
