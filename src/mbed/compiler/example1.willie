@@ -1,14 +1,7 @@
-
-  push 1
-  store 0 //sensor_distancia
-  push 1
-  store 1 //led
-  read 0 0 //sensor_distancia 0
-  lift 1 0 hay_casa //signal_viendo 1
-  write 1 1 //write_led
-  halt
-[hay_casa]
-  load_arg 0
-  push 100
-  cmp_lt //0 < 100
-  ret
+push 0
+store 0 //INPUT_BUTTON
+push 1
+store 1 //OUTPUT_LED
+read 0 0 //INPUT_BUTTON 0
+write 1 0 //write OUTPUT_LED 0
+halt
