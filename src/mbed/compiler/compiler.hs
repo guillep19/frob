@@ -32,10 +32,17 @@ data Expression = E_Value Int
                 deriving Show
 
 data Declaration = E_Fun [Char] [String] Expression
-                 | E_Const [Char] Int
+                 | E_Const String Int
                  deriving Show
 
-data DoDeclaration = E_Do [Char]
+data FRPApplication = E_Read String String
+                    | E_Lift String String String
+                    | E_Lift2 String String String String
+                    | E_Folds String String Expression String
+                    | E_Output String String
+                    deriving Show
+
+data DoDeclaration = E_Do [FRPApplication]
                    deriving Show
 
 data Program = E_Program [Declaration] DoDeclaration
@@ -87,7 +94,26 @@ program = E_Program [
               E_BinExpr E_Mul (E_Var "a") (E_Var "b")
             )
             ]
-            (E_Do "Hola")
+            (E_Do [
+              E_Read "distance" "INPUT_DISTANCE",
+              E_Read "color_izq" "INPUT_COLOR_LEFT",
+              E_Read "color_der" "INPUT_COLOR_RIGHT",
+
+              E_Lift "viendo_casa" "hay_casa" "distance",
+              E_Folds "cambio" "distinto" (E_Value 0) "viendo_casa",
+              E_Lift2 "nueva_casa" "and" "viendo_casa" "cambio",
+              E_Folds "cuenta" "suma" (E_Value 0) "nueva_casa",
+              E_Lift "velocidad" "velocidad_casa" "cuenta",
+              
+              E_Lift "multip_izq" "color_a_vel" "color_izq",
+              E_Lift "multip_der" "color_a_vel" "color_der",
+
+              E_Lift2 "speed_left" "multiplicar" "velocidad" "multip_izq",
+              E_Lift2 "speed_right" "multiplicar" "velocidad" "multip_der",
+
+              E_Output "OUTPUT_ENGINE_LEFT" "speed_left",
+              E_Output "OUTPUT_ENGINE_RIGHT" "speed_right"
+            ])
 
 main = do
   putStrLn "Alf? Willie? Alf? Willie? Alf! Willie!"
