@@ -7,18 +7,20 @@
 Tradicionalmente los programas son formados a partir de
 una secuencia de acciones imperativas. Los programas
 reactivos suelen formarse por eventos y código iterativo
-que se corre cuando un evento ocurre.
+que se ejecuta cuando un evento ocurre.
 
 Dicho código iterativo suele hacer referencia y manipular
-variables compartidas con diferentes rutinas. Ésto lleva a que
+un estado global con diferentes rutinas.
+Ésto tiene como consecuencia que
 como un valor puede ser manipulado desde diferentes lugares,
 puedan producirse problemas de concurrencia y algunos valores
 pueden quedar en un estado inconsistente.
 
-En el paradigma FRP no existen valores compartidos, sinó que
-dichos valores dependientes del tiempo, tienen una representación
-llamada Comportamiento y la única forma de modificarlos, es
-a partir de como fueron definidos.
+En el paradigma FRP no hay un estado compartido explícito,
+un programa se forma con valores dependientes del tiempo,
+llamados Comportamientos y la única forma de modificarlos,
+es a partir de su definición.
+
 
 \begin{definicion}
 Programa reactivo.\\
@@ -34,18 +36,19 @@ completa al final. Por ejemplo un compilador.
 \begin{definicion}
 Comportamientos (Behaviours).\\
 Un comportamiento es un valor contínuo que depende del paso del tiempo.
-Los comportamientos se pueden definir, combinar, pasarlos como
-argumentos a funciones, retornarlos.
-Un comportamiento puede ser un valor constante, el tiempo mismo (un reloj),
+Los comportamientos se pueden definir, combinar, aplicarles una
+función, retornarlos.\\
+Un comportamiento puede ser una entrada, el tiempo mismo (un reloj),
 o puede formarse combinando otros comportamientos, por ejemplo secuencialmente
-o paralelamente.
+o en paralelo.
 \end{definicion}
 
 \begin{definicion}
 Eventos (Streams).\\
 Son valores discretos dependientes del tiempo, que forman
-una secuencia finita o infinita de ocurrencias. Cada ocurrencia
-está formada por el valor y el instante de tiempo.
+una secuencia finita o infinita de ocurrencias.\\
+Cada evento está formado por un valor y
+el instante de tiempo en el que ocurre.
 \end{definicion}
 
 La principal diferencia entre Comportamientos y Eventos, es que los
@@ -60,27 +63,64 @@ por ejemplo:
 \end{itemize}
 
 Las operaciones que se pueden realizar sobre los comportamientos incluyen:
+
 \begin{itemize}
 \item \textit{Operaciones genéricas} Aritmética, integración, diferenciación
 \item \textit{Operaciones específicas de un dominio} como escalar video, aplicar filtros, detección de patrones.
 \end{itemize}
 
-Los eventos pueden ser sensores específicos de un dominio, por ejemplo un
-botón, un click, una interrupción o mensaje asincrónico.
+Los eventos pueden ser ciertos sensores que aportan valores discretos,
+específicos de un dominio, por ejemplo un
+botón, un click, una interrupción o un mensaje asincrónico.\\
 También puede ser generado a partir de valores de un comportamiento,
 como ser \emph{Temperatura alta}, \emph{Batería baja}.
 
-Las operaciones que se pueden realizar sobre los eventos incluyen:
+Ejemplos de operaciones que se pueden realizar sobre los eventos pueden ser:
+
 \begin{itemize}
-\item fmap, filter
-\item Modificar un \emph{Comportamiento} reactivo
+\item \textit{map} Modifica un valor discreto a otro aplicando una función
+\item \textit{filter} Selecciona valores que son relevantes.
 \end{itemize}
+
+
+
+  Este paradigma comenzó siendo utilizado para realizar animaciones con programación
+funcional (Fran \cite{ElliotHudak97:Fran}), para crear una animación se describía
+cómo y dónde deberían ubicarse imágenes en función del tiempo, de ésta forma se simula
+el movimiento.\\
+  Luego fue generalizada la idea para poder representar otro tipo de valores que
+varían en el tiempo, un lenguaje específico de dominio llamado
+Frob \cite{petersonhudakelliot99:lambdainmotion} fue creado para poder especificar
+robots. El mismo utiliza Fran como base y crea abstracciones de los sensores
+para poder abstraerse de las plataformas y de las dificultades de un hardware en particular.
+  La parte más importante de Frob es la idea de crear abstracciones, y que no formen
+parte de lo que debe resolver un programa.
+
+  Existen varios trabajos que tienen como objetivo crear abstracciones para escribir
+programas reactivos funcionales.
+  Yampa \cite{yampa} es una herramienta que expresa los programas como señales y
+define operadores simples para combinarlas y funciones que procesan las señales.
+
+  Por último existe un lenguaje llamado Elm \cite{evanczaplicki2012:Elm}, creado para
+poder escribir aplicaciones web reactivas, de una forma funcional declarativa.
+  En Elm, las entradas se asumen conocidas y son dadas, por ejemplo un click o el movimiento del mouse,
+o una tecla presionada.
+  Todos los valores son señales, el combinador $lift$
+toma una señal y una función, y define otra señal resultado de la aplicación de la función
+sobre cada valor de la señal.\\
+  Para combinar más de una señal, se usa el combinador $lift_2$ o $lift_n$ con $n in N$.\\
+  En los casos que se desea tener memoria, por ejemplo llevar una cuenta de ocurrencias
+  de una señal, o mantener un estado explícito, se utiliza el combinador $foldp$.\\
+  
+  El combinador $foldp$ opera sobre una señal como el operador $fold$ sobre una lista. Dado
+un valor inicial y una función, aplica la función sobre cada valor, utilizando el último
+valor conocido como primer argumento.
 
 
 \section{Ejemplo}
 
 Para entender un poco más las ideas de Comportamiento y Evento, se puede
-plantear el siguiente ejemplo.
+plantear el siguiente ejemplo.\\
 
   En una cuenta de un banco, el saldo se puede definir
 como un comportamiento, el cuál solo se modifica cuando ocurre
@@ -96,27 +136,75 @@ afectaría al saldo.
   Usaremos la notación \texttt{<nombre> :: Event <tipo>} para definir
 fuentes de eventos.
   Asumo conocida la fuente de eventos \emph{movimientos} que por
-cada movimiento
-emite su valor.
+cada movimiento emite su valor.
 
 \begin{verbatim}
 movimientos :: Event Number
 \end{verbatim}
 
-  Ahora puedo expresar el saldo a partir de los mismos, y construir
+  Con ella puedo expresar el saldo a partir de los mismos, y construir
 un programa que muestre el saldo.
 
 \begin{verbatim}
-main = let saldos = (foldlE (+) SALDO_INICIAL movimientos) in
-     mapE show saldos
+main = let saldos = (foldls (+) SALDO_INICIAL movimientos) in
+     maps show saldos
 \end{verbatim}
 
-  En el ejemplo se ve que es imposible asignar un valor al saldo,
+  Al especificarse $saldos$ declarativamente, es imposible asignar un valor al saldo,
 éste se compone a partir del \texttt{SALDO\_INICIAL} y la suma de
 los movimientos (positivos o negativos).
+  El saldo siempre tiene un valor, por lo que es un \texttt{Comportamiento}, los movimientos
+son discretos, por lo que es un \texttt{Evento}.
 
-TODO: Mejorar esta sección explicando: Signal y SF (Signal Functions),
-Arrows, Behaviours y Event, Event, time leaks.
+\section{Simplificación del paradigma}
 
-Leer y citar \cite{peterson99:lambdainmotion} y también este otro
-\cite{evanczaplicki2012:Elm} y \cite{yampa}.
+  Al intentar implementar en un computador programas utilizando éste paradigma, nos encontramos
+con varias limitaciones.
+  Una de ellas es que no es posible tener valores que se modifiquen de forma contínua, la capacidad
+de cómputo es finita, y no es posible ejecutar tareas al mismo tiempo, incluso en un entorno con
+paralelismo, el mismo está acotado a la cantidad de procesadores con los que se cuente.\\
+
+  Aunque el paradigma distinga Eventos de Comportamientos, se puede hacer una simplificación y
+asumir que todos los valores son Eventos. Los comportamientos en realidad serán una secuencia de
+cambios de valor, los eventos que dependan de un comportamiento serán notificados sólo en el momento
+que éste cambie.\\
+  Valores como el tiempo (reloj) y otros sensores como ser un sensor de distancia, entregarán valores
+periódicamente. Sería imposible que un programa reaccione a un valor contínuo, sin embargo, es muy fácil
+asumir que lo que nos importa del tiempo en realidad es dada una variación de tiempo cómo se debe
+comportar nuestro programa.\\
+  A su vez un sensor de distancia no nos puede entregar infinitos valores, y generalmente sólo importa
+poder recibir un valor nuevo en un período relativamente corto de tiempo.
+
+  Otra limitación en nuestro caso, al tratarse de robots con bajas capacidades de cómputo, es que
+la implementación del lenguaje no siempre tendrá más de un procesador disponible.\\
+  Para simular éste paralelismo se asumirá que el tiempo que se necesita para hacer cálculos es de
+una magnitud mucho menor al tiempo que lleva recibir un dato de una entrada, o enviar un dato a una salida.
+  Se implementará una máquina capaz de correr dichos programas, la cuál esperará por valores en las entradas,
+y en base a los mismos, actualizará todos los eventos que dependan de ellas, y a su vez actualizará luego
+las salidas que dependan de éstos.\\
+  Cada actualización se hará secuencialmente hasta terminar, y en caso de contar con más de un procesador, se
+asignarán en paralelo las actualizaciones utilizando varios hilos de ejecución.\\
+
+\section{Ventajas}
+
+  La motivación para utilizar el paradigma presentado, es que un programa reactivo, si es escrito de
+forma iterativa, es susceptible a cometer errores de concurrencia al modificar valores en diferentes
+rutinas. A su vez, es difícil estructurar un programa iterativo para que reaccione rápidamente a
+los cambios.
+
+  Un patrón utilizado comunmente para estructurar un programa reactivo es el patrón \texttt{Observer}.
+En dicho patrón, un \texttt{Sujeto} puede ser observado por un \texttt{Observador}, éste último se
+subscribe al sujeto, y el sujeto notifica a todos sus observadores cuando su valor cambia.
+  
+  La desventaja de hacer un programa reactivo siguiendo ese esquema, es que es difícil ver en que
+momento ocurren las actualizaciones de los observer. Si hay muchos observer suscritos a cambios
+de varios sujetos, se vuelve complejo mantener el código al tener tantas interacciones implícitas.
+
+  Al usar un lenguaje funcional, las interacciones son especificadas declarativamente, y se puede
+entender como un valor es formado a partir de otros.
+  Para ver que es lo que está sucediendo en un programa se pueden obtener los valores en un instante
+de tiempo, como una fotografía y evaluar los errores o corroborar si el mismo es correcto.\\
+  De ésta manera si un programa tiene un error, se puede tomar una secuencia de instantes,
+como si fuera una grabación y entender donde está el problema,
+sin necesidad de seguir varios hilos de ejecución ni razonar sobre la concurrencia.
+
