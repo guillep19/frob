@@ -85,7 +85,7 @@ Ejemplos de operaciones que se pueden realizar sobre los eventos pueden ser:
 
 
   Este paradigma comenzó siendo utilizado para realizar animaciones con programación
-funcional (Fran \cite{ElliotHudak97:Fran}), para crear una animación se describía
+funcional (Fran \cite{ElliottHudak97:Fran}), para crear una animación se describía
 cómo y dónde deberían ubicarse imágenes en función del tiempo, de ésta forma se simula
 el movimiento.\\
   Luego fue generalizada la idea para poder representar otro tipo de valores que
@@ -104,14 +104,14 @@ define operadores simples para combinarlas y funciones que procesan las señales
   Por último existe un lenguaje llamado Elm \cite{evanczaplicki2012:Elm}, creado para
 poder escribir aplicaciones web reactivas, de una forma funcional declarativa.
   En Elm, las entradas se asumen conocidas y son dadas, por ejemplo un click o el movimiento del mouse,
-o una tecla presionada.
+o una tecla presionada.\\
   Todos los valores son señales, el combinador $lift$
 toma una señal y una función, y define otra señal resultado de la aplicación de la función
 sobre cada valor de la señal.\\
-  Para combinar más de una señal, se usa el combinador $lift_2$ o $lift_n$ con $n in N$.\\
+  Para combinar más de una señal, se usa el combinador $lift_2$ o $lift_n$ con $n \in N$.\\
   En los casos que se desea tener memoria, por ejemplo llevar una cuenta de ocurrencias
   de una señal, o mantener un estado explícito, se utiliza el combinador $foldp$.\\
-  
+
   El combinador $foldp$ opera sobre una señal como el operador $fold$ sobre una lista. Dado
 un valor inicial y una función, aplica la función sobre cada valor, utilizando el último
 valor conocido como primer argumento.
