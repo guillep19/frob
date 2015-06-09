@@ -1,10 +1,10 @@
-module Codegenerator (generate_bytecode) where
+module CodeGenerator (generate_bytecode) where
 
 import Ast
 import Bytecode
 
 
-instr_length :: WillieCode -> Int
+instr_length :: OpCode -> Int
 instr_length Thalt = 2
 instr_length (Tcall _) = 2
 instr_length Tret = 1
@@ -33,5 +33,7 @@ instr_length (Tdup) = 1
 instr_length (Tstore _) = 1
 instr_length (Tload _) = 1
 
+
+
 generate_bytecode :: WillieAST -> WillieBC
-generate_bytecode _ = [T_halt]
+generate_bytecode (E_Program decls dodecls) = WillieBC [Thalt]

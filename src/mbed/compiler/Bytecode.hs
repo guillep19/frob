@@ -31,4 +31,4 @@ data OpCode = Thalt
             | Tload Int
             deriving (Eq, Ord, Show, Read)
 
-data WillieBC = [OpCode]
+data WillieBC = WillieBC [OpCode]

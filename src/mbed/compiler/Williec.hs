@@ -1,11 +1,11 @@
 
-module Williec where
+module Main where
 
 import Ast
 import Bytecode
 import CodeGenerator
 
-program :: Program
+program :: WillieAST
 program = E_Program [
             E_Const "INPUT_DISTANCE" 1,
             E_Const "INPUT_COLOR_LEFT" 2,
