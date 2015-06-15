@@ -81,3 +81,5 @@ program = E_Program [
 main = do
   putStrLn "Alf? Willie? Alf? Willie? Alf! Willie!"
   putStrLn $ show program
+  putStrLn "Compilando... Alf? Willie!"
+  putStrLn $ show (generate_bytecode program)

@@ -31,4 +31,8 @@ data OpCode = Thalt
             | Tload Int
             deriving (Eq, Ord, Show, Read)
 
-data WillieBC = WillieBC [OpCode]
+data LabelMap = LabelMap String Int
+              deriving Show
+
+data WillieBC = WillieBC [OpCode] [LabelMap]
+              deriving Show
