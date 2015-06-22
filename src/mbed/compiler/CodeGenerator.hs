@@ -48,12 +48,21 @@ generate_bytecode_expression (E_BinExpr bin_op expr1 expr2) =
                                   WillieBC (a1 ++ a2 ++ a) (b ++ b1 ++ b2)
 
 generate_bytecode_decl :: Declaration -> WillieBC
+generate_bytecode_decl (E_Const name value) = let index = create_index name
+                                              WillieBC [Tpush value, Tstore name] []
 generate_bytecode_decl decl = WillieBC [Tdiv] []
 
-generate_bytecode_decls :: [Declaration] -> [OpCode]
-generate_bytecode_decls (x:xs) = (generate_bytecode_decl x) ++ generate_bytecode_decls(xs)
-generate_bytecode_decls [] = []
+generate_bytecode_decls :: [Declaration] -> WillieBC
+generate_bytecode_decls (x:xs) = let WillieBC ax bx = generate_bytecode_decl x
+                                     WillieBC axs bxs = generate_bytecode_decls xs in
+                                 WillieBC (ax ++ axs) (bx ++ bxs)
+generate_bytecode_decls [] = WillieBC [] []
+
+generate_bytecode_dodecls :: [FRPApplication] -> WillieBC
+generate_bytecode_dodecls (x:xs) = WillieBC [] []
+generate_bytecode_dodecls [] = WillieBC [] []
 
 generate_bytecode :: WillieAST -> WillieBC
-generate_bytecode (E_Program decls do_decls) = WillieBC ([Thalt] ++ (generate_bytecode_decls decls)) []
-
+generate_bytecode (E_Program decls (E_Do do_decls)) = let WillieBC ado bdo = generate_bytecode_dodecls do_decls
+                                                          WillieBC adecls bdecls = generate_bytecode_decls decls in
+                                                      WillieBC (ado ++ [Thalt] ++ adecls) (bdo ++ bdecls)
