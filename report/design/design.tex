@@ -1,20 +1,62 @@
-En esta seccion se describe el diseño del lenguaje, su semántica,
-así como el diseño del lenguaje de bajo nivel, y cómo es interpretado.
+En esta sección se describe el diseño del lenguaje junto con su semántica.
+Luego se explica de que manera es traducido a un lenguaje de bajo nivel, más
+simple de interpretar, el cuál podrá ser interpretado por implementaciones de
+una máquina virtual en diferentes plataformas de hardware.
 
 \section{Lenguaje de alto nivel}
 
+  Un programa constará de dos secciones principales, una sección de declaraciones, donde
+se declararán funciones y una sección donde se aplicarán combinadores de programación
+funcional reactiva, especificando cómo son transformadas las señales para especificar
+el comportamiento de los robots.
+
+\subsection{Declaraciones}
+
+  Las funciones se declaran de la siguiente manera.
+
+\begin{verbatim}
+    nombre argumento_1 .. argumento_n = expresion
+\end{verbatim}
+
+  Donde una expresión puede ser un valor,
+una expresión aritmética (por ejemplo una suma o multiplicación),
+una aplicación de una función, o una expresión condicional.\\
+
+  La sintaxis es muy similar a la del lenguaje \texttt{Haskell}, aunque
+no se permiten funciones anónimas, y los cálculos se hacen
+inmediatamente (no cuenta con evaluación a demanda \emph{lazy evaluation}).
+
+  Para declarar un valor constante simplemente se escribe:
+
+\begin{verbatim}
+  $NOMBRE_CONSTANTE = valor
+\end{verbatim}
+
+  Ejemplo de declaración:
+
+\begin{verbatim}
+  # fibonacci
+  fibo n = if (n < 2) then (1) else (fibo(n-1) + fibo(n-2))
+\end{verbatim}
+
 \subsection{Combinadores de FRP}
 
-La función \texttt{lift} combina una función y un valor
+  En la segunda sección se especifica que entradas se procesarán y
+se crean señales a partir de ellas usando la función \texttt{read}.
+  Luego se usa una lista de aplicaciones de \texttt{lift},
+\texttt{lift2} y \texttt{folds} para combinar las señales hasta
+obtener los valores que conformarán la salida del robot y su estado.\\
+  La función \texttt{output} se utiliza para mapear esas señales a las
+salidas correspondientes.\\
+
+  La función \texttt{lift} combina una función y un valor
 dependiente del tiempo, y crea un nuevo valor dependiente
 del tiempo, es decir, aplica una función que transforma
 una señal en otra:\\
 
-
 $lift :: (a \rightarrow b) \rightarrow Signal\ a \rightarrow Signal\ b$\\
 
-
-Para combinar señales, se utiliza la función \texttt{lift2}
+  Para combinar señales, se utiliza la función \texttt{lift2}
 que recibe dos señales y produce una nueva aplicando una
 función.\\
 
@@ -27,51 +69,50 @@ $lift3 :: (a \rightarrow b \rightarrow c \rightarrow d) \rightarrow Signal\ a \r
 $lift3\ f\ sa\ sb\ sc = lift2\ ((lift2\ f\ sa\ sb)\ sc)$\\
 
 Para crear señales que no solo dependen de otra señal, sinó que dependen
-de ella y además de su historia, se define otro combinador \texttt{foldE}
+de ella y además de su historia, se define otro combinador \texttt{folds}
 que cuando recibe los valores de la señal, los combina y acumula. Éste
 combinador es análogo a la operación \texttt{fold} sobre listas.\\
 
-$foldE :: (a \rightarrow b \rightarrow b) \rightarrow b \rightarrow Signal\ a \rightarrow Signal\ b$\\
+$folds :: (a \rightarrow b \rightarrow b) \rightarrow b \rightarrow Signal\ a \rightarrow Signal\ b$\\
+
 
 \subsection{Sintaxis}
-
 
 La gramática del lenguaje es la siguiente:
 
 \begin{verbatim}
 
-bool := "True" | "False"
-float := [-+]?[0-9]*\.?[0-9]+
-int := [-+]?[0-9]*\.?[0-9]+
+number := [-+]?[0-9]*\.?[0-9]+
 
 name := [a-z_A-Z]+
 
-value := float | int | bool
+value := number | name
 
 binop := '+' | '-' | '/' | '*'
        | 'or' | 'and' | '==' | '<='
        | '>' | '<' | '<>' | '>=';
 
-arg_list := name ',' arg_list | name;
+arg_list := name arg_list | name;
 
 expr := value
       | expr binop expr
-      | "if" expr "then" expr "else" expr
-      | "let" name "=" expr "in" expr
-      | "\" arg_list "->" expr;
+      | "if" expr "then" expr "else" expr;
 
-assign := name "<-" expr;
+assign := name "<- read" name
+        | name "<- lift" name name
+        | name "<- lift2" name name name
+        | name "<- folds" value name
+        | "output" name name
 
 assign_list = assign assign_list | assign;
 
-definitions := name "=" expr;
+definitions := name arg_list "=" expr;
 
 main_block := "do {" assign_list "}";
 
 program := definitions main_block;
 
 \end{verbatim}
-
 
 \subsection{Ejemplo}
 
@@ -88,7 +129,7 @@ STOP = 0
 
 distanceToSpeed n = if (n < MIN_DISTANCE) then STOP else FULL_SPEED
 
-do { 
+do {
   distance <- read INPUT_DISTANCE,
   speed <- lift distanceToSpeed distance,
   output OUTPUT_MOTOR speed
@@ -130,10 +171,8 @@ en éste caso son velocidades.
 
 \section{Lenguaje de bajo nivel}
 
- Para presentar el lenguaje, primero defino las estructuras
+  Para presentar el lenguaje, primero defino las estructuras
 necesarias para explicar la semántica de cada instrucción.
-
-(TODO: Revisar ésta seccion que cambié las estructuras)
 
 \begin{enumerate}
 
