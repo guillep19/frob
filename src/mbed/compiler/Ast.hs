@@ -1,26 +1,24 @@
 
 module Ast where
 
+import Data.Foldable
+
 data BinOp = E_Add | E_Sub | E_Mul | E_Div
+           | E_GT | E_LT | E_GTe | E_LTe | E_Eq | E_Neq
+           | E_And | E_Or
            deriving Show
 
-data BinComp = E_GT | E_LT | E_GTe | E_LTe | E_Eq | E_Neq
-             deriving Show
-
-data BoolExpr = E_Compare BinComp Expression Expression
-              | E_And Expression Expression 
-              | E_Or Expression Expression
-              | E_Not Expression
+data UnaryOp = E_Not
               deriving Show
 
 data Expression = E_Value Int
-                | E_BinExpr BinOp Expression Expression
                 | E_Var String
-                | E_BoolExpr BoolExpr
-                | E_If BoolExpr Expression Expression
+                | E_BinExpr BinOp Expression Expression
+                | E_UnaryExpr UnaryOp Expression
+                | E_If Expression Expression Expression
                 deriving Show
 
-data Declaration = E_Fun [Char] [String] Expression
+data Declaration = E_Fun String [String] Expression
                  | E_Const String Int
                  deriving Show
 
@@ -31,9 +29,5 @@ data FRPApplication = E_Read String String
                     | E_Output String String
                     deriving Show
 
-data DoDeclaration = E_Do [FRPApplication]
-                   deriving Show
-
-data WillieAST = E_Program [Declaration] DoDeclaration
+data WillieAST = E_Root [Declaration] [FRPApplication]
              deriving Show
-
