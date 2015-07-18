@@ -22,11 +22,11 @@ data Declaration = E_Fun String [String] Expression
                  | E_Const String Int
                  deriving Show
 
-data FRPApplication = E_Read String String
+data FRPApplication = E_Read String Expression
                     | E_Lift String String String
                     | E_Lift2 String String String String
-                    | E_Folds String String Expression String
-                    | E_Output String String
+                    | E_Folds String String String Expression
+                    | E_Output String Expression
                     deriving Show
 
 data WillieAST = E_Root [Declaration] [FRPApplication]

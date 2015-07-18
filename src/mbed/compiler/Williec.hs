@@ -58,28 +58,30 @@ program = E_Root [
                 (E_Value 5)
             )]
             [
-              E_Read "distance" "INPUT_DISTANCE",
-              E_Read "color_izq" "INPUT_COLOR_LEFT",
-              E_Read "color_der" "INPUT_COLOR_RIGHT",
+              E_Read "distance" (E_Var "INPUT_DISTANCE"),
+              E_Read "color_izq" (E_Var "INPUT_COLOR_LEFT"),
+              E_Read "color_der" (E_Var "INPUT_COLOR_RIGHT"),
 
-              E_Lift "viendo_casa" "hay_casa" "distance",
-              E_Folds "cambio" "distinto" (E_Value 0) "viendo_casa",
-              E_Lift2 "nueva_casa" "and" "viendo_casa" "cambio",
-              E_Folds "cuenta" "suma" (E_Value 0) "nueva_casa",
-              E_Lift "velocidad" "velocidad_casa" "cuenta",
+              E_Lift "viendo_casa" "distance" "hay_casa",
+              E_Folds "cambio" "viendo_casa" "distinto" (E_Value 0),
+              E_Lift2 "nueva_casa" "viendo_casa" "cambio" "and",
+              E_Folds "cuenta" "nueva_casa" "suma" (E_Value 0),
+              E_Lift "velocidad" "cuenta" "velocidad_casa",
               
-              E_Lift "multip_izq" "color_a_vel" "color_izq",
-              E_Lift "multip_der" "color_a_vel" "color_der",
+              E_Lift "multip_izq" "color_izq" "color_a_vel",
+              E_Lift "multip_der" "color_der" "color_a_vel",
 
-              E_Lift2 "speed_left" "multiplicar" "velocidad" "multip_izq",
-              E_Lift2 "speed_right" "multiplicar" "velocidad" "multip_der",
+              E_Lift2 "speed_left" "velocidad" "multip_izq" "multiplicar",
+              E_Lift2 "speed_right" "velocidad" "multip_der" "multiplicar",
 
-              E_Output "OUTPUT_ENGINE_LEFT" "speed_left",
-              E_Output "OUTPUT_ENGINE_RIGHT" "speed_right"
+              E_Output "speed_left" (E_Var "OUTPUT_ENGINE_LEFT"),
+              E_Output "speed_right" (E_Var "OUTPUT_ENGINE_RIGHT")
             ]
 
 main = do
   putStrLn "Alf? Willie? Alf? Willie? Alf! Willie!"
   putStrLn $ show program
   putStrLn "Compilando... Alf? Willie!"
+  putStrLn ""
   putStrLn $ show (generate_bytecode program)
+  putStrLn ""

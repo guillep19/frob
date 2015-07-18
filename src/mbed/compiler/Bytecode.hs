@@ -5,12 +5,12 @@ data OpCode = Thalt
             | Tcall Int
             | Tret
             | Tload_param Int
-            | Tlift {liftsource :: Int, liftdest :: Int, liftfun :: Int}
-            | Tlift2 {liftsource1 :: Int, liftsource2 :: Int,
-                      liftdest :: Int, liftfun :: Int}
-            | Tfolds {foldsource :: Int, folddest :: Int, foldfun :: Int}
-            | Tread Int Int
-            | Twrite Int Int
+            | Tlift {id :: Int, source :: Int, fun :: String}
+            | Tlift2 {id :: Int, source1 :: Int,
+                      source2 :: Int, fun :: String}
+            | Tfolds {id :: Int, source :: Int, fun :: String}
+            | Tread Int
+            | Twrite Int
             | Tjump Int
             | Tjump_false Int
             | Tcmp_eq
