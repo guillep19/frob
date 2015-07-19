@@ -29,11 +29,12 @@ data OpCode = Thalt
             | Tdup
             | Tstore Int
             | Tload Int
+            | Tlabel String
             deriving (Eq, Ord, Show, Read)
 
 data LabelMap = Label_Map String Int
               | Var_Map String Int
               deriving Show
 
-data WillieBC = WillieBC [OpCode] [LabelMap]
+data WillieBC = WillieBC [OpCode]
               deriving Show

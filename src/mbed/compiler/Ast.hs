@@ -29,5 +29,6 @@ data FRPApplication = E_Read String Expression
                     | E_Output String Expression
                     deriving Show
 
-data WillieAST = E_Root [Declaration] [FRPApplication]
-             deriving Show
+data WillieAST = E_Root {decls :: [Declaration],
+                         frpcode :: [FRPApplication]}
+               deriving Show
