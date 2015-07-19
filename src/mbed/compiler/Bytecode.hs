@@ -32,9 +32,16 @@ data OpCode = Thalt
             | Tlabel String
             deriving (Eq, Ord, Show, Read)
 
-data LabelMap = Label_Map String Int
-              | Var_Map String Int
-              deriving Show
+type WillieBC = [OpCode]
 
-data WillieBC = WillieBC [OpCode]
-              deriving Show
+instr_length :: OpCode -> Int
+instr_length (Tcall word) = 2
+instr_length (Tlift inm src fun) = 3
+instr_length (Tlift2 inm src1 src2 fun) = 4
+instr_length (Tfolds inm src1 fun) = 3
+instr_length (Tjump word) = 2
+instr_length (Tjump_false word) = 2
+instr_length (Tpush word) = 2
+instr_length _ = 1
+
+

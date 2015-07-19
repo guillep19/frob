@@ -18,7 +18,9 @@ exists_var name = Map.member name . vars
 add_vardecl :: String -> Env -> Env
 add_vardecl name env = if (Map.member name $ vars env)
             then env
-            else env { varcount = (varcount env) + 1 }
+            else env {vars = Map.insert name count (vars env),
+                      varcount = count + 1}
+            where count = varcount env
 
 lookup_var :: String -> Env -> Int
 lookup_var str env = case Map.lookup str (vars env) of
@@ -26,8 +28,8 @@ lookup_var str env = case Map.lookup str (vars env) of
                    Nothing -> 1998
 
 add_frp_id :: String -> Env -> Env
-add_frp_id id env = env { frps = Map.insert id count (frps env),
-                          frpcount = count + 1 }
+add_frp_id id env = env {frps = Map.insert id count (frps env),
+                         frpcount = count + 1}
                   where count = frpcount env
 
 find_frp_id :: String -> Env -> Int

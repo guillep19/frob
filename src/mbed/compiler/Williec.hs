@@ -82,6 +82,6 @@ main = do
   putStrLn "Alf? Willie? Alf? Willie? Alf! Willie!"
   putStrLn $ show program
   putStrLn "Compilando... Alf? Willie!"
-  putStrLn ""
-  putStrLn $ show (generate_bytecode program)
-  putStrLn ""
+  putStrLn "-----------------------------"
+  mapM_ (putStrLn . show) (generate_bytecode program)
+  putStrLn "-----------------------------"
