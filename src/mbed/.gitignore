@@ -1,5 +1,5 @@
 *.d
-mbed_frob.bin
-mbed_frob.elf
-mbed_frob.hex
-mbed_frob.map
+mbed_alfvm.bin
+mbed_alfvm.elf
+mbed_alfvm.hex
+mbed_alfvm.map
