@@ -3,6 +3,20 @@ Luego se explica de que manera es traducido a un lenguaje de bajo nivel, más
 simple de interpretar, el cuál podrá ser interpretado por implementaciones de
 una máquina virtual en diferentes plataformas de hardware.
 
+También se describirá las etapas de compilación, desde que se escribe
+un programa en alto nivel, hasta que el mismo es ejecutado en una
+plataforma objetivo.
+
+El siguiente diagrama resume todas las etapas y componentes necesarios:
+
+\begin{figure}[hbtp]
+\begin{center}
+\caption{Etapas y componentes}
+\includegraphics[width=0.9\textwidth]{graphs/compilacion.png}
+\label{fig:compilacion}
+\end{center}
+\end{figure}
+
 \section{Lenguaje de alto nivel}
 
   Un programa constará de dos secciones principales, una sección de declaraciones, donde
@@ -22,27 +36,31 @@ el comportamiento de los robots.
 una expresión aritmética (por ejemplo una suma o multiplicación),
 una aplicación de una función, o una expresión condicional.\\
 
-  La sintaxis es muy similar a la del lenguaje \texttt{Haskell}, aunque
-no se permiten funciones anónimas, y los cálculos se hacen
-inmediatamente (no cuenta con evaluación a demanda \emph{lazy evaluation}).
+%  La sintaxis es muy similar a la del lenguaje \texttt{Haskell}, aunque
+%no se permiten funciones anónimas, y los cálculos se hacen
+%inmediatamente (no cuenta con evaluación a demanda \emph{lazy evaluation}).
 
   Para declarar un valor constante simplemente se escribe:
 
 \begin{verbatim}
-  $NOMBRE_CONSTANTE = valor
+    NOMBRE_CONSTANTE = valor
 \end{verbatim}
 
   Ejemplo de declaración:
 
 \begin{verbatim}
-  # fibonacci
-  fibo n = if (n < 2) then (1) else (fibo(n-1) + fibo(n-2))
+    # fibonacci
+    fibo n = if (n < 2) then (1) else (fibo(n-1) + fibo(n-2))
 \end{verbatim}
 
 \subsection{Combinadores de FRP}
 
-  En la segunda sección se especifica que entradas se procesarán y
-se crean señales a partir de ellas usando la función \texttt{read}.
+  Las entradas en el robot se puden manipular utilizando la función \texttt{read}.
+  La misma crea una señal que cambia de acuerdo a los valores recibidos en la entrada.\\
+
+  Para aplicar una función a una señal, se aplica el combinador \texttt{lift} el cuál toma
+  una función y una señal y produce una nueva señal resultado de la aplicación.
+
   Luego se usa una lista de aplicaciones de \texttt{lift},
 \texttt{lift2} y \texttt{folds} para combinar las señales hasta
 obtener los valores que conformarán la salida del robot y su estado.\\
@@ -69,54 +87,16 @@ $lift3 :: (a \rightarrow b \rightarrow c \rightarrow d) \rightarrow Signal\ a \r
 $lift3\ f\ sa\ sb\ sc = lift2\ ((lift2\ f\ sa\ sb)\ sc)$\\
 
 Para crear señales que no solo dependen de otra señal, sinó que dependen
-de ella y además de su historia, se define otro combinador \texttt{folds}
+de ella y además de su historia (los valores anteriores),
+se define otro combinador \texttt{folds}
 que cuando recibe los valores de la señal, los combina y acumula. Éste
 combinador es análogo a la operación \texttt{fold} sobre listas.\\
 
 $folds :: (a \rightarrow b \rightarrow b) \rightarrow b \rightarrow Signal\ a \rightarrow Signal\ b$\\
 
-
-\subsection{Sintaxis}
-
-La gramática del lenguaje es la siguiente:
-
-\begin{verbatim}
-
-number := [-+]?[0-9]*\.?[0-9]+
-
-name := [a-z_A-Z]+
-
-value := number | name
-
-binop := '+' | '-' | '/' | '*'
-       | 'or' | 'and' | '==' | '<='
-       | '>' | '<' | '<>' | '>=';
-
-arg_list := name arg_list | name;
-
-expr := value
-      | expr binop expr
-      | "if" expr "then" expr "else" expr;
-
-assign := name "<- read" name
-        | name "<- lift" name name
-        | name "<- lift2" name name name
-        | name "<- folds" value name
-        | "output" name name
-
-assign_list = assign assign_list | assign;
-
-definitions := name arg_list "=" expr;
-
-main_block := "do {" assign_list "}";
-
-program := definitions main_block;
-
-\end{verbatim}
-
 \subsection{Ejemplo}
 
-En el siguiente ejemplo se muestra como haría para detener un
+  En el siguiente ejemplo se muestra como haría para detener un
 robot cuando su sensor de distancia muestra un valor menor a un mínimo.
 
 \begin{verbatim}
@@ -249,7 +229,8 @@ salida cuenta con un valor, que será mapeado a los actuadores.
 
 \subsection{Instrucciones}
 
-Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semántica.
+  A continuación se listan las instrucciones de bajo nivel
+  más relevantes junto con su semántica.
 
 \begin{itemize}
 \item \texttt{lift id source\_id function\_pointer}
@@ -257,198 +238,74 @@ Las siguiente tabla muestra las instrucciones de bajo nivel junto con su semánt
  Crea un nodo que recibe valores de la fuente de
  eventos $source_id$,
  les aplica la función $function_pointer$ y emite el resultado
- en la fuente de eventos $id$.
+ en la fuente de eventos $id$.\\
+ El nodo se agrega a $Nodes$ y el dispatcher se encargará de aplicar
+ la función siempre que sea necesario.
 
 \item \texttt{lift2 id source-id\_1 source-id\_2 function\_pointer}
 
  Crea un nodo que recibe valores de $source-id_1$ y
  $source-id_2$,
  les aplica la función $function_pointer$ y emite el resultado
- en la fuente de eventos $id$.
+ en la fuente de eventos $id$.\\
+ Cuando reciba un valor nuevo por cada uno de los que espera, el
+ dispatcher aplica la función y emite el resultado.
 
 \item \texttt{read id input-id}
 
- Crea un nodo que recibe valores de una entrada,
+ Agrega un nodo a $Nodes$ que recibe valores de una entrada,
  y emite el resultado en la fuente de eventos $id$.
-
-\item \texttt{halt}
-
-  Detiene el hilo de ejecución actual.
-
-  \texttt{ip = 0} 
-
-\item \texttt{call function}
-
-  Invoca la funcion $function$.
-
-  \texttt{stack.push(fp)}
-
-  \texttt{stack.push(ip)}
-
-  \texttt{fp = sp}
-
-  \texttt{goto function}
-
-\item \texttt{ret}
-
-  Elimina el frame y coloca el resultado en el stack.
-
-  \texttt{value = stack.pop()}
-
-  \texttt{stack.pop\_frame();}
-
-  \texttt{ip = code[stack.pop()]}
-
-  \texttt{fp = stack.pop()}
-
-  \texttt{stack.pop\_args()}
-
-  \texttt{stack.push(value)}
-
-\item \texttt{load\_param}
-
-  \texttt{a = stack.get\_arg(inm)}
-
-  \texttt{stack.push(a)}
-
-\item \texttt{jump}
-
-  \texttt{goto position}
-
-\item \texttt{jump\_false position}
-
-  \texttt{a = stack.pop()}
-
-  \texttt{if not a: goto position}
-
-\item \texttt{cmp\_eq}
-
-  \texttt{a = stack.pop()}
-
-  \texttt{b = stack.pop()}
-
-  \texttt{stack.push(a == b)}
-
-\item \texttt{cmp\_neq}
-
-  \texttt{a = stack.pop()}
-
-  \texttt{b = stack.pop()}
-
-  \texttt{stack.push(a != b)}
-
-\item \texttt{cmp\_gt}
-
-  \texttt{a = stack.pop()}
-
-  \texttt{b = stack.pop()}
-
-  \texttt{stack.push(a > b)}
-
-\item \texttt{cmp\_lt}
-
-  \texttt{a = stack.pop()}
-
-  \texttt{b = stack.pop()}
-
-  \texttt{stack.push(a < b)}
-
-\item \texttt{add}
-
-  \texttt{a = stack.pop()}
-
-  \texttt{b = stack.pop()}
-
-  \texttt{stack.push(a + b)}
-
-\item \texttt{sub}
-
-  \texttt{a = stack.pop()}
-
-  \texttt{b = stack.pop()}
-
-  \texttt{stack.push(a - b)}
-
-\item \texttt{div}
-  
-  \texttt{a = stack.pop()}
-
-  \texttt{b = stack.pop()}
-
-  \texttt{stack.push(a / b)}
-
-\item \texttt{mul}
-
-  \texttt{a = stack.pop()}
-
-  \texttt{b = stack.pop()}
-
-  \texttt{stack.push(a * b)}
-
-\item \texttt{op\_and}
-
-  \texttt{a = stack.pop()}
-
-  \texttt{b = stack.pop()}
-
-  \texttt{stack.push(a and b)}
-
-\item \texttt{op\_or}
-
-  \texttt{a = stack.pop()}
-
-  \texttt{b = stack.pop()}
-
-  \texttt{stack.push(a or b)}
-
-\item \texttt{op\_not}
-
-  Coloca un valor constante en el stack.
-
-  \texttt{stack.push(word)}
-
-\item \texttt{push word}
-
-  Coloca un valor constante en el stack.
-
-  \texttt{stack.push(word)}
-
-\item \texttt{pop}
-
-  Elimina el tope del stack.
-
-  \texttt{stack.pop()}
-
-\item \texttt{dup}
-
-  Duplica el tope del stack.
-
-  \texttt{stask.push(stack.tos())}
-
-\item \texttt{store inm}
-
-  Guarda el tope del stack en la variable $inm$.
-
-  \texttt{var[inm] = stack.pop()}
-
-\item \texttt{load inm}
-
-  Carga la variable $inm \in {0..255}$ en el stack.
-
-  \texttt{stack.push(var[inm])}
-
-\item \texttt{write inm}
-
-  Toma el último valor del stack y lo coloca en la 
-  salida número $inm \in {0..255}$.
-
-  \texttt{output(inm, stack.pop())}
+ Cuando el dispatcher reciba un cambio en la entrada, el nodo emitirá
+ el resultado.
+
+\item \texttt{write index id}
+
+  Crea un nodo $Output$ que recibe valores de la señal $id$
+  y los emite en la salida número $index$.
+  El nodo guarda dicho valor y el dispatcher decide en que momento
+  debe escribirlo en la salida asociada.
+  Se intentará que sea lo más instantáneo posible
+  ya que el valor depende del tiempo y a mayor demora, menos correcto
+  será el comportamiento.
 
 \end{itemize}
 
-
 \pagebreak
-\subsection{Traducción de alto nivel a bajo nivel}
+\section{Compilador}
+
+  El compilador será el encargado de leer el programa de alto nivel y
+traducirlo al lenguaje de bajo nivel.
+
+  El programa resultado tendrá al principio las traducción de las instrucciones
+correspondientes al bloque \texttt{do}. Las mismas al ser ejecutadas armarán el
+grafo de señales del programa.\\
+  Al final del bloque, habrá una instrucción \texttt{halt} que cederá el control
+al $dispatcher$.\\
+  Luego estará el código correspondiente a cada función definida. Cada invocación
+a función, tendrá la referencia directa hacia la posición en el código de la misma.
+
+  El compilador constará de dos etapas principales.
+
+  En la primer etapa lee el programa de alto nivel y
+  genera un árbol de sintaxis
+  abstracto (AST) del mismo. Dicha etapa es llamada análisis sintáctico.\\
+
+  Luego el ast se recorre y la segunda etapa es la generación del
+  código de bajo nivel.\\
+
+  En la siguiente figura se puede ver la estructura más detallada
+  del compilador.
+
+\begin{figure}[hp]
+\begin{center}
+\caption{Diagrama del compilador}
+\includegraphics[width=0.9\textwidth]{graphs/compiler.png}
+\label{fig:compiler}
+\end{center}
+\end{figure}
+
+\newpage
+\subsection{Ejemplo de traducción}
 
 Dado el siguiente programa de ejemplo en alto nivel:
 
@@ -485,3 +342,21 @@ El mismo se representaría en bajo nivel de la siguiente forma:
 11:  cmp_le //distancia < 100
 12:  return
 \end{verbatim}
+
+\section{Máquina Virtual}
+
+  La máquina virtual será la encargada de recibir el bytecode creado por
+el compilador, e interpretarlo en la plataforma que esté ejecutando.
+  A diferencia del compilador, es necesario implementar una máquina virtual
+para cada arquitectura objetivo.\\
+
+  Por ejemplo, para ejecutar programas en un robot
+  con un procesador \emph{arduino}, debe
+  existir una implementación de la máquina para ese modelo
+  de \emph{arduino}.
+
+  Al momento de implementar la máquina, se tomará en cuenta ésto para
+  factorizar partes en común y sólo implementar por arquitectura, las
+  partes que realmente sean diferentes como ser la comunicación con
+  los periféricos de entrada/salida y las llamadas al sistema.
+
