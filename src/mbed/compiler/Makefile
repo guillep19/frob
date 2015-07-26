@@ -3,4 +3,4 @@ all:
 clean:
 	rm -rf *.hi
 	rm -rf *.o
-	rm Williec
+	rm -f Williec

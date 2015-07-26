@@ -13,6 +13,7 @@ data UnaryOp = E_Not
 
 data Expression = E_Value Int
                 | E_Var String
+                | E_Call Expression [Expression]
                 | E_BinExpr BinOp Expression Expression
                 | E_UnaryExpr UnaryOp Expression
                 | E_If Expression Expression Expression
