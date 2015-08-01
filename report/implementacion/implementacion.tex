@@ -37,6 +37,13 @@ de ésta etapa.
   Ésta salida se escribe en un archivo (.alf) terminando el proceso
   de compilación.
 
+  Para utilizar el compilador, dado un archivo \textit{Ejemplo.willie}, se
+  ejecuta:
+
+  \begin{verbatim}
+  > williec < Ejemplo.willie > Ejemplo.alf
+  \end{verbatim}
+
 \section{Máquina virtual}
 
   La máquina, deberá ejecutar el código de bajo nivel en una plataforma
@@ -59,4 +66,25 @@ limitaciones existen, por ejemplo: Cantidad de pines digitales o analógicos.
   la plataforma \textit{MBED LPC1768},
 se puede encontrar documentación de la misma en \cite{mbed-LPC1768} 
 y en \cite{mbed}.
+
+  \textit{MBED} es una plataforma pensada para colaborar mediante
+  un entorno de desarrollo web, y compilador online, ese esquema de 
+  trabajo no es el más práctico para desarrollar la máquina virtual, por
+  lo que se descargaron de la página de mbed,
+  en \cite{mbeddev} las herramientas
+  de desarrollo para compilar offline.
+
+  El código de la máquina virtual está en el directorio
+  /src/alfvm, para compilarlo se ejecuta:
+
+\begin{verbatim}
+  > cd src/alfvm
+  > make
+\end{verbatim}
+
+  Ésto genera un archivo \emph{mbed\_alfvm.bin}.
+  Para cargar la máquina en la placa \textit{MBED}, alcanza con conectarla
+  a un puerto USB y pegar el archivo en la carpeta /media/MBED.
+
+
 
