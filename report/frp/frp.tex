@@ -1,68 +1,82 @@
 
-
-
-
 \section{Programación Funcional Reactiva}
 
-Tradicionalmente los programas son formados a partir de
-una secuencia de acciones imperativas. Los programas
-reactivos suelen formarse por eventos y código iterativo
-que se ejecuta cuando un evento ocurre.
+\input{intro.tex}
 
-Dicho código iterativo suele hacer referencia y manipular
-un estado global con diferentes rutinas.
-Ésto tiene como consecuencia que
-como un valor puede ser manipulado desde diferentes lugares,
-puedan producirse problemas de concurrencia y algunos valores
-pueden quedar en un estado inconsistente.
-
-En el paradigma FRP no hay un estado compartido explícito,
-un programa se forma con valores dependientes del tiempo,
-llamados Comportamientos y la única forma de modificarlos,
-es a partir de su definición.
+\subsection{FRP Clásico}
+\input{classic.tex}
 
 
-\begin{definicion}
-Programa reactivo.\\
-Es aquel que interactúa con el ambiente, intercalando entradas
-y salidas dependientes del tiempo. Por ejemplo un reproductor
-de música, video juegos o controladores robóticos.
+\subsection{Para corregir}
 
-Difiere de los programas \emph{transformacionales} los cuáles
-toman una entrada al inicio de la ejecución y producen una salida
-completa al final. Por ejemplo un compilador.
-\end{definicion}
+  Luego fue generalizada la idea para poder representar otro tipo de valores que
+varían en el tiempo, en particular un lenguaje específico de dominio llamado
+Frob \cite{petersonhudakelliot99:lambdainmotion} fue creado para poder especificar
+robots. El mismo utiliza Fran como base y crea abstracciones de los sensores
+para poder abstraerse de las plataformas y de las dificultades de un hardware en particular.
+  La parte más importante de Frob es la idea de crear abstracciones, y que no formen
+parte de lo que debe resolver un programa.
 
-\begin{definicion}
-Comportamientos (Behaviours).\\
-Un comportamiento es un valor contínuo que depende del paso del tiempo.
-Los comportamientos se pueden definir, combinar, aplicarles una
-función, retornarlos.\\
-Un comportamiento puede ser una entrada, el tiempo mismo (un reloj),
-o puede formarse combinando otros comportamientos, por ejemplo secuencialmente
-o en paralelo.
-\end{definicion}
 
-\begin{definicion}
-Eventos (Streams).\\
-Son valores discretos dependientes del tiempo, que forman
-una secuencia finita o infinita de ocurrencias.\\
-Cada evento está formado por un valor y
-el instante de tiempo en el que ocurre.
-\end{definicion}
+\section{A-FRP}
 
-La principal diferencia entre Comportamientos y Eventos, es que los
-comportamientos son valores contínuos y los eventos son discretos.
+  AFRP, significa \textit{Arrowized FRP}, es un paradima derivado del paradigma FRP.
 
-Los comportamientos representan cualquier valor en función del tiempo,
+  Otro framework más completo es Yampa \cite{yampa}, un lenguaje embebido en Haskell,
+que busca 
+  herramienta que expresa los programas como señales y
+define operadores simples para combinarlas y funciones que procesan las señales.
+  En Yampa, las señales dejan de ser objetos de primera clase, y las funciones que
+las combinan pasan a tomar mayor importancia.
+
+
+  
+Para entender más la problemática se puede plantear el siguiente ejemplo:
+
+\begin{center}
+  Dada una cuenta bancaria, se quiere mantener el saldo disponible,
+y realizar movimientos sobre la misma.\\
+
+  Los movimientos posibles son extraer dinero, o depositar dinero,
+o sea restar o sumar un valor al saldo.\\
+
+  Al crearse una cuenta, el saldo inicial es el valor cero.\\
+
+  El saldo de la cuenta, sólo puede ser modificado mediante un movimiento,
+  y nunca debe ser menor a cero\\
+
+  Un dato importante a ver, es que no es posible asignar un valor
+sin que sea por medio de su propia definición, por lo que nadie
+podría realizar la asignación $saldo = 1000000$.
+  La misma operación sería posible creando un movimiento, el cuál
+afectaría al saldo.
+\end{center}
+
+  Para modelar los movimientos, éstos pueden verse como una
+secuencia de valores enteros, que ocurren en un instante de tiempo.
+
+  Dada la definición se puede decir que contamos con una secuencia de
+entradas \textbf{movimientos} de tipo \textbf{Event Number} denotado cómo:
+
+\begin{verbatim}
+  movimientos :: Event Number
+\end{verbatim}
+
+  A partir de \textbf{movimientos} puedo definir el saldo.
+El mismo, es un valor en función del tiempo, pero no ocurre en
+instantes discretos, sinó que es contínuo respecto al tiempo a lo
+que llamaremos \textbf{Señal}.
+
+  Las señales representan cualquier valor en función del tiempo,
 por ejemplo:
+
 \begin{itemize}
 \item \textit{entrada} sensor de distancia, temperatura, video
 \item \textit{salida} velocidad, voltaje
 \item \textit{valores} intermedios calculados
 \end{itemize}
 
-Las operaciones que se pueden realizar sobre los comportamientos incluyen:
+Las operaciones que se pueden realizar sobre las señales incluyen:
 
 \begin{itemize}
 \item \textit{Operaciones genéricas} Aritmética, integración, diferenciación
@@ -72,7 +86,7 @@ Las operaciones que se pueden realizar sobre los comportamientos incluyen:
 Los eventos pueden ser ciertos sensores que aportan valores discretos,
 específicos de un dominio, por ejemplo un
 botón, un click, una interrupción o un mensaje asincrónico.\\
-También puede ser generado a partir de valores de un comportamiento,
+También puede ser generado a partir de valores de una señal,
 como ser \emph{Temperatura alta}, \emph{Batería baja}.
 
 Ejemplos de operaciones que se pueden realizar sobre los eventos pueden ser:
@@ -83,24 +97,7 @@ Ejemplos de operaciones que se pueden realizar sobre los eventos pueden ser:
 \end{itemize}
 
 
-
-  Este paradigma comenzó siendo utilizado para realizar animaciones con programación
-funcional (Fran \cite{ElliottHudak97:Fran}), para crear una animación se describía
-cómo y dónde deberían ubicarse imágenes en función del tiempo, de ésta forma se simula
-el movimiento.\\
-  Luego fue generalizada la idea para poder representar otro tipo de valores que
-varían en el tiempo, un lenguaje específico de dominio llamado
-Frob \cite{petersonhudakelliot99:lambdainmotion} fue creado para poder especificar
-robots. El mismo utiliza Fran como base y crea abstracciones de los sensores
-para poder abstraerse de las plataformas y de las dificultades de un hardware en particular.
-  La parte más importante de Frob es la idea de crear abstracciones, y que no formen
-parte de lo que debe resolver un programa.
-
-  Existen varios trabajos que tienen como objetivo crear abstracciones para escribir
-programas reactivos funcionales.
-  Yampa \cite{yampa} es una herramienta que expresa los programas como señales y
-define operadores simples para combinarlas y funciones que procesan las señales.
-
+  
   Por último existe un lenguaje llamado Elm \cite{evanczaplicki2012:Elm}, creado para
 poder escribir aplicaciones web reactivas, de una forma funcional declarativa.
   En Elm, las entradas se asumen conocidas y son dadas, por ejemplo un click o el movimiento del mouse,
@@ -119,28 +116,8 @@ valor conocido como primer argumento.
 
 \section{Ejemplo}
 
-Para entender un poco más las ideas de Comportamiento y Evento, se puede
-plantear el siguiente ejemplo.\\
-
-  En una cuenta de un banco, el saldo se puede definir
-como un comportamiento, el cuál solo se modifica cuando ocurre
-un movimiento.
-  Un movimiento puede ser depositar dinero o extraer
-dinero de la cuenta.
-  Un dato importante a ver, es que no es posible asignar un valor
-sin que sea por medio de su propia definición, por lo que nadie
-podría realizar la asignación $saldo = 1000000$.
-  La misma operación sería posible creando un movimiento, el cuál
-afectaría al saldo.
-
-  Usaremos la notación \texttt{<nombre> :: Event <tipo>} para definir
+  Usaremos la notación \texttt{<nombre> :: Event <tipo>} para denotar
 fuentes de eventos.
-  Asumo conocida la fuente de eventos \emph{movimientos} que por
-cada movimiento emite su valor.
-
-\begin{verbatim}
-movimientos :: Event Number
-\end{verbatim}
 
   Con ella puedo expresar el saldo a partir de los mismos, y construir
 un programa que muestre el saldo.
@@ -207,4 +184,6 @@ de tiempo, como una fotografía y evaluar los errores o corroborar si el mismo e
   De ésta manera si un programa tiene un error, se puede tomar una secuencia de instantes,
 como si fuera una grabación y entender donde está el problema,
 sin necesidad de seguir varios hilos de ejecución ni razonar sobre la concurrencia.
+
+  A su vez, no es necesario tener toda
 

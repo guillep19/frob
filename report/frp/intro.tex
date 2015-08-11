@@ -1,0 +1,35 @@
+
+Tradicionalmente los programas reactivos
+se escriben como una secuencia de acciones imperativas.
+Existe un ciclo de control principal, donde en cualquier
+momento se leen valores de las entradas, se procesan,
+se mantiene un estado y se escriben valores en las salidas.
+
+Los programas también suelen formarse por eventos
+y código imperativo que se ejecuta cuando un evento ocurre.
+
+Dicho código imperativo suele hacer referencia y manipular
+un estado global desde diferentes rutinas.
+
+Ésto tiene como consecuencia que
+como un valor puede ser manipulado desde diferentes lugares,
+puedan producirse problemas de concurrencia o llegar a un
+estado global inconsistente.
+
+En el paradigma FRP no hay un estado compartido explícito,
+un programa se forma con valores dependientes del tiempo
+cuya única forma de ser modificados,
+es a partir de su definición, preservando la consistencia.
+
+\begin{definicion}
+Programa reactivo.\\
+Es aquel que interactúa con el ambiente, intercalando entradas
+y salidas dependientes del tiempo. Por ejemplo un reproductor
+de música, video juegos o controladores robóticos.
+
+Difiere de los programas \textbf{transformacionales} los cuáles
+toman una entrada al inicio de la ejecución y producen una salida
+completa al final. Por ejemplo un compilador.
+\end{definicion}
+
+

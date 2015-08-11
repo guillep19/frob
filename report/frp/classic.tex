@@ -1,0 +1,55 @@
+
+%% FRP Clasico
+
+El paradigma FRP comenzó a ser utilizado por Paul Hudak y Conal Elliot en
+Fran: (Functional Reactive Animation \cite{ElliottHudak97:Fran})
+para crear animaciones interactivas de forma declarativa.
+
+Su implementación está embebida en el lenguaje Haskell.
+
+Los programas funcionales puros, no permiten modificar valores,
+sinó que una función siempre retorna el mismo valor dadas las mismas
+entradas, sin causar efectos secundarios.
+
+Ésta propiedad es deseable para fomentar la reutilización del código
+pero no ayuda a mantener un estado.
+
+En la programación reactiva, es necesario mantener un estado por
+ejemplo para saber la posición del puntero del mouse en una interfaz,
+o para saber la ubicación de un robot.
+
+En FRP para representar estado, se modela como valores dependientes
+del paso del tiempo.
+
+Para ésto Fran define dos abstracciones principales:
+ 
+\begin{definicion}
+  Comportamiento (Behaviour).\\
+
+  Un comportamiento es una función que dado un instante de tiempo
+  retorna un valor.\\
+  
+  $\textbf{Behaviour} \alpha = \textbf{Time} \rightarrow \alpha$
+
+\end{definicion}
+
+  Los comportamientos son muy útiles al realizar animaciones,
+para modelar propiedades físicas como velocidad, posición.
+  Ésta abstracción permite que el desarrollador solo se ocupe de
+definir como se calcula un valor, sin implementar la actualización
+del mismo y dejando esos detalles al compilador.
+
+\begin{definicion}
+  Eventos. (Events)\\
+
+  Los eventos representan una colección discreta finita o infinita de valores
+  junto al instante de tiempo en el que cada uno ocurre.\\
+
+  $\textbf{Event} \alpha = [(\textbf{Time}, \alpha)]$
+
+\end{definicion}
+
+  Los eventos se utilizan para representar entradas discretas como por
+ejemplo cuando una tecla oprime en el teclado.\\
+
+  

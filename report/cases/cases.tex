@@ -110,6 +110,60 @@ do {
 
 \end{verbatim}
 
+\section{Solución sin utilizar \frob}
+
+\begin{verbatim}
+
+INPUT_DISTANCE = 1
+INPUT_COLOR_LEFT = 2
+INPUT_COLOR_RIGHT = 3
+OUTPUT_ENGINE_LEFT = 1
+OUTPUT_ENGINE_RIGHT = 2
+
+MIN_DISTANCE = 100
+MIN_GREY = 50
+
+hay_casa d = if (d < MIN_DISTANCE) then 1 else 0
+distinto a b = if (a /= b) then 1 else 0
+velocidad_casa num = if (num >= 5) then 0 else 100
+color_a_vel gris = if (gris > MIN_GREY) 1 else 1/2
+
+bool viendo = false
+int velocidad = 100
+int cuenta = 0
+
+while (cuenta < 5) {
+  //chequear si hay casa
+  distance = read(INPUT_DISTANCE)
+  if (hay_casa(distance)) {
+    if (!viendo) {
+      cuenta = cuenta + 1
+      viendo = true
+    }
+  } else {
+    viendo = false
+  }
+  //chequear que no estoy fuera de la linea
+  color_izq = read(INPUT_COLOR_LEFT)
+  color_der = read(INPUT_COLOR_RIGHT)
+  if (color_izq > MIN_GREY) {
+    write(MOTOR_DER, velocidad)
+  } else {
+    write(MOTOR_DER, 1/2 * velocidad)
+  }
+  if (color_der > MIN_GREY) {
+    write(MOTOR_DER, velocidad)
+  } else {
+    write(MOTOR_DER, 1/2 * velocidad)
+  }
+}
+//Detener robot
+write(MOTOR_IZQ, 0)
+write(MOTOR_DER, 0)
+
+\end{verbatim}
+
+
 \section {Conclusiones del caso}
 
 
