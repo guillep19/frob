@@ -1,0 +1,25 @@
+\section{Ventajas}
+
+  La motivación para utilizar el paradigma presentado, es que un programa reactivo, si es escrito de
+forma iterativa, es susceptible a cometer errores de concurrencia al modificar valores en diferentes
+rutinas. A su vez, es difícil estructurar un programa iterativo para que reaccione rápidamente a
+los cambios.
+
+  Un patrón utilizado comunmente para estructurar un programa reactivo es el patrón \texttt{Observer}.
+En dicho patrón, un \texttt{Sujeto} puede ser observado por un \texttt{Observador}, éste último se
+subscribe al sujeto, y el sujeto notifica a todos sus observadores cuando su valor cambia.
+  
+  La desventaja de hacer un programa reactivo siguiendo ese esquema, es que es difícil ver en que
+momento ocurren las actualizaciones de los observer. Si hay muchos observer suscritos a cambios
+de varios sujetos, se vuelve complejo mantener el código al tener tantas interacciones implícitas.
+
+  Al usar un lenguaje funcional, las interacciones son especificadas declarativamente, y se puede
+entender como un valor es formado a partir de otros.
+  Para ver que es lo que está sucediendo en un programa se pueden obtener los valores en un instante
+de tiempo, como una fotografía y evaluar los errores o corroborar si el mismo es correcto.\\
+  De ésta manera si un programa tiene un error, se puede tomar una secuencia de instantes,
+como si fuera una grabación y entender donde está el problema,
+sin necesidad de seguir varios hilos de ejecución ni razonar sobre la concurrencia.
+
+  A su vez, no es necesario tener toda
+

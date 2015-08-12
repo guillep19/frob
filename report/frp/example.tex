@@ -1,0 +1,55 @@
+
+Para entender más la problemática se puede plantear el siguiente ejemplo:
+
+\begin{center}
+  Dada una cuenta bancaria, se quiere mantener el saldo disponible,
+y realizar movimientos sobre la misma.\\
+
+  Los movimientos posibles son extraer dinero, o depositar dinero,
+o sea restar o sumar un valor al saldo.\\
+
+  Al crearse una cuenta, el saldo inicial es el valor cero.\\
+
+  El saldo de la cuenta, sólo puede ser modificado mediante un movimiento,
+  y nunca debe ser menor a cero\\
+
+  Un dato importante a ver, es que no es posible asignar un valor
+sin que sea por medio de su propia definición, por lo que nadie
+podría realizar la asignación $saldo = 1000000$.
+  La misma operación sería posible creando un movimiento, el cuál
+afectaría al saldo.
+\end{center}
+
+  Para modelar los movimientos, éstos pueden verse como una
+secuencia de valores enteros, que ocurren en un instante de tiempo.
+
+  Dada la definición se puede decir que contamos con una secuencia de
+entradas \textbf{movimientos} de tipo \textbf{Event Number} denotado cómo:
+
+\begin{verbatim}
+  movimientos :: Event Number
+\end{verbatim}
+
+  A partir de \textbf{movimientos} puedo definir el saldo.
+El mismo, es un valor en función del tiempo, pero no ocurre en
+instantes discretos, sinó que es contínuo respecto al tiempo a lo
+que llamaremos \textbf{Señal}.
+
+Usaremos la notación \texttt{<nombre> :: Event <tipo>} para denotar
+fuentes de eventos.
+
+  Con ella puedo expresar el saldo a partir de los mismos, y construir
+un programa que muestre el saldo.
+
+\begin{verbatim}
+main = let saldos = (foldls (+) SALDO_INICIAL movimientos) in
+     maps show saldos
+\end{verbatim}
+
+  Al especificarse $saldos$ declarativamente, es imposible asignar un valor al saldo,
+éste se compone a partir del \texttt{SALDO\_INICIAL} y la suma de
+los movimientos (positivos o negativos).
+  El saldo siempre tiene un valor, por lo que es un \texttt{Comportamiento}, los movimientos
+son discretos, por lo que es un \texttt{Evento}.
+
+

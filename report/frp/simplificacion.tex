@@ -1,0 +1,31 @@
+
+\section{Simplificación del paradigma}
+
+  Al intentar implementar en un computador programas utilizando éste paradigma, nos encontramos
+con varias limitaciones.
+  Una de ellas es que no es posible tener valores que se modifiquen de forma contínua, la capacidad
+de cómputo es finita, y no es posible ejecutar tareas al mismo tiempo, incluso en un entorno con
+paralelismo, el mismo está acotado a la cantidad de procesadores con los que se cuente.\\
+
+  Aunque el paradigma distinga Eventos de Comportamientos, se puede hacer una simplificación y
+asumir que todos los valores son Eventos. Los comportamientos en realidad serán una secuencia de
+cambios de valor, los eventos que dependan de un comportamiento serán notificados sólo en el momento
+que éste cambie.\\
+  Valores como el tiempo (reloj) y otros sensores como ser un sensor de distancia, entregarán valores
+periódicamente. Sería imposible que un programa reaccione a un valor contínuo, sin embargo, es muy fácil
+asumir que lo que nos importa del tiempo en realidad es dada una variación de tiempo cómo se debe
+comportar nuestro programa.\\
+  A su vez un sensor de distancia no nos puede entregar infinitos valores, y generalmente sólo importa
+poder recibir un valor nuevo en un período relativamente corto de tiempo.
+
+  Otra limitación en nuestro caso, al tratarse de robots con bajas capacidades de cómputo, es que
+la implementación del lenguaje no siempre tendrá más de un procesador disponible.\\
+  Para simular éste paralelismo se asumirá que el tiempo que se necesita para hacer cálculos es de
+una magnitud mucho menor al tiempo que lleva recibir un dato de una entrada, o enviar un dato a una salida.
+  Se implementará una máquina capaz de correr dichos programas, la cuál esperará por valores en las entradas,
+y en base a los mismos, actualizará todos los eventos que dependan de ellas, y a su vez actualizará luego
+las salidas que dependan de éstos.\\
+  Cada actualización se hará secuencialmente hasta terminar, y en caso de contar con más de un procesador, se
+asignarán en paralelo las actualizaciones utilizando varios hilos de ejecución.\\
+
+

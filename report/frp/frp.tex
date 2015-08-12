@@ -1,189 +1,25 @@
 
 \section{Programación Funcional Reactiva}
 
-\input{intro.tex}
+\input{frp/intro.tex}
 
 \subsection{FRP Clásico}
-\input{classic.tex}
+\input{frp/classic.tex}
 
+\subsection{Frob}
+\input{frp/frob.tex}
 
-\subsection{Para corregir}
+\subsection{Arrows}
+\input{frp/arrows.tex}
 
-  Luego fue generalizada la idea para poder representar otro tipo de valores que
-varían en el tiempo, en particular un lenguaje específico de dominio llamado
-Frob \cite{petersonhudakelliot99:lambdainmotion} fue creado para poder especificar
-robots. El mismo utiliza Fran como base y crea abstracciones de los sensores
-para poder abstraerse de las plataformas y de las dificultades de un hardware en particular.
-  La parte más importante de Frob es la idea de crear abstracciones, y que no formen
-parte de lo que debe resolver un programa.
+\subsection{Elm: Programación funcional reactiva concurrente}
+\input{frp/elm.tex}
+   
+\subsection{Simplificación del paradigma}
+\input{frp/simplificacion.tex}
 
+\subsection{Ventajas} 
+\input{frp/ventajas.tex}
 
-\section{A-FRP}
-
-  AFRP, significa \textit{Arrowized FRP}, es un paradima derivado del paradigma FRP.
-
-  Otro framework más completo es Yampa \cite{yampa}, un lenguaje embebido en Haskell,
-que busca 
-  herramienta que expresa los programas como señales y
-define operadores simples para combinarlas y funciones que procesan las señales.
-  En Yampa, las señales dejan de ser objetos de primera clase, y las funciones que
-las combinan pasan a tomar mayor importancia.
-
-
-  
-Para entender más la problemática se puede plantear el siguiente ejemplo:
-
-\begin{center}
-  Dada una cuenta bancaria, se quiere mantener el saldo disponible,
-y realizar movimientos sobre la misma.\\
-
-  Los movimientos posibles son extraer dinero, o depositar dinero,
-o sea restar o sumar un valor al saldo.\\
-
-  Al crearse una cuenta, el saldo inicial es el valor cero.\\
-
-  El saldo de la cuenta, sólo puede ser modificado mediante un movimiento,
-  y nunca debe ser menor a cero\\
-
-  Un dato importante a ver, es que no es posible asignar un valor
-sin que sea por medio de su propia definición, por lo que nadie
-podría realizar la asignación $saldo = 1000000$.
-  La misma operación sería posible creando un movimiento, el cuál
-afectaría al saldo.
-\end{center}
-
-  Para modelar los movimientos, éstos pueden verse como una
-secuencia de valores enteros, que ocurren en un instante de tiempo.
-
-  Dada la definición se puede decir que contamos con una secuencia de
-entradas \textbf{movimientos} de tipo \textbf{Event Number} denotado cómo:
-
-\begin{verbatim}
-  movimientos :: Event Number
-\end{verbatim}
-
-  A partir de \textbf{movimientos} puedo definir el saldo.
-El mismo, es un valor en función del tiempo, pero no ocurre en
-instantes discretos, sinó que es contínuo respecto al tiempo a lo
-que llamaremos \textbf{Señal}.
-
-  Las señales representan cualquier valor en función del tiempo,
-por ejemplo:
-
-\begin{itemize}
-\item \textit{entrada} sensor de distancia, temperatura, video
-\item \textit{salida} velocidad, voltaje
-\item \textit{valores} intermedios calculados
-\end{itemize}
-
-Las operaciones que se pueden realizar sobre las señales incluyen:
-
-\begin{itemize}
-\item \textit{Operaciones genéricas} Aritmética, integración, diferenciación
-\item \textit{Operaciones específicas de un dominio} como escalar video, aplicar filtros, detección de patrones.
-\end{itemize}
-
-Los eventos pueden ser ciertos sensores que aportan valores discretos,
-específicos de un dominio, por ejemplo un
-botón, un click, una interrupción o un mensaje asincrónico.\\
-También puede ser generado a partir de valores de una señal,
-como ser \emph{Temperatura alta}, \emph{Batería baja}.
-
-Ejemplos de operaciones que se pueden realizar sobre los eventos pueden ser:
-
-\begin{itemize}
-\item \textit{map} Modifica un valor discreto a otro aplicando una función
-\item \textit{filter} Selecciona valores que son relevantes.
-\end{itemize}
-
-
-  
-  Por último existe un lenguaje llamado Elm \cite{evanczaplicki2012:Elm}, creado para
-poder escribir aplicaciones web reactivas, de una forma funcional declarativa.
-  En Elm, las entradas se asumen conocidas y son dadas, por ejemplo un click o el movimiento del mouse,
-o una tecla presionada.\\
-  Todos los valores son señales, el combinador $lift$
-toma una señal y una función, y define otra señal resultado de la aplicación de la función
-sobre cada valor de la señal.\\
-  Para combinar más de una señal, se usa el combinador $lift_2$ o $lift_n$ con $n \in N$.\\
-  En los casos que se desea tener memoria, por ejemplo llevar una cuenta de ocurrencias
-  de una señal, o mantener un estado explícito, se utiliza el combinador $foldp$.\\
-
-  El combinador $foldp$ opera sobre una señal como el operador $fold$ sobre una lista. Dado
-un valor inicial y una función, aplica la función sobre cada valor, utilizando el último
-valor conocido como primer argumento.
-
-
-\section{Ejemplo}
-
-  Usaremos la notación \texttt{<nombre> :: Event <tipo>} para denotar
-fuentes de eventos.
-
-  Con ella puedo expresar el saldo a partir de los mismos, y construir
-un programa que muestre el saldo.
-
-\begin{verbatim}
-main = let saldos = (foldls (+) SALDO_INICIAL movimientos) in
-     maps show saldos
-\end{verbatim}
-
-  Al especificarse $saldos$ declarativamente, es imposible asignar un valor al saldo,
-éste se compone a partir del \texttt{SALDO\_INICIAL} y la suma de
-los movimientos (positivos o negativos).
-  El saldo siempre tiene un valor, por lo que es un \texttt{Comportamiento}, los movimientos
-son discretos, por lo que es un \texttt{Evento}.
-
-\section{Simplificación del paradigma}
-
-  Al intentar implementar en un computador programas utilizando éste paradigma, nos encontramos
-con varias limitaciones.
-  Una de ellas es que no es posible tener valores que se modifiquen de forma contínua, la capacidad
-de cómputo es finita, y no es posible ejecutar tareas al mismo tiempo, incluso en un entorno con
-paralelismo, el mismo está acotado a la cantidad de procesadores con los que se cuente.\\
-
-  Aunque el paradigma distinga Eventos de Comportamientos, se puede hacer una simplificación y
-asumir que todos los valores son Eventos. Los comportamientos en realidad serán una secuencia de
-cambios de valor, los eventos que dependan de un comportamiento serán notificados sólo en el momento
-que éste cambie.\\
-  Valores como el tiempo (reloj) y otros sensores como ser un sensor de distancia, entregarán valores
-periódicamente. Sería imposible que un programa reaccione a un valor contínuo, sin embargo, es muy fácil
-asumir que lo que nos importa del tiempo en realidad es dada una variación de tiempo cómo se debe
-comportar nuestro programa.\\
-  A su vez un sensor de distancia no nos puede entregar infinitos valores, y generalmente sólo importa
-poder recibir un valor nuevo en un período relativamente corto de tiempo.
-
-  Otra limitación en nuestro caso, al tratarse de robots con bajas capacidades de cómputo, es que
-la implementación del lenguaje no siempre tendrá más de un procesador disponible.\\
-  Para simular éste paralelismo se asumirá que el tiempo que se necesita para hacer cálculos es de
-una magnitud mucho menor al tiempo que lleva recibir un dato de una entrada, o enviar un dato a una salida.
-  Se implementará una máquina capaz de correr dichos programas, la cuál esperará por valores en las entradas,
-y en base a los mismos, actualizará todos los eventos que dependan de ellas, y a su vez actualizará luego
-las salidas que dependan de éstos.\\
-  Cada actualización se hará secuencialmente hasta terminar, y en caso de contar con más de un procesador, se
-asignarán en paralelo las actualizaciones utilizando varios hilos de ejecución.\\
-
-\section{Ventajas}
-
-  La motivación para utilizar el paradigma presentado, es que un programa reactivo, si es escrito de
-forma iterativa, es susceptible a cometer errores de concurrencia al modificar valores en diferentes
-rutinas. A su vez, es difícil estructurar un programa iterativo para que reaccione rápidamente a
-los cambios.
-
-  Un patrón utilizado comunmente para estructurar un programa reactivo es el patrón \texttt{Observer}.
-En dicho patrón, un \texttt{Sujeto} puede ser observado por un \texttt{Observador}, éste último se
-subscribe al sujeto, y el sujeto notifica a todos sus observadores cuando su valor cambia.
-  
-  La desventaja de hacer un programa reactivo siguiendo ese esquema, es que es difícil ver en que
-momento ocurren las actualizaciones de los observer. Si hay muchos observer suscritos a cambios
-de varios sujetos, se vuelve complejo mantener el código al tener tantas interacciones implícitas.
-
-  Al usar un lenguaje funcional, las interacciones son especificadas declarativamente, y se puede
-entender como un valor es formado a partir de otros.
-  Para ver que es lo que está sucediendo en un programa se pueden obtener los valores en un instante
-de tiempo, como una fotografía y evaluar los errores o corroborar si el mismo es correcto.\\
-  De ésta manera si un programa tiene un error, se puede tomar una secuencia de instantes,
-como si fuera una grabación y entender donde está el problema,
-sin necesidad de seguir varios hilos de ejecución ni razonar sobre la concurrencia.
-
-  A su vez, no es necesario tener toda
-
+%%\subsection{Ejemplo}
+%%\input{example.tex}
