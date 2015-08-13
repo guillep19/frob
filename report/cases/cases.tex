@@ -27,7 +27,7 @@ centímetros representando las casas.
 
 \section {Solución}
 
-  Se armó un robot móvil que cuenta con 3 sensores:
+Se armó un robot móvil (\ref{fig:deliverybot}) que cuenta con 3 sensores:
 
 \begin{itemize}
 \item Sensor de grises izquierdo
@@ -42,6 +42,15 @@ centímetros representando las casas.
 \item Motor derecho 
 \end{itemize}
 
+\begin{figure}[hbtp]
+\begin{center}
+\caption{Diagrama del robot móvil}
+\includegraphics[width=0.9\textwidth]{graphs/breaboardbb.png}
+\label{fig:deliverybot}
+\end{center}
+\end{figure}
+ 
+
   El robot utilizará los sensores de grises para mantenerse sobre
 la línea y el sensor de distancia para saber cuándo está frente
 a una casa.
@@ -52,8 +61,8 @@ a una casa.
   Durante el trayecto contará las casas, y se detendrá cuando la cuenta
 llegue al valor 5.
 
-  En el siguiente diagrama, se puede ver gráficamente de que forma
-se combinan los eventos, para lograr nuestro objetivo:
+  En la figura \ref{fig:delivery} se puede ver gráficamente de que forma
+se combinan los eventos para lograr el objetivo.
 
 \begin{figure}[hbtp]
 \begin{center}
