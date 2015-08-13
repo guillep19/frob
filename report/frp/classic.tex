@@ -2,7 +2,7 @@
 %% FRP Clasico
 
 El paradigma FRP comenzó a ser utilizado por Paul Hudak y Conal Elliot en
-Fran: (Functional Reactive Animation \cite{ElliottHudak97:Fran})
+Fran (Functional Reactive Animation \cite{ElliottHudak97:Fran})
 para crear animaciones interactivas de forma declarativa.
 
 Su implementación está embebida en el lenguaje Haskell.
@@ -13,8 +13,7 @@ entradas, sin causar efectos secundarios.
 
 Ésta propiedad es deseable para fomentar la reutilización del código
 pero no ayuda a mantener un estado.
-
-En la programación reactiva, es necesario mantener un estado por
+En la programación reactiva, es necesario mantenerlo por
 ejemplo para saber la posición del puntero del mouse en una interfaz,
 o para saber la ubicación de un robot.
 
@@ -22,15 +21,19 @@ En FRP para representar estado, éste se modela como valores dependientes
 del paso del tiempo.
 
 Para ésto Fran define dos abstracciones principales,
-que son Eventos y Comportamientos.
- 
+que son Eventos y Comportamientos
+\footnote{La definición de comportamientos en Fran no coincide con
+la definición de comportamiento normalmente utilizada en robótica.
+En bibliografía posterior, comportamientos fue cambiado por señales
+para evitar ésta ambiguedad.}.
+
 \begin{definicion}
   Comportamiento (Behaviour).\\
 
   Un comportamiento es una función que dado un instante de tiempo
-  retorna un valor.\\
-  
-  $\textbf{Behaviour} \alpha = \textbf{Time} \rightarrow \alpha$
+  retorna un valor.
+
+  \center{$\textbf{Behaviour}\ \alpha = \textbf{Time} \rightarrow \alpha$}
 
 \end{definicion}
 
@@ -38,7 +41,7 @@ que son Eventos y Comportamientos.
 para modelar propiedades físicas como velocidad, posición.
   Ésta abstracción permite que el desarrollador solo se ocupe de
 definir como se calcula un valor, sin implementar la actualización
-del mismo y dejando esos detalles al compilador.\\
+del mismo y dejando esos detalles al compilador.
 
   Ejemplos de comportamientos aplicados a robótica pueden ser:
 
@@ -53,24 +56,27 @@ comportamientos incluyen:
 
 \begin{itemize}
 \item \textit{Operaciones genéricas} Aritmética, integración, diferenciación
-\item \textit{Operaciones específicas de un dominio} como escalar video, aplicar filtros, detección de patrones.
+\item {
+    \textit{Operaciones específicas de un dominio} como escalar video,
+    aplicar filtros, detección de patrones.
+}
 \end{itemize}
-
 
 
 \begin{definicion}
   Eventos. (Events)\\
 
   Los eventos representan una colección discreta finita o infinita de valores
-  junto al instante de tiempo en el que cada uno ocurre.\\
+  junto al instante de tiempo en el que cada uno ocurre.
 
-  $\textbf{Event} \alpha = [(\textbf{Time}, \alpha)]$
+  \center{$\textbf{Events}\ \alpha = [(\textbf{Time}, \alpha)]$}
 
 \end{definicion}
 
   Los eventos se utilizan para representar entradas discretas como por
-ejemplo cuando una tecla oprime en el teclado, cuando se recibe un
-mensaje o una interrupción.\\
+ejemplo cuando una tecla es oprimida, cuando se recibe un
+mensaje o una interrupción.
+
   También pueden ser generados a partir de valores de un comportamiento,
 como ser \emph{Temperatura alta}, \emph{Batería baja}, etc.
 
@@ -84,4 +90,5 @@ como ser \emph{Temperatura alta}, \emph{Batería baja}, etc.
   }
 \end{itemize}
 
- 
+
+

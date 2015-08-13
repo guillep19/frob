@@ -1,14 +1,49 @@
-%%Para revisar
+\paragraph{Frob}
 
-Luego fue generalizada la idea para poder representar otro tipo de
-valores que varían en el tiempo, en particular un lenguaje específico
-de dominio llamado
-Frob \cite{petersonhudakelliot99:lambdainmotion} fue creado para
-poder especificar
-robots.
-El mismo utiliza Fran como base y crea abstracciones de los sensores
-para poder abstraerse de las plataformas y de las dificultades de un hardware en particular.
-  La parte más importante de Frob es la idea de crear abstracciones, y que no formen
-parte de lo que debe resolver un programa.
+  Utilizando como base el trabajo realizado en Fran, se construyó Frob
+(Functional Robotics \cite{petersonhudakelliot99:lambdainmotion}
+\cite{petersonhagerhudak99:frob})
+un lenguaje funcional reactivo embebido en haskell, aplicado al
+dominio de la robótica.
+  
+  En éste trabajo se introdujo el concepto de reactividad con el cuál
+utilizando los conceptos de comportamientos y eventos, éstos se combinan
+para realizar las tareas que un robot debe hacer.
+  La estrategia que presenta, es de formalizar las tareas por medio de
+comportamientos, y conseguir que los comportamientos se modifiquen
+utilizando eventos y un conjunto de combinadores específicos.
+
+  Un ejemplo es, dado un robot, éste se tiene que mover a una velocidad
+constante hasta que se supere un tiempo máximo o se detecte un objeto.
+  En Frob ésto se expresaría de ésta manera:
+
+\begin{verbatim}
+goAhead r t =
+  (forward 30 'untilB'
+    (predicate (time > t) .|.  predicate (frontSonar r < 20))
+     -=> stop)
+\end{verbatim}
+
+  Lo que se leería cómo: "Para el robot r, moverse hacia adelante a
+velocidad 30, hasta que se exceda el tiempo t, o se detecte un objeto
+a menos de distancia 20. En ese momento detenerse."
+
+  La función \texttt{predicate} se utiliza para generar eventos a partir
+de comportamientos en base a una condición.
+  El combinador \texttt{untilB} recibe dos comportamientos y un predicado,
+combina los dos comportamientos, retornando el primero mientras el predicado
+no se cumpla, y luego pasando al siguiente.
+  
+  Otro punto importante de Frob, es que los periféricos del robot se
+asumen implementados, permitiendo que el desarrollador se concentre
+en la lógica específica de su problema, y no en resolver problemas
+del hardware.
+  Además la lógica de leer las entradas, procesarlas y escribir las salidas
+es realizada por el flujo de control de Frob, y no de cada programa.
+  En la implementación utilizaron un esquema simple, donde se leen todos
+los valores de todas las entradas y se procesan lo más rápido posible.
+  Está claro que no es la mejor estrategia, porque puede causar demoras
+en el procesamiento y los datos leídos son válidos por un
+período corto de tiempo.
 
 

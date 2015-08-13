@@ -1,0 +1,68 @@
+%% Listo
+
+  Si bien el paradigma clásico de FRP permite expresar naturalmente
+programas reactivos, ésta expresividad no es gratuita, sinó que
+puede llevar a errores muy difíciles de encontrar en los programas.
+  Un ejemplo de ésto es el llamado \emph{time leak}, al implementarse
+en un lenguaje como Haskell, que cuenta con evaluación a demanda,
+los cálculos a demanda sobre los \emph{Behaviours} puede que se
+retrasen y se acumulen, y al momento de necesitarse, el cálculo
+es tan largo que deja al programa sin memoria o afecta demasiado
+el tiempo de respuesta.
+
+  También pueden ocurrir \emph{space leaks} donde un cálculo se
+retrasa indefinidamente, y la acumulación de los mismos consume
+el total de la memoria.
+
+  Como solución a ésto se propuso
+Real-Time FRP \cite{wan2001:rtfrp}, una simplificación que
+garantiza mayor eficiencia.
+  Utilizando el tipo de datos paramétrico Maybe
+  \footnote{
+    El tipo \texttt{Maybe} $\alpha$ en Haskell tiene dos
+    valores posibles,
+    \texttt{Just} $\alpha$ y \texttt{Nothing}.
+  },
+  se realiza un isomorfismo entre Events y Behaviour.
+
+\begin{definicion}
+  Isomorfismo en RT-FRP entre Events y Behaviour.
+  \center{
+    $\textbf{Events}\ \alpha \approx \textbf{Behaviour}\ (\textbf{Maybe}\ \alpha)$
+  }
+\end{definicion}
+
+  Utilizando ésta simplificación, se agrupan las dos definiciones en un
+  nuevo tipo llamado \texttt{Signal}.
+
+\begin{definicion}
+  Señal (Signal).
+  \center{
+    $\textbf{Signal}\ \alpha = \textbf{Time} \rightarrow \alpha$
+  }
+\end{definicion}
+
+  Para garantizar las restricciones de que el tiempo y el espacio requerido
+por los programas es acotado, RT-FRP define un lenguaje base (lambda cálculo)
+de alto órden, y luego sobre esa base define un lenguaje reactivo que obliga
+a declarar las señales y sus conexiones.
+  Sobre éste lenguaje restringido, se proveen demostraciones de que
+se cumplen las restricciones.\\
+
+\paragraph{Event-Driven FRP}
+  Poco después de ésto, se propuso \textit{Event-Driven FRP}
+\cite{wan2002:edfrp}, otra simplificación que añade como restricción
+que las señales sólo puedan ser modificadas mediante un evento.
+  Aunque parezca muy restrictiva, la justificación de la misma es que
+los sistemas reactivos que se desean implementar están fuertemente
+guiados por eventos.
+
+  La propuesta de Event-Driven FRP era de llevar la programación reactiva
+a microcontroladores, para lo cuál define un lenguaje imperativo llamado
+\textit{Simple C}, de tal forma que a partir del mismo sea muy simple
+compilarlo al lenguaje \textit{C} o a las variantes que existen para 
+microcontroladores.
+
+  En particular se implementó un prototipo que era capaz de generar
+código para el microcontrolador \textit{PIC16C66} \cite{microchip}.
+
