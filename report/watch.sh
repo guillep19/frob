@@ -16,7 +16,9 @@ build() {
 }
 trap build SIGINT
 trap exit SIGQUIT
- 
+
+python -m SimpleHTTPServer &
+
 echo -e  "--> Press Ctrl+C to force build, Ctrl+\\ to exit."
 while true; do
   build
