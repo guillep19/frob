@@ -353,6 +353,7 @@ void propagate_signal(BYTE id) {
 }
 
 void update_signal(BYTE id) {
+  /* Improvement: Add memoization */
   WORD function_loc = graph.nodes[id].function_loc;
   if (function_loc == -1) { //no function (id)
     graph.nodes[id].value = graph.nodes[id].arg[0];
@@ -439,18 +440,12 @@ void print_graph() {
   }
 }
 
-void __heapstats() {
-  print_stack();
-}
-
 void run_vm() {
   graph = create_graph();
-  //pc.printf("Running vm....\n");
   ip = (WORD*) code;
   run_thread();
   print_graph();
   while (1) {
-    //__heapstats();
     read_inputs();
     update_signals();
     write_outputs();

@@ -17,7 +17,7 @@
   HCSR04 sensor(D12, D11); //12 trigger, 11 echo.
   int main() {
     while(1) {
-      long distance = sensor.distance();   
+      long distance = sensor.read();   
       printf("distance=%d\n",distance);
       wait(1.0); // 1 sec  
     }
@@ -26,6 +26,7 @@
 #ifndef hcsr04_H
 #define hcsr04_H
 #include "mbed.h"
+#include "FrobDefinitions.h"
  
 class HCSR04 {
   private:
@@ -33,10 +34,11 @@ class HCSR04 {
     DigitalIn echo;
     Timer timer;
     long duration,distance_cm;
-  public:
-    HCSR04(PinName t, PinName e);
     long echo_duration();
     long distance();
+  public:
+    HCSR04(PinName t, PinName e);
+    WORD read();
 };
  
-#endif
+#endif /* hcsr04_H */

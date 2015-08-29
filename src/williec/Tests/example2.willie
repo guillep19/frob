@@ -1,0 +1,17 @@
+# debug-bot
+# El programa genera senales para cada entrada.
+# Cargando el programa en modo debug, la maquina
+# debe obtener valores para las entradas e imprimirlos
+# en el puerto serial.
+
+#Inputs
+INPUT_DISTANCE = 1
+INPUT_COLOR_LEFT = 2
+INPUT_COLOR_RIGHT = 3
+INPUT_CLOCK = 4
+
+do {
+    distance <- read INPUT_DISTANCE
+    color_izq <- read INPUT_COLOR_LEFT
+    color_der <- read INPUT_COLOR_RIGHT
+}

@@ -1,4 +1,6 @@
-#alf
+# delivery-bot
+# El robot sigue una línea, y cuenta las casas frente a las que pasa.
+# Al llegar a la casa número 5 se detiene.
 
 #Inputs
 INPUT_DISTANCE = 1
@@ -16,12 +18,13 @@ MIN_DISTANCE = 100
 MIN_GREY = 50 
 
 hay_casa d = if (d < MIN_DISTANCE) then 1 else 0
-distinto a b = if (a /= b) then 1 else 0
-and a b = if (a && b) then 1 else 0
 velocidad_casa num = if (num >= 5) then 0 else 100
-suma a b = (a + b)
 color_a_vel gris = if (gris > MIN_GREY) 1 else 1/2
+
+suma a b = (a + b)
 multiplicar a b = (a * b)
+and a b = if (a && b) then 1 else 0
+distinto a b = if (a /= b) then 1 else 0
 
 do {
     distance <- read INPUT_DISTANCE
