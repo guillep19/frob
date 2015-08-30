@@ -1,8 +1,9 @@
 #include "IOInterface.h"
 #include "mbed.h"
 #include "hcsr04.h"
-
-//Serial pc(USBTX, USBRX); // tx, rx
+#include "pwmEngine.h"
+#include "frobTimer.h"
+#include "lightSensor.h"
 
 #define FROB_LED1 0
 DigitalOut led(LED1);
@@ -12,47 +13,40 @@ PWMEngine engine_left(p24);
 PWMEngine engine_right(p25);
 
 #define FROB_TIME 0
-Timer t;
+FrobTimer t;
 #define FROB_DISTANCE_SENSOR 1
 HCSR04 distance_sensor(p14, p15); //trig, echo
-#define FROB_LIGHT_SENSOR_L 2
-I2C iic(p28, p27); //sda scl
-#define FROB_LIGHT_SENSOR_R 3
-I2C iic(p28, p27); //sda scl
-
-void initialize_iointerface() {
-  t.start();
-}
+#define FROB_LIGHT_SENSOR_R 2 //sda scl (add=vcc)
+LightSensor light_sensor_r(p28, p27, LIGHTSENSOR_ADDR_VCC, BH1750_CONTINUOUS_HIGH_RES_MODE);
+#define FROB_LIGHT_SENSOR_L 3 //sda scl (add=gnd)
+LightSensor light_sensor_l(p28, p27, LIGHTSENSOR_ADDR_GND, BH1750_CONTINUOUS_HIGH_RES_MODE);
 
 void write_output(WORD index, WORD value) {
   switch (index) {
     case FROB_LED1:
       led = value; break;
     case FROB_ENGINE_L:
-      max = 256
-      min = 0
+      engine_left.write(value); break;
     case FROB_ENGINE_R:
-
-  } else if (index == FROB_MOTOR_IZQ) {
-    float val = value * 0.1;
-    while (val > 1) val-=1;
-    motor_izq = val;
-  } else if (index == FROB_MOTOR_DER) {
-    float val = value * 0.1;
-    while (val > 1) val-=1;
-    motor_der = val;
+      engine_right.write(value); break;
+    default:
+      break;
   }
 }
 
 WORD read_input(WORD index) {
   WORD value = 0;
-  if (index == FROB_TIME) {
-    value = t.read();
-  } else if (index == FROB_DISTANCE_SENSOR) {
-    value = distance_sensor.read();
-  } else if (index == FROB_LIGHT_SENSOR) {
-    value = light//value = (WORD) iic.read();
-    value = 19;
+  switch (index) {
+    case FROB_TIME:
+      value = t.read(); break;
+    case FROB_DISTANCE_SENSOR:
+      value = distance_sensor.read(); break;
+    case FROB_LIGHT_SENSOR_R:
+      value = light_sensor_r.read(); break;
+    case FROB_LIGHT_SENSOR_L:
+      value = light_sensor_l.read(); break;
+    default:
+      break;
   }
   return value;
 }

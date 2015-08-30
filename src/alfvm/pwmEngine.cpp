@@ -6,6 +6,6 @@
 PWMEngine::PWMEngine(PinName e) : engine(e) {}
 
 void PWMEngine::write(WORD speed) {
-  engine = speed/256.0
+  engine = speed/256.0;
 }
 

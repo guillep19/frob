@@ -455,7 +455,6 @@ void run_vm() {
 }
 
 int main() {
-  initialize_iointerface();
   print_stack();
   run_vm();
   return 0;

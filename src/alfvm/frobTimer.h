@@ -11,4 +11,6 @@ class FrobTimer {
   public:
     FrobTimer();
     WORD read(); //Return time in ds.
-}
+};
+
+#endif /* frobTimer_H */
