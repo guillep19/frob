@@ -7,7 +7,7 @@
 #include "graph.h"
 #include "debug.h"
 
-Serial pc(USBTX, USBRX); // tx, rx
+#include "serial.h"
 
 #include "vmcode.c"
 
@@ -295,7 +295,7 @@ void read_inputs() {
     fwd_count = graph.inputs[iter].fwd_count;
     if (fwd_count > 0) {
       value = read_input(iter);
-      pc.printf("Read(%d) == %d\n", iter, value);
+      pc.printf("I %d %d\n", iter, value);
       for (fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
         // Give the waiting signal the value.
         WORD id = graph.inputs[iter].fwd[fwd_iter];
@@ -316,7 +316,7 @@ void write_outputs() {
     source = graph.outputs[iter].source;
     if (source != -1) {
       WORD value = graph.nodes[source].value;
-      pc.printf("Output(%d) == %d\n", iter, value);
+      pc.printf("O %d %d\n", iter, value);
       write_output(iter, value);
     }
   }
@@ -414,7 +414,7 @@ void print_graph() {
     fwd_count = graph.inputs[iter].fwd_count;
     if (fwd_count > 0) {
       for (fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
-        pc.printf("Input %d -> Signal %d\n",
+        pc.printf("I %d -> S %d\n",
                   iter, graph.nodes[graph.inputs[iter].fwd[fwd_iter]].id);
       }
     }
@@ -426,7 +426,7 @@ void print_graph() {
     for (fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
       Node dest = graph.nodes[source.fwd[fwd_iter]];
       BYTE fwd_place = source.fwd_place[fwd_iter];
-      pc.printf("Signal %d -> Signal %d.%d (fun:%d)\n",
+      pc.printf("S %d -> S %d.%d (fun:%d)\n",
                 source.id, dest.id, fwd_place, dest.function_loc);
     }
   }
@@ -434,7 +434,7 @@ void print_graph() {
   for (iter = 0; iter < 10; iter++) {
     WORD source = graph.outputs[iter].source;
     if (source != -1) {
-      pc.printf("Signal %d -> Output %d\n",
+      pc.printf("S %d -> O %d\n",
                 graph.nodes[source].id, iter);
     }
   }
