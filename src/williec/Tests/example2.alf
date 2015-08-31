@@ -1,28 +1,13 @@
+push 0
+store 0 //INPUT_CLOCK
 push 1
-store 0
-push 1
-store 1
-read 0 0
-lift 1 0 hay_casa
-write 1 1
-push 1
-store 2
-folds 2 1 2 suma
-lift 3 2 mayor_a_5
-write 3 2
+store 1 //INPUT_DISTANCE
+push 2
+store 2 //INPUT_COLOR_LEFT
+push 3
+store 3 //INPUT_COLOR_RIGHT
+read 0 0 //clock = read INPUT_CLOCK
+read 1 1 //distance = read INPUT_DISTANCE
+read 2 2 //color_l = read INPUT_COLOR_LEFT
+read 3 3 //color_r = read INPUT_COLOR_RIGHT
 halt
-[hay_casa]
-load_param 0
-push 100
-cmp_lt
-ret
-[suma]
-load_param 0
-load_param 1
-add
-ret
-[mayor_a_5]
-load_param 0
-push 5
-cmp_gt
-ret

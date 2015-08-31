@@ -5,13 +5,14 @@
 # en el puerto serial.
 
 #Inputs
+INPUT_CLOCK = 0
 INPUT_DISTANCE = 1
 INPUT_COLOR_LEFT = 2
 INPUT_COLOR_RIGHT = 3
-INPUT_CLOCK = 4
 
 do {
-    distance <- read INPUT_DISTANCE
-    color_izq <- read INPUT_COLOR_LEFT
-    color_der <- read INPUT_COLOR_RIGHT
+    clock = read INPUT_CLOCK
+    distance = read INPUT_DISTANCE
+    color_l = read INPUT_COLOR_LEFT
+    color_r = read INPUT_COLOR_RIGHT
 }
