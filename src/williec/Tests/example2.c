@@ -20,4 +20,4 @@ extern CODE code = {
   /*018:*/  t_read << 8 | 3, //signal 3
   /*019:*/  3, //input 3
   /*020:*/  t_halt << 8
-}
+};

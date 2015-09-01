@@ -3,13 +3,16 @@
 # El reloj varia entre 0 y 256 (decimas de segundo)
 
 #Input
-INPUT_CLOCK = 0
+INPUT_CLOCK = 1
 #Outputs
 OUTPUT_ENGINE_L = 1
 OUTPUT_ENGINE_R = 2
 
+speed_at time = if (time < 128) then 128 else 256
+
 do {
   clock = read INPUT_CLOCK
-  output OUTPUT_ENGINE_L clock
-  output OUTPUT_ENGINE_R clock
+  speed = lift speed_at clock
+  output OUTPUT_ENGINE_L speed
+  output OUTPUT_ENGINE_R speed
 }

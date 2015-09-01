@@ -17,6 +17,9 @@ MIN_DISTANCE = 100
 # Los valores del sensor de gris menores e este valor se consideran BLANCO
 MIN_GREY = 50 
 
+MAX_SPEED = 300 # Variar la amplitud?
+MIN_SPEED = 150
+
 hay_casa d = if (d < MIN_DISTANCE) then 1 else 0
 velocidad_casa num = if (num >= 5) then 0 else 100
 color_a_vel gris = if (gris > MIN_GREY) 1 else 1/2
