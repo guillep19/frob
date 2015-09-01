@@ -54,9 +54,9 @@ void BH1750::set_sensitivity(uint8_t parameter) {
         parameter = SENS_0R45;
     }
     dt[0] = CMD_M_TIME_H | (parameter >> 5);    // Set High byte
-    //_i2c.write((int)BH1750_addr, (char *)dt, 1, false);
+    _i2c.write((int)BH1750_addr, (char *)dt, 1, false);
     dt[0] = CMD_M_TIME_L | (parameter & 0x1f);  // Set Low byte
-    //_i2c.write((int)BH1750_addr, (char *)dt, 1, false);
+    _i2c.write((int)BH1750_addr, (char *)dt, 1, false);
     dt[0] = CMD_C_H_RES_M;      // Measurement mode: High Resolution
     _i2c.write((int)BH1750_addr, (char *)dt, 1, false);
     wait_ms(240);   // need normal conversion time(120mS) x 2

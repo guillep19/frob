@@ -450,7 +450,7 @@ void run_vm() {
     update_signals();
     write_outputs();
     //pc.getc();
-    wait(0.2);
+    wait(1.5);
   }
 }
 
