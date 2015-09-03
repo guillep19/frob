@@ -39,91 +39,91 @@ void call_function(WORD location, WORD return_ip) {
   fp = (WORD) (sp - stack); //create new frame
   ip = (WORD*) code + location; //jump to function
   //pc.printf("call_function location=%d return_ip=%d:\n", location, return_ip);
-}
-//Functions
-void f_call() {
-  //arg0, arg1, count ! oldfp, oldip
-  WORD fun_location = *ip;
-  WORD old_ip = (WORD) (++ip - (WORD*) code);
-  call_function(fun_location, old_ip);
-  //pc.printf("call: fun=%d", fun_location);
-}
-void f_ret() {
-  WORD ret_value = *sp;
-  sp = stack + fp; //remove current frame
-  WORD return_index = *sp--; 
-  ip = (WORD*) code + return_index; //restore ip
-  if (return_index == 0) ip = 0; //to stop run_thread when 
-                                 //return ip is 0. HACK
-  fp = *sp--; //restore fp
-  aux = *sp--; //get count to pop arguments
-  sp -= aux; //remove arguments
-  *++sp = ret_value; //push result to return
-  //pc.printf("ret:");
-}
-void f_load_param() {
-  *++sp = stack[fp - inm - 3]; //3 because of count,oldfp,oldip
-  //pc.printf("load_param: inm=%d", inm);
-}
-//FRP combinators
-void f_lift() {
-  //lift inm=id word=source word=function_loc
-  WORD id = inm;
-  WORD source = *ip++;
-  WORD function_loc = *ip++;
-  //pc.printf("lift: source=%d id=%d fun=%d\n", source, id, function_loc);
+  }
+    //Functions
+    void f_call() {
+      //arg0, arg1, count ! oldfp, oldip
+      WORD fun_location = *ip;
+      WORD old_ip = (WORD) (++ip - (WORD*) code);
+      call_function(fun_location, old_ip);
+      //pc.printf("call: fun=%d", fun_location);
+    }
+    void f_ret() {
+      WORD ret_value = *sp;
+      sp = stack + fp; //remove current frame
+      WORD return_index = *sp--; 
+      ip = (WORD*) code + return_index; //restore ip
+      if (return_index == 0) ip = 0; //to stop run_thread when 
+                                     //return ip is 0. HACK
+      fp = *sp--; //restore fp
+      aux = *sp--; //get count to pop arguments
+      sp -= aux; //remove arguments
+      *++sp = ret_value; //push result to return
+      //pc.printf("ret:");
+    }
+    void f_load_param() {
+      *++sp = stack[fp - inm - 3]; //3 because of count,oldfp,oldip
+      //pc.printf("load_param: inm=%d", inm);
+    }
+    //FRP combinators
+    void f_lift() {
+    //lift inm=id word=source word=function_loc
+    WORD id = inm;
+    WORD source = *ip++;
+    WORD function_loc = *ip++;
+    //pc.printf("lift: source=%d id=%d fun=%d\n", source, id, function_loc);
 
-  WORD source_pos = find_node(graph, source);
-  if (source_pos == -1) {
-    pc.printf("ERROR: unexistant source=%d\n", source);
-    return;
+    WORD source_pos = find_node(graph, source);
+    if (source_pos == -1) {
+      //pc.printf("ERROR: unexistant source=%d\n", source);
+      return;
+    }
+    if (find_node(graph, id) != -1) {
+      //pc.printf("ERROR: destination already exists=%d\n", id);
+      return;
+    }
+    WORD dest_pos = create_node(graph, id, function_loc, 1);
+    link_nodes(graph, source_pos, dest_pos, 0);
   }
-  if (find_node(graph, id) != -1) {
-    pc.printf("ERROR: destination already exists=%d\n", id);
-    return;
+  void f_lift2() {
+    WORD id = inm;
+    WORD s1 = *ip++;
+    WORD s2 = *ip++;
+    WORD function_loc = *ip++;
+    //pc.printf("lift2: s1=%d s2=%d id=%d fun=%d\n", s1, s2, inm, function_loc);
+    WORD s1_pos = find_node(graph, s1);
+    WORD s2_pos = find_node(graph, s2);
+    if ((s1_pos == -1)||(s2_pos == -1)) {
+      //pc.printf("ERROR: unexistant source\n");
+      return;
+    }
+    if (find_node(graph, id) != -1) {
+      //pc.printf("ERROR: destination already exists=%d\n", id);
+      return;
+    }
+    WORD dest_pos = create_node(graph, id, function_loc, 2);
+    link_nodes(graph, s1_pos, dest_pos, 0);
+    link_nodes(graph, s2_pos, dest_pos, 1);
   }
-  WORD dest_pos = create_node(graph, id, function_loc, 1);
-  link_nodes(graph, source_pos, dest_pos, 0);
-}
-void f_lift2() {
-  WORD id = inm;
-  WORD s1 = *ip++;
-  WORD s2 = *ip++;
-  WORD function_loc = *ip++;
-  pc.printf("lift2: s1=%d s2=%d id=%d fun=%d\n", s1, s2, inm, function_loc);
-  WORD s1_pos = find_node(graph, s1);
-  WORD s2_pos = find_node(graph, s2);
-  if ((s1_pos == -1)||(s2_pos == -1)) {
-    pc.printf("ERROR: unexistant source\n");
-    return;
-  }
-  if (find_node(graph, id) != -1) {
-    pc.printf("ERROR: destination already exists=%d\n", id);
-    return;
-  }
-  WORD dest_pos = create_node(graph, id, function_loc, 2);
-  link_nodes(graph, s1_pos, dest_pos, 0);
-  link_nodes(graph, s2_pos, dest_pos, 1);
-}
-void f_folds() {
-  BYTE id = inm;
-  BYTE source = *ip++;
-  WORD acum = globals[*ip++];//paso un valor, estaria bueno q fuera
-                             //un nodo (habria q cambiar todo :D)
-  WORD function_loc = *ip++;
-  WORD source_pos = find_node(graph, source);
-  if (source_pos == -1) {
-    pc.printf("ERROR: unexistant source\n");
-    return;
-  }
-  if (find_node(graph, id) != -1) {
-    pc.printf("ERROR: destination already exists=%d\n", id);
-    return;
-  }
-  WORD node_pos = create_fold_node(graph, id, function_loc, acum);
-  link_nodes(graph, source_pos, node_pos, 0);
-  pc.printf("folds: source=%d dest=%d initial=%d fun=%d\n",
-            source, id, acum, function_loc);
+  void f_folds() {
+    BYTE id = inm;
+    BYTE source = *ip++;
+    WORD acum = globals[*ip++];//paso un valor, estaria bueno q fuera
+                               //un nodo (habria q cambiar todo :D)
+    WORD function_loc = *ip++;
+    WORD source_pos = find_node(graph, source);
+    if (source_pos == -1) {
+      //pc.printf("ERROR: unexistant source\n");
+      return;
+    }
+    if (find_node(graph, id) != -1) {
+      //pc.printf("ERROR: destination already exists=%d\n", id);
+      return;
+    }
+    WORD node_pos = create_fold_node(graph, id, function_loc, acum);
+    link_nodes(graph, source_pos, node_pos, 0);
+    //pc.printf("folds: source=%d dest=%d initial=%d fun=%d\n",
+    //          source, id, acum, function_loc);
 }
 //IO
 void f_read() {
@@ -134,16 +134,16 @@ void f_read() {
   WORD node_pos = create_node(graph, id, -1, 1);
   //link input to node
   link_input(graph, input, node_pos);
-  pc.printf("read: input=%d id=%d\n", input, id);
+  //pc.printf("read: input=%d id=%d\n", input, id);
 }
 void f_write() {
   //write inm=id word=output
   WORD id = inm;
   WORD output = *ip++;
   WORD node_pos = find_node(graph, id);
-  pc.printf("write: node=%d output=%d\n", id, output);
+  //pc.printf("write: node=%d output=%d\n", id, output);
   if (node_pos == -1) {
-    pc.printf("ERROR: unexistant node %d\n", id);
+    //pc.printf("ERROR: unexistant node %d\n", id);
     return;
   }
   link_output(graph, output, id);
@@ -259,18 +259,18 @@ void (*functions[])() = {
 };
 
 void print_stack() {
-  pc.printf("Stack: ");
+  //pc.printf("Stack: ");
   WORD* p = (WORD*) stack;
   if (p != sp) {
     p++;
     for (; p != sp; p++) {
-      pc.printf("-> [%d] ", *p);
+      //pc.printf("-> [%d] ", *p);
     };
-    pc.printf("-> [%d] -x", *sp);
+    //pc.printf("-> [%d] -x", *sp);
   } else {
-    pc.printf("-x");
+    //pc.printf("-x");
   }
-  pc.printf("\n");
+  //pc.printf("\n");
 }
 
 void run_thread() {
@@ -295,13 +295,13 @@ void read_inputs() {
     fwd_count = graph.inputs[iter].fwd_count;
     if (fwd_count > 0) {
       value = read_input(iter);
-      pc.printf("I %d %d\n", iter, value);
+      //pc.printf("I %d %d\n", iter, value);
       for (fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
         // Give the waiting signal the value.
         WORD id = graph.inputs[iter].fwd[fwd_iter];
         graph.nodes[id].arg[0] = value;
         graph.nodes[id].arg_new[0] = true;
-        pc.printf("Sending %d to node %d with fun=%d\n", value, id, graph.nodes[id].function_loc);
+        //pc.printf("Sending %d to node %d with fun=%d\n", value, id, graph.nodes[id].function_loc);
         // Mark the waiting signal as ready.
         graph.ready_nodes[graph.ready_end++] = id;
         if (graph.ready_end == 20) graph.ready_end = 0;
@@ -316,7 +316,7 @@ void write_outputs() {
     source = graph.outputs[iter].source;
     if (source != -1) {
       WORD value = graph.nodes[source].value;
-      pc.printf("O %d %d\n", iter, value);
+      //pc.printf("O %d %d\n", iter, value);
       write_output(iter, value);
     }
   }
@@ -362,27 +362,27 @@ void update_signal(BYTE id) {
     BYTE arg_count = graph.nodes[id].arg_count;
 
     if (graph.nodes[id].is_fold) { //ONLY FOR FOLD
-      pc.printf("                      signal %d is fold\n", id);
+      //pc.printf("                      signal %d is fold\n", id);
       *++sp = graph.nodes[id].value;
-      pc.printf("                      push %d\n", graph.nodes[id].value);
-    } else {
-      pc.printf("                      signal %d is not fold\n", id);
-    }
+      //pc.printf("                      push %d\n", graph.nodes[id].value);
+    }// else {
+      //pc.printf("                      signal %d is not fold\n", id);
+    //}
 
     for (BYTE iter = 0; iter < arg_count; iter++) {
       graph.nodes[id].arg_new[iter] = 0;
       WORD value = graph.nodes[id].arg[iter];
       *++sp = value;
-      pc.printf("                      push %d\n", value);
+      //pc.printf("                      push %d\n", value);
     }
     
     if (graph.nodes[id].is_fold) arg_count++; //ONLY FOR FOLD
 
     *++sp = (WORD) arg_count;
-    pc.printf("                      push %d (arg_count)\n", arg_count);
+    //pc.printf("                      push %d (arg_count)\n", arg_count);
 
     //pc.printf("push count %d\n", arg_count);
-    pc.printf("                      call %d\n", function_loc);
+    //pc.printf("                      call %d\n", function_loc);
     call_function(function_loc, 0);
     //pc.printf("Before running the thread\n");
     //print_stack();
@@ -391,9 +391,9 @@ void update_signal(BYTE id) {
     //pc.printf("after running the thread\n");
     //print_stack();
     graph.nodes[id].value = *sp--;
-    pc.printf("                      returned %d\n", graph.nodes[id].value);
+    //pc.printf("                      returned %d\n", graph.nodes[id].value);
   }
-  pc.printf("Signal %d -> %d\n", id, graph.nodes[id].value);
+  //pc.printf("Signal %d -> %d\n", id, graph.nodes[id].value);
   // Propagate signal
   propagate_signal(id);
 }
@@ -414,8 +414,8 @@ void print_graph() {
     fwd_count = graph.inputs[iter].fwd_count;
     if (fwd_count > 0) {
       for (fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
-        pc.printf("I %d -> S %d\n",
-                  iter, graph.nodes[graph.inputs[iter].fwd[fwd_iter]].id);
+        //pc.printf("I %d -> S %d\n",
+        //          iter, graph.nodes[graph.inputs[iter].fwd[fwd_iter]].id);
       }
     }
   }
@@ -426,17 +426,17 @@ void print_graph() {
     for (fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
       Node dest = graph.nodes[source.fwd[fwd_iter]];
       BYTE fwd_place = source.fwd_place[fwd_iter];
-      pc.printf("S %d -> S %d.%d (fun:%d)\n",
-                source.id, dest.id, fwd_place, dest.function_loc);
+      //pc.printf("S %d -> S %d.%d (fun:%d)\n",
+                //source.id, dest.id, fwd_place, dest.function_loc);
     }
   }
   //Print output functions
   for (iter = 0; iter < 10; iter++) {
     WORD source = graph.outputs[iter].source;
-    if (source != -1) {
-      pc.printf("S %d -> O %d\n",
-                graph.nodes[source].id, iter);
-    }
+    //if (source != -1) {
+      //pc.printf("S %d -> O %d\n",
+      //          graph.nodes[source].id, iter);
+    //}
   }
 }
 
@@ -450,7 +450,7 @@ void run_vm() {
     update_signals();
     write_outputs();
     //pc.getc();
-    wait(1.5);
+    //wait(0.1);
   }
 }
 

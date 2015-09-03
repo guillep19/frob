@@ -34,8 +34,10 @@ float BH1750::lux() {
 
 WORD BH1750::read() {
     float value = lux();
-    pc.printf("///////////////////////////// %.4f Lux\r\n", value);
-    return 250;
+    int intvalue = (int)(value + 0.5);
+    WORD ret = (WORD) intvalue;
+    //pc.printf("///////////////////////////// %.4f (%d) Lux\r\n", value, ret);
+    return (WORD) intvalue;
 }
  
 /////////////// Initialize ////////////////////////////////

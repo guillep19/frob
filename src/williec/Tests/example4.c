@@ -20,9 +20,9 @@ extern CODE code = {
   /*018:*/  t_push << 8,
   /*019:*/  150,
   /*020:*/  t_store << 8 | 6, //MIN_SPEED
-  /*021:*/  t_read << 0, //signal 0 (color_l)
+  /*021:*/  t_read << 8 | 0, //signal 0 (color_l)
   /*022:*/  0, //input 0 (COLOR_LEFT)
-  /*023:*/  t_read << 1, //signal 1 (color_r)
+  /*023:*/  t_read << 8 | 1, //signal 1 (color_r)
   /*024:*/  1, //input 1 (COLOR_RIGHT)
   /*025:*/  t_lift << 8 | 2, // speed_left
   /*026:*/  0, // color_l
@@ -39,7 +39,7 @@ extern CODE code = {
   /*036:*/  t_load_param << 8 | 0, //grey
   /*037:*/  t_load << 8 | 4, //MIN_GREY
   /*038:*/  t_cmp_gt << 8, //grey > MIN_GREY
-  /*039:*/  jump_false << 8,
+  /*039:*/  t_jump_false << 8,
   /*040:*/  43, //color2speed.else
   /*041:*/  t_load << 8 | 6, //MIN_SPEED
   /*042:*/  t_ret << 8,
