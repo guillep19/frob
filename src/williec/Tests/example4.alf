@@ -1,29 +1,31 @@
-# TODO: Incompleto. Generar a partir de compiler..
-
+push 2
+store 0 // INPUT_COLOR_LEFT
+push 3
+store 1 // INPUT_COLOR_RIGHT
 push 1
-store 0
-push 1
-store 1
-read 0 0
-lift 1 0 hay_casa
-write 1 1
-push 1
-store 2
-folds 2 1 2 suma
-lift 3 2 mayor_a_5
-write 3 2
+store 2 // OUTPUT_ENGINE_LEFT
+push 2
+store 3 // OUTPUT_ENGINE_RIGHT
+push 50
+store 4 // MIN_GREY
+push 300
+store 5 // MAX_SPEED
+push 150
+store 6 // MIN_SPEED
+read 0 0 // color_l = read INPUT_COLOR_LEFT
+read 1 1 // color_r = read INPUT_COLOR_RIGHT
+lift 2 0 color2speed // speed_left = lift color2speed color_l
+lift 3 1 color2speed // speed_right = lift color2speed color_r
+write 2 2 // output OUTPUT_ENGINE_LEFT speed_left
+write 3 3 // output OUTPUT_ENGINE_RIGHT speed_right
 halt
-[hay_casa] load_param 0
-push 100
-cmp_lt
+[color2speed]
+load_param 0 // grey
+load 4 // MIN_GREY
+cmp_gt // grey > MIN_GREY
+jump_false color2speed.else
+load 6 // MAX_SPEED
 ret
-[suma]
-load_param 0
-load_param 1
-add
-ret
-[mayor_a_5]
-load_param 0
-push 5
-cmp_gt
+[color2speed.else]
+load 5 // MAX_SPEED
 ret
