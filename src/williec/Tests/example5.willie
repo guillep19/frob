@@ -1,0 +1,51 @@
+# delivery-bot
+# El robot sigue una línea, y cuenta las casas frente a las que pasa.
+# Al llegar a la casa número 5 se detiene.
+
+#Inputs
+INPUT_DISTANCE = 1
+INPUT_COLOR_LEFT = 2
+INPUT_COLOR_RIGHT = 3
+#Outputs
+OUTPUT_ENGINE_LEFT = 1
+OUTPUT_ENGINE_RIGHT = 2
+
+# Constantes
+# Al recibir un valor de distancia menor a MIN_DISTANCE, se considera
+# que se esta frente a una casa.
+MIN_DISTANCE = 100
+# Los valores del sensor de gris menores e este valor se consideran BLANCO
+MIN_GREY = 50 
+
+MAX_SPEED = 300 # Variar la amplitud?
+MIN_SPEED = 150
+
+hay_casa d = if (d < MIN_DISTANCE) then 1 else 0
+velocidad_casa num = if (num >= 5) then 0 else 100
+color_a_vel gris = if (gris > MIN_GREY) 1 else 1/2
+
+suma a b = (a + b)
+multiplicar a b = (a * b)
+and a b = if (a && b) then 1 else 0
+distinto a b = if (a /= b) then 1 else 0
+
+do {
+    distance <- read INPUT_DISTANCE
+    color_izq <- read INPUT_COLOR_LEFT
+    color_der <- read INPUT_COLOR_RIGHT
+
+    viendo_casa <- lift hay_casa distance
+    cambio <- folds distinto viendo_casa
+    nueva_casa <- lift2 and viendo_casa cambio
+    cuenta <- folds suma 0 nueva_casa
+    velocidad <- lift velocidad_casa cuenta
+
+    multip_izq <- lift color_a_vel color_izq
+    multip_der <- lift color_a_vel color_der
+
+    speed_left <- lift2 multiplicar velocidad multip_izq
+    speed_right <- lift2 multiplicar velocidad multip_der
+
+    output MOTOR_IZQ speed_left
+    output MOTOR_DER speed_right
+}
