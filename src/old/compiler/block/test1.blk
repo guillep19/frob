@@ -1,4 +1,0 @@
-[ use x; use y; decl x;
-  [ decl y ; use y ; use w ; decl w ; use x; use z ] ;
-  decl y ; decl z; use z
-]

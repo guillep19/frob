@@ -1,6 +1,0 @@
-Example variants:
-
-for now only one:
-- BlockHS.ag, AG with Haskell syntax
-
-Choose one of the above in the Makefile
