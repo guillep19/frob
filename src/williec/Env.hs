@@ -42,4 +42,6 @@ set_label_index label index env = let l = Map.insert label index (labels env)
                                 in env {labels = l}
 
 get_label_index :: String -> Env -> Int
-get_label_index label env = 100000
+get_label_index label env = case Map.lookup label (labels env) of
+                   Just n -> n
+                   Nothing -> 9999

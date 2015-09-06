@@ -16,20 +16,21 @@ import Data.Char
 
 import Lexer
 import Parser
-import Html
+import AttributeGrammar
 
 main :: IO ()
 main
   = do args <- getArgs
        if (length args /= 2)
-        then putStrLn "usage: html <source> <dest>"
+        then putStrLn "usage: williec <source> <dest>"
         else let [source,dest] = args
              in compile source dest
 
 compile :: String -> String -> IO ()
 compile source dest
-  = do input  <- readFile source
-       let toks = runScanner source input
+  = do input <- readFile source
+       --let toks = runScanner source input
+       let toks = alexScanTokens input
        sem <- runParser toks
        let output = transform $ sem
        writeFile dest output
@@ -46,9 +47,4 @@ transform :: T_Root -> String
 transform sem
   = let inh = Inh_Root {}
         syn = wrap_Root sem inh
-    in html_Syn_Root syn
-
-augment :: String -> String
-augment doc
-  = "<html lang=\"en\"><head><title>Generated HTML document</title></head><body>\n" ++ doc ++ "\n</body></html>"
-
+    in code_Syn_Root syn

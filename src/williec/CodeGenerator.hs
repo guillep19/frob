@@ -28,10 +28,9 @@ gen_bc_expression (E_BinExpr bin_op expr1 expr2) e =
         (e1, a1) = gen_bc_expression expr1 e
         (e2, a2) = gen_bc_expression expr2 e1 in
     (e2, a1 ++ a2 ++ a)
-gen_bc_expression (E_Call str args) env =
-    let env1 = add_vardecl str env
-        index = lookup_var str env1 in
-    (env1, [Tcall str])
+gen_bc_expression (E_Call expr args) env =
+    let (env1, bc) = gen_bc_expression expr env in
+    (env1, bc ++ [Tcall 1242])
 gen_bc_expression _ env = (env, [Tdup])
 
 gen_bc_decl :: Declaration -> WillieBC

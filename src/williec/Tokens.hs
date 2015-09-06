@@ -3,7 +3,7 @@ module Tokens where
 data Token = T_Const String
            | T_Var String
            | T_Int Int
-           | T_Do | T_Read | T_Output | T_lift | T_lift2
+           | T_Do | T_Read | T_Output | T_Lift | T_Lift2 | T_Folds
            | T_LCurly
            | T_RCurly
            | T_LParen

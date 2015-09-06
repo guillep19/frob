@@ -78,6 +78,7 @@ program = E_Root [
               E_Output "speed_right" (E_Call "OUTPUT_ENGINE_RIGHT" [])
             ]
 
+main :: IO ()
 main = do
   putStrLn "Alf? Willie? Alf? Willie? Alf! Willie!"
   putStrLn $ show program

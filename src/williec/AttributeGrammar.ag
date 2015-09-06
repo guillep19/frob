@@ -1,43 +1,45 @@
 imports
 {
-module Html where
+module AttributeGrammar where
 }
-data Docs
-  | Cons  hd :: Doc
-          tl :: Docs
+data Decls
+  | Cons  hd :: Decl
+          tl :: Decls
   | Nil
 
-data Doc
-  | Section
-      title :: {String}
-      body  :: Docs
-  | Paragraph
-      text  :: {String}
+data Decl
+  | Function
+      name :: {String}
+      args :: {String}
+      body  :: {Int}
+  | Const
+      name :: {String}
+      value :: {Int}
 
 data Root
   | Root
-      body :: Docs
+      decls :: Decls
 
 deriving * : Show
 wrapper Root
 
--- Html generation
-attr Root Docs Doc syn html :: String
+-- Code generation
+attr Root Decls Decl syn code :: String
 
-sem Doc
-  | Section
-      lhs.html = "<b>" ++ @title ++ "</b>\n" ++ @body.html
-  | Paragraph
-      lhs.html = "<p>" ++ @text ++ "</p>"
+sem Decl
+  | Function
+      lhs.code = "fun: " ++ @name ++ "body: TODO" ++ "\n"
+  | Const
+      lhs.code = "const: " ++ @name ++ "value: " ++ @value ++ "\n"
 
-sem Docs
+sem Decls
   | Cons
-      lhs.html  =  @hd.html ++ @tl.html
+      lhs.code =  @hd.code ++ @tl.code
   | Nil
-      lhs.html  =  ""
+      lhs.code =  ""
 
 -------------------------------------------
 -- Interface to the haskell world:
 --   inh  = Inh_Root { }
 --   syn  = wrap_Root sem inh
---   code = html_Syn_Root syn
+--   code = code_Syn_Root syn

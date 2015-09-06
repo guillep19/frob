@@ -1,7 +1,7 @@
 {
-  module Lexer where
+module Lexer where
 
-  import Tokens
+import Tokens
 }
 
 %wrapper "basic"
@@ -19,12 +19,13 @@ tokens :-
   "#".*         ;
   $alphaupper [$alphaupper $digit \_]*     { \s -> T_Const s }
   $alpha [$alpha $digit \_]*               { \s -> T_Var s }
-  $digit+                                  { \s -> Int (read s) }
+  $digit+                                  { \s -> T_Int (read s) }
   Do                                       { \s -> T_Do }
   Read                                     { \s -> T_Read }
   Output                                   { \s -> T_Output }
   Lift                                     { \s -> T_Lift }
   Lift2                                    { \s -> T_Lift2 }
+  Folds                                    { \s -> T_Folds }
 
   "{"                                      { \s -> T_LCurly }
   "}"                                      { \s -> T_RCurly }
