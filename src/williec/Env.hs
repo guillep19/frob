@@ -38,7 +38,8 @@ find_frp_id id env = case Map.lookup id (frps env) of
                    Nothing -> 9999
 
 set_label_index :: String -> Int -> Env -> Env
-set_label_index label index env = env
+set_label_index label index env = let l = Map.insert label index (labels env)
+                                in env {labels = l}
 
 get_label_index :: String -> Env -> Int
 get_label_index label env = 100000

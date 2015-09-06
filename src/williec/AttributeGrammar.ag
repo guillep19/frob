@@ -1,0 +1,43 @@
+imports
+{
+module Html where
+}
+data Docs
+  | Cons  hd :: Doc
+          tl :: Docs
+  | Nil
+
+data Doc
+  | Section
+      title :: {String}
+      body  :: Docs
+  | Paragraph
+      text  :: {String}
+
+data Root
+  | Root
+      body :: Docs
+
+deriving * : Show
+wrapper Root
+
+-- Html generation
+attr Root Docs Doc syn html :: String
+
+sem Doc
+  | Section
+      lhs.html = "<b>" ++ @title ++ "</b>\n" ++ @body.html
+  | Paragraph
+      lhs.html = "<p>" ++ @text ++ "</p>"
+
+sem Docs
+  | Cons
+      lhs.html  =  @hd.html ++ @tl.html
+  | Nil
+      lhs.html  =  ""
+
+-------------------------------------------
+-- Interface to the haskell world:
+--   inh  = Inh_Root { }
+--   syn  = wrap_Root sem inh
+--   code = html_Syn_Root syn
