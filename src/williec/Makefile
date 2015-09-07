@@ -1,15 +1,23 @@
 
 default: williec
 
-williec: Lexer.hs AttributeGrammar.hs Williec.hs Ast.hs CodeGenerator.hs Tokens.o Env.o Bytecode.hs Parser.hs
-	ghc -c Lexer.hs AttributeGrammar.hs Ast.hs CodeGenerator.hs Bytecode.hs Parser.hs
+williec: Lexer.hs AttributeGrammar.hs Williec.hs Ast.o CodeGenerator.hs Tokens.o Env.o Bytecode.o Parser.hs
+	ghc -c Lexer.hs AttributeGrammar.hs CodeGenerator.hs Parser.hs
 	ghc Williec.hs -o williec
 Lexer.hs: Lexer.x Tokens.o
 	alex Lexer.x
 Env.o:
 	ghc -c Env.hs
+Ast.o:
+	ghc -c Ast.hs
 Tokens.o:
 	ghc -c Tokens.hs
+Bytecode.o:
+	ghc -c Bytecode.hs
+Parser.o: AttributeGrammar.o Tokens.o
+	ghc -c Parser.hs
+AttributeGrammar.o: AttributeGrammar.hs
+	ghc -c AttributeGrammar.hs
 AttributeGrammar.hs: AttributeGrammar.ag Makefile
 	uuagc -dcfsrv --haskellsyntax -o AttributeGrammar.hs AttributeGrammar.ag
 clean:

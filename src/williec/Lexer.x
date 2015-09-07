@@ -18,7 +18,7 @@ tokens :-
   $white+       ;
   "#".*         ;
   $alphaupper [$alphaupper $digit \_]*     { \s -> T_Const s }
-  $alpha [$alpha $digit \_]*               { \s -> T_Var s }
+  $alpha [$alpha $digit \_]*               { \s -> T_Ident s }
   $digit+                                  { \s -> T_Int (read s) }
   Do                                       { \s -> T_Do }
   Read                                     { \s -> T_Read }

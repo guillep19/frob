@@ -11,7 +11,7 @@ data Decl
   | Function
       name :: {String}
       args :: {String}
-      body  :: {Int}
+      body  :: {String}
   | Const
       name :: {String}
       value :: {Int}
@@ -30,7 +30,7 @@ sem Decl
   | Function
       lhs.code = "fun: " ++ @name ++ "body: TODO" ++ "\n"
   | Const
-      lhs.code = "const: " ++ @name ++ "value: " ++ @value ++ "\n"
+      lhs.code = "const: " ++ @name ++ "value: \n"
 
 sem Decls
   | Cons
