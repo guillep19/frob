@@ -8,7 +8,7 @@ module AttributeGrammar where
 {-# LINE 9 "AttributeGrammar.hs" #-}
 -- Decl --------------------------------------------------------
 data Decl = Decl_Function (String) (String) (String)
-          | Decl_Const (String) (Int)
+          | Decl_Const (String) (String)
           deriving ( Show)
 -- cata
 sem_Decl :: Decl ->
@@ -32,7 +32,7 @@ sem_Decl_Function name_ args_ body_ =
               )
      in  ( _lhsOcode))
 sem_Decl_Const :: String ->
-                  Int ->
+                  String ->
                   T_Decl
 sem_Decl_Const name_ value_ =
     (let _lhsOcode :: String

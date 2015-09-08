@@ -1,6 +1,8 @@
 module Tokens where
 
-data Token = T_Identifier --Used to match in grammar
+import UU.Parsing
+
+data Tok = T_Identifier --Used to match in grammar
            | T_Constant --Used to match in grammar
            | T_Const { constname :: String }
            | T_Ident { varname :: String }
@@ -18,6 +20,10 @@ data Token = T_Identifier --Used to match in grammar
            | T_And | T_Or | T_Not
            deriving (Show)
 
-instance Eq Token where
+instance Eq Tok where
   (T_Ident _) == T_Identifier = True
   (T_Const _) == T_Constant = True
+  _ == _ = False
+  
+instance (Symbol Tok)
+instance (Ord Tok)

@@ -13,7 +13,6 @@ import System.Environment
 import System.IO
 import Data.Char
 
-
 import Lexer
 import Parser
 import AttributeGrammar

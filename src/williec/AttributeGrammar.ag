@@ -11,10 +11,10 @@ data Decl
   | Function
       name :: {String}
       args :: {String}
-      body  :: {String}
+      body :: {String}
   | Const
       name :: {String}
-      value :: {Int}
+      value :: {String}
 
 data Root
   | Root
