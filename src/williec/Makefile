@@ -1,18 +1,18 @@
 
 default: williec
 
-williec: Lexer.hs AttributeGrammar.hs Williec.hs Ast.o CodeGenerator.hs Tokens.o Env.o Bytecode.o Parser.hs
-	ghc -c Lexer.hs AttributeGrammar.hs CodeGenerator.hs Parser.hs
-	ghc Williec.hs -o williec
-Lexer.hs: Lexer.x Tokens.o
-	alex Lexer.x
-Env.o:
+williec: Lexer.o AttributeGrammar.hs Main.hs Ast.o CodeGenerator.hs Env.o Bytecode.o Parser.hs
+	ghc -c AttributeGrammar.hs CodeGenerator.hs Parser.hs
+	ghc -rtsopts Main.hs -o williec
+Lexer.o: Lexer.hs
+	ghc -c Lexer.hs
+Lexer.hs: Lexer.x
+	alex -o Lexer.hs -g Lexer.x
+Env.o: Env.hs
 	ghc -c Env.hs
-Ast.o:
+Ast.o: Ast.hs
 	ghc -c Ast.hs
-Tokens.o:
-	ghc -c Tokens.hs
-Bytecode.o:
+Bytecode.o: Bytecode.hs
 	ghc -c Bytecode.hs
 Parser.o: AttributeGrammar.o Tokens.o
 	ghc -c Parser.hs

@@ -1,10 +1,11 @@
 {
-module Lexer where
+-- alex scanner with uulib support.
+-- compile: alex -o Lexer.hs -g Lexer.x
+module Lexer(tokenize) where
 
-import Tokens
+import UU.Scanner
+import Data.Word (Word8)
 }
-
-%wrapper "basic"
 
 -- digits
 $digit = 0-9
@@ -17,37 +18,72 @@ tokens :-
 
   $white+       ;
   "#".*         ;
-  $alphaupper [$alphaupper $digit \_]*     { \s -> T_Const s }
-  $alpha [$alpha $digit \_]*               { \s -> T_Ident s }
-  $digit+                                  { \s -> T_Int (read s) }
-  Do                                       { \s -> T_Do }
-  Read                                     { \s -> T_Read }
-  Output                                   { \s -> T_Output }
-  Lift                                     { \s -> T_Lift }
-  Lift2                                    { \s -> T_Lift2 }
-  Folds                                    { \s -> T_Folds }
+  "do"                                     { reserved }
+  "read"                                   { reserved }
+  "output"                                 { reserved }
+  "lift"                                   { reserved }
+  "lift2"                                  { reserved }
+  "folds"                                  { reserved }
+  "{"                                      { reserved }
+  "}"                                      { reserved }
+  "("                                      { reserved }
+  ")"                                      { reserved }
+  "="                                      { reserved }
+  "<-"                                     { reserved }
 
-  "{"                                      { \s -> T_LCurly }
-  "}"                                      { \s -> T_RCurly }
-  "("                                      { \s -> T_LParen }
-  ")"                                      { \s -> T_RParen }
-  "="                                      { \s -> T_Equal }
-  "<-"                                     { \s -> T_Arrow }
+  "if"                                     { reserved }
+  "then"                                   { reserved }
+  "else"                                   { reserved }
 
-  If                                       { \s -> T_If }
-  Then                                     { \s -> T_Then }
-  Else                                     { \s -> T_Else }
+  "+"                                      { reserved }
+  "-"                                      { reserved }
+  "*"                                      { reserved }
+  "/"                                      { reserved }
+  ">"                                      { reserved }
+  "<"                                      { reserved }
+  "=>"                                     { reserved }
+  "<="                                     { reserved }
+  "=="                                     { reserved }
+  "/="                                     { reserved }
+  "and"                                    { reserved }
+  "or"                                     { reserved }
+  "not"                                    { reserved }
+  $digit+                                  { valueToken TkInteger16 }
+  $alphaupper [$alphaupper $digit \_]*     { valueToken TkConid }
+  $alpha [$alpha $digit \_]*               { valueToken TkVarid }
 
-  "+"                                      { \s -> T_Add }
-  "-"                                      { \s -> T_Sub }
-  "*"                                      { \s -> T_Mul }
-  "/"                                      { \s -> T_Div }
-  ">"                                      { \s -> T_GT }
-  "<"                                      { \s -> T_LT }
-  "=>"                                     { \s -> T_GTe }
-  "<="                                     { \s -> T_LTe }
-  "=="                                     { \s -> T_Eq }
-  "/="                                     { \s -> T_Neq }
-  And                                      { \s -> T_And }
-  Or                                       { \s -> T_Or }
-  Not                                      { \s -> T_Not }
+{
+-- Boilerplate code to adapt to uu.scanner
+type AlexInput = (Pos, String)
+
+alexInputPrevChar :: AlexInput -> Char
+alexInputPrevChar = error "alexInputPrevChar: there is no need to go back in the input."
+
+-- for alex 3 (not compatible with uulib example!)
+alexGetByte :: AlexInput -> Maybe (Word8, AlexInput)
+alexGetByte (_,[]) = Nothing
+alexGetByte (p, (c:cs)) = let p' = adv p c
+                          in Just ((fromIntegral $ ord c), (p', cs))
+
+-- This doesnt work with alex 3 (from the uulib example)
+alexGetChar :: AlexInput -> Maybe (Char, AlexInput)
+alexGetChar (_, []) = Nothing
+alexGetChar (p, (c:cs))
+  = let p' = adv p c
+    in Just (c, (p', cs))
+
+-- use Alex scanner to generate a list of tokens for the uulib token parsers
+tokenize :: String -> String -> [Token]
+tokenize filename str
+  = go (initpos, str)
+  where
+    initpos = Pos 1 1 filename
+    
+    go inp@(pos, cs)
+      = case alexScan inp 0 of
+          AlexEOF         -> []
+          AlexError inp'  -> valueToken TkError [head cs] pos : go inp'
+          AlexSkip inp' _ -> go inp'
+          AlexToken inp' len act -> act (take len cs) pos : go inp'
+}
+

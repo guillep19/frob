@@ -28,22 +28,26 @@ main
 compile :: String -> String -> IO ()
 compile source dest
   = do input <- readFile source
-       --let toks = runScanner source input
-       let toks = alexScanTokens input
-       sem <- runParser toks
-       let output = transform $ sem
+       let toks = tokenize source input
+       putStrLn "-- Tokens: --"
+       putStrLn (show toks)
+       putStrLn "-----------------"
+       root <- runParser toks
+       putStrLn "-- AST: --"
+       putStrLn (show root)
+       putStrLn "-----------------"
+       let output = transform root
+       putStrLn "-- Código: --"
+       putStrLn output
+       putStrLn "-----------------"
        writeFile dest output
 
-runScanner :: String -> String -> [Token]
-runScanner filename
-  = scanBlock (initPos filename)
+runParser :: [Token] -> IO Root
+runParser = parseIOMessage show pRoot
+--runParser t = parseIOMessage show pRoot $ t
 
-runParser :: [Token] -> IO T_Root
-runParser
-  = parseIOMessage show pRoot
-
-transform :: T_Root -> String
-transform sem
-  = let inh = Inh_Root {}
-        syn = wrap_Root sem inh
-    in code_Syn_Root syn
+transform :: Root -> String
+transform r
+  = code_Syn_Root syn
+  where inh = Inh_Root {}
+        syn = wrap_Root (sem_Root r) inh

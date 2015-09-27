@@ -2,15 +2,22 @@ imports
 {
 module AttributeGrammar where
 }
-data Decls
-  | Cons  hd :: Decl
-          tl :: Decls
-  | Nil
+type Decls = [Decl]
+type Dodecls = [Dodecl]
+
+data Expr
+  | Var
+    name :: {String}
+    const :: {String}
+
+data Dodecl
+  | Read
+      name :: {String}
+      input :: Expr
 
 data Decl
   | Function
       name :: {String}
-      args :: {String}
       body :: {String}
   | Const
       name :: {String}
@@ -19,18 +26,19 @@ data Decl
 data Root
   | Root
       decls :: Decls
+      dodecls :: Dodecls
 
 deriving * : Show
 wrapper Root
 
 -- Code generation
-attr Root Decls Decl syn code :: String
+attr Root Decls Decl Dodecls Dodecl syn code :: String
 
 sem Decl
   | Function
-      lhs.code = "fun: " ++ @name ++ "body: TODO" ++ "\n"
+      lhs.code = "[" ++ @name ++ "]:\n " ++ @body ++ "\nret\n"
   | Const
-      lhs.code = "const: " ++ @name ++ "value: \n"
+      lhs.code = "const: " ++ @name ++ "value: " ++ @value ++ "\n"
 
 sem Decls
   | Cons
@@ -38,6 +46,19 @@ sem Decls
   | Nil
       lhs.code =  ""
 
+sem Dodecls
+  | Cons
+      lhs.code = @hd.code ++ @tl.code
+  | Nil
+      lhs.code = ""
+
+sem Dodecl
+  | Read
+      lhs.code = "read " ++ @name ++ "input: TODO\n"
+
+sem Root
+  | Root
+      lhs.code = @decls.code ++ @dodecls.code
 -------------------------------------------
 -- Interface to the haskell world:
 --   inh  = Inh_Root { }
