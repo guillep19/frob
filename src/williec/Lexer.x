@@ -41,7 +41,7 @@ tokens :-
   "/"                                      { reserved }
   ">"                                      { reserved }
   "<"                                      { reserved }
-  "=>"                                     { reserved }
+  ">="                                     { reserved }
   "<="                                     { reserved }
   "=="                                     { reserved }
   "/="                                     { reserved }

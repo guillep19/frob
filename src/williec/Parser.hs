@@ -44,6 +44,8 @@ pAdd
   <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey ">" <*> pExpr
   <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey "<=" <*> pExpr
   <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey ">=" <*> pExpr
+  <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey "==" <*> pExpr
+  <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey "/=" <*> pExpr
   <|> (\x _ y -> Expr_BinBool x y) <$> pFactor <*> pKey "and" <*> pExpr
   <|> (\x _ y -> Expr_BinBool x y) <$> pFactor <*> pKey "or" <*> pExpr
 
