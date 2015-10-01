@@ -29,12 +29,23 @@ pArgs
 pExpr :: TokenParser Expr
 pExpr
   = pAdd
+  <|> pIfExpr
+
+pIfExpr :: TokenParser Expr
+pIfExpr
+  = (\_ cond _ t _ e -> Expr_If cond t e) <$> pKey "if" <*> pExpr <*> pKey "then" <*> pExpr <*> pKey "else" <*> pExpr
 
 pAdd :: TokenParser Expr
 pAdd
   = pFactor
   <|> (\x _ y -> Expr_Add x y) <$> pFactor <*> pKey "+" <*> pAdd
   <|> (\x _ y -> Expr_Sub x y) <$> pFactor <*> pKey "-" <*> pAdd
+  <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey "<" <*> pExpr
+  <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey ">" <*> pExpr
+  <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey "<=" <*> pExpr
+  <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey ">=" <*> pExpr
+  <|> (\x _ y -> Expr_BinBool x y) <$> pFactor <*> pKey "and" <*> pExpr
+  <|> (\x _ y -> Expr_BinBool x y) <$> pFactor <*> pKey "or" <*> pExpr
 
 pFactor :: TokenParser Expr
 pFactor
@@ -62,3 +73,4 @@ pDodecl
   <|> (\x _ _ y -> Dodecl_Read x y) <$> pVarid <*> pKey "<-" <*> pKey "read" <*> pExpr
   <|> (\x _ _ f s -> Dodecl_Lift x f s) <$> pVarid <*> pKey "<-" <*> pKey "lift" <*> pVarid <*> pVarid
   <|> (\x _ _ f s1 s2 -> Dodecl_Lift2 x f s1 s2) <$> pVarid <*> pKey "<-" <*> pKey "lift2" <*> pVarid <*> pVarid <*> pVarid
+  <|> (\x _ _ f v s -> Dodecl_Folds x f v s) <$> pVarid <*> pKey "<-" <*> pKey "folds" <*> pVarid <*> pExpr <*> pVarid

@@ -18,11 +18,11 @@ MIN_SPEED = 150
 color2speed grey = if (grey > MIN_GREY) then MIN_SPEED else MAX_SPEED
 
 do {
-    color_l = read INPUT_COLOR_LEFT
-    color_r = read INPUT_COLOR_RIGHT
+    color_l <- read INPUT_COLOR_LEFT
+    color_r <- read INPUT_COLOR_RIGHT
 
-    speed_left = lift color2speed color_l
-    speed_right = lift color2speed color_r
+    speed_left <- lift color2speed color_l
+    speed_right <- lift color2speed color_r
 
     output OUTPUT_ENGINE_LEFT speed_left
     output OUTPUT_ENGINE_RIGHT speed_right

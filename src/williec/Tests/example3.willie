@@ -9,7 +9,7 @@ OUTPUT_ENGINE_L = 1
 OUTPUT_ENGINE_R = 2
 
 do {
-  clock = read INPUT_CLOCK
+  clock <- read INPUT_CLOCK
   output OUTPUT_ENGINE_L clock
   output OUTPUT_ENGINE_R clock
 }

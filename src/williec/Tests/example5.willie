@@ -1,6 +1,6 @@
 # delivery-bot
 # El robot sigue una línea, y cuenta las casas frente a las que pasa.
-# Al llegar a la casa número 5 se detiene.
+# Al llegar a la casa numero 5 se detiene.
 
 #Inputs
 INPUT_DISTANCE = 1
@@ -26,7 +26,7 @@ color_a_vel gris = if (gris > MIN_GREY) 1 else 1/2
 
 suma a b = (a + b)
 multiplicar a b = (a * b)
-and a b = if (a && b) then 1 else 0
+and a b = if (a and b) then 1 else 0
 distinto a b = if (a /= b) then 1 else 0
 
 do {

@@ -12,6 +12,10 @@ data Expr
     name :: {String}
   | Int
     value :: {Int}
+  | If
+    cond :: {Expr}
+    then :: {Expr}
+    else :: {Expr}
   | Add
     left :: Expr
     right :: Expr
@@ -22,6 +26,12 @@ data Expr
     left :: Expr
     right :: Expr
   | Div
+    left :: Expr
+    right :: Expr
+  | Cmp
+    left :: Expr
+    right :: Expr
+  | BinBool
     left :: Expr
     right :: Expr
 
@@ -41,6 +51,11 @@ data Dodecl
       function :: {String}
       source_1 :: {String}
       source_2 :: {String}
+  | Folds
+      name :: {String}
+      function :: {String}
+      value :: Expr
+      source :: {String}
 
 data Decl
   | Function
@@ -89,6 +104,9 @@ sem Dodecl
       lhs.code = "lift "
   | Lift2
       lhs.code = "lift2 "
+  | Folds 
+      lhs.code = "folds "
+
 
 sem Expr
   | Var
@@ -97,6 +115,8 @@ sem Expr
       lhs.code = "push const " ++ @name ++ "\n"
   | Int
       lhs.code = "integer value"
+  | If
+      lhs.code = "if ...."
 
 sem Root
   | Root
