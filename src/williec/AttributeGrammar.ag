@@ -8,20 +8,39 @@ type Dodecls = [Dodecl]
 data Expr
   | Var
     name :: {String}
-    const :: {String}
+  | Const
+    name :: {String}
+  | Int
+    value :: {Int}
+  | Add
+    left :: Expr
+    right :: Expr
+  | Sub
+    left :: Expr
+    right :: Expr
+  | Times
+    left :: Expr
+    right :: Expr
+  | Div
+    left :: Expr
+    right :: Expr
 
 data Dodecl
   | Read
       name :: {String}
       input :: Expr
+  | Output
+      output :: Expr
+      name :: {String}
 
 data Decl
   | Function
       name :: {String}
-      body :: {String}
+      args :: {[String]}
+      body :: Expr
   | Const
       name :: {String}
-      value :: {String}
+      value :: Expr
 
 data Root
   | Root
@@ -32,13 +51,13 @@ deriving * : Show
 wrapper Root
 
 -- Code generation
-attr Root Decls Decl Dodecls Dodecl syn code :: String
+attr Root Decls Decl Dodecls Dodecl Expr syn code :: String
 
 sem Decl
   | Function
-      lhs.code = "[" ++ @name ++ "]:\n " ++ @body ++ "\nret\n"
+      lhs.code = "[" ++ @name ++ "]:\n " ++ @body.code ++ "\nret\n"
   | Const
-      lhs.code = "const: " ++ @name ++ "value: " ++ @value ++ "\n"
+      lhs.code = "const: " ++ @name ++ "value: " ++ @value.code ++ "\n"
 
 sem Decls
   | Cons
@@ -55,6 +74,14 @@ sem Dodecls
 sem Dodecl
   | Read
       lhs.code = "read " ++ @name ++ "input: TODO\n"
+
+sem Expr
+  | Var
+      lhs.code = "load " ++ @name ++ "\n"
+  | Const
+      lhs.code = "push const " ++ @name ++ "\n"
+  | Int
+      lhs.code = "integer value"
 
 sem Root
   | Root
