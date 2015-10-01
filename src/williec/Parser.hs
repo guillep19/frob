@@ -59,4 +59,6 @@ pDodecls
 pDodecl :: TokenParser Dodecl
 pDodecl
   = (\_ x y -> Dodecl_Output x y) <$> pKey "output" <*> pExpr <*> pVarid
-  <|> (\x _ _ y -> Dodecl_Read x y) <$> pVarid <*> pKey "->" <*> pKey "read" <*> pExpr
+  <|> (\x _ _ y -> Dodecl_Read x y) <$> pVarid <*> pKey "<-" <*> pKey "read" <*> pExpr
+  <|> (\x _ _ f s -> Dodecl_Lift x f s) <$> pVarid <*> pKey "<-" <*> pKey "lift" <*> pVarid <*> pVarid
+  <|> (\x _ _ f s1 s2 -> Dodecl_Lift2 x f s1 s2) <$> pVarid <*> pKey "<-" <*> pKey "lift2" <*> pVarid <*> pVarid <*> pVarid

@@ -32,6 +32,15 @@ data Dodecl
   | Output
       output :: Expr
       name :: {String}
+  | Lift
+      name :: {String}
+      function :: {String}
+      source :: {String}
+  | Lift2
+      name :: {String}
+      function :: {String}
+      source_1 :: {String}
+      source_2 :: {String}
 
 data Decl
   | Function
@@ -74,6 +83,12 @@ sem Dodecls
 sem Dodecl
   | Read
       lhs.code = "read " ++ @name ++ "input: TODO\n"
+  | Output
+      lhs.code = "output "
+  | Lift
+      lhs.code = "lift "
+  | Lift2
+      lhs.code = "lift2 "
 
 sem Expr
   | Var
@@ -86,6 +101,7 @@ sem Expr
 sem Root
   | Root
       lhs.code = @decls.code ++ @dodecls.code
+
 -------------------------------------------
 -- Interface to the haskell world:
 --   inh  = Inh_Root { }
