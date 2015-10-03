@@ -5,6 +5,7 @@ module AttributeGrammar where
 type Decls = [Decl]
 type Dodecls = [Dodecl]
 
+
 data Expr
   | Var
     name :: {String}
@@ -16,6 +17,10 @@ data Expr
     cond :: {Expr}
     then :: {Expr}
     else :: {Expr}
+  | BinExpr
+    op :: {String}
+    left :: Expr
+    right :: Expr
   | Add
     left :: Expr
     right :: Expr
@@ -104,7 +109,7 @@ sem Dodecl
       lhs.code = "lift "
   | Lift2
       lhs.code = "lift2 "
-  | Folds 
+  | Folds
       lhs.code = "folds "
 
 
@@ -114,9 +119,11 @@ sem Expr
   | Const
       lhs.code = "push const " ++ @name ++ "\n"
   | Int
-      lhs.code = "integer value"
+      lhs.code = "integer value\n"
   | If
-      lhs.code = "if ...."
+      lhs.code = "if ....\n"
+  | BinExpr
+      lhs.code = "bin expr \n"
 
 sem Root
   | Root

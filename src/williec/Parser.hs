@@ -35,33 +35,45 @@ pIfExpr :: TokenParser Expr
 pIfExpr
   = (\_ cond _ t _ e -> Expr_If cond t e) <$> pKey "if" <*> pExpr <*> pKey "then" <*> pExpr <*> pKey "else" <*> pExpr
 
+-- Lowest precedence operators.
+pBinOp :: TokenParser String
+pBinOp
+  = pKey "+"
+  <|> pKey "-"
+  <|> pKey "<"
+  <|> pKey ">"
+  <|> pKey "<="
+  <|> pKey ">="
+  <|> pKey "=="
+  <|> pKey "/="
+  <|> pKey "and"
+  <|> pKey "or"
+
+-- Highest precedence operators
+pBinOpH :: TokenParser String
+pBinOpH
+  = pKey "*"
+  <|> pKey "/"
+
+-- Lowest precedence operators expressions.
 pAdd :: TokenParser Expr
 pAdd
   = pFactor
-  <|> (\x _ y -> Expr_Add x y) <$> pFactor <*> pKey "+" <*> pAdd
-  <|> (\x _ y -> Expr_Sub x y) <$> pFactor <*> pKey "-" <*> pAdd
-  <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey "<" <*> pExpr
-  <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey ">" <*> pExpr
-  <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey "<=" <*> pExpr
-  <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey ">=" <*> pExpr
-  <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey "==" <*> pExpr
-  <|> (\x _ y -> Expr_Cmp x y) <$> pFactor <*> pKey "/=" <*> pExpr
-  <|> (\x _ y -> Expr_BinBool x y) <$> pFactor <*> pKey "and" <*> pExpr
-  <|> (\x _ y -> Expr_BinBool x y) <$> pFactor <*> pKey "or" <*> pExpr
+  <|> (\x op y -> Expr_BinExpr op x y) <$> pFactor <*> pBinOp <*> pExpr
 
+-- Highest precedence operators expressions.
 pFactor :: TokenParser Expr
 pFactor
   = pTerm
-  <|> (\x _ y -> Expr_Times x y) <$> pTerm <*> pKey "*" <*> pFactor
-  <|> (\x _ y -> Expr_Div x y) <$> pTerm <*> pKey "/" <*> pFactor
+  <|> (\x op y -> Expr_BinExpr op x y) <$> pTerm <*> pBinOpH <*> pFactor
 
+-- (Atom) Simple terms: Numbers, Variables, Constants or parenthized expr.
 pTerm :: TokenParser Expr
 pTerm
   = (\x -> Expr_Var x) <$> pVarid
     <|> (\x -> Expr_Const x) <$> pConid
     <|> (\x -> Expr_Int $ read x) <$> pInteger16
     <|> (\_ x _ -> x) <$> pKey "(" <*> pExpr <*> pKey ")"
-
 
 -- do declarations
 --
