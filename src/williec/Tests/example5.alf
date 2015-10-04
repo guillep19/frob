@@ -1,29 +1,151 @@
-# TODO: Incompleto. Generar a partir de compiler..
-
-push 1
-store 0
-push 1
-store 1
-read 0 0
-lift 1 0 hay_casa
-write 1 1
-push 1
-store 2
-folds 2 1 2 suma
-lift 3 2 mayor_a_5
-write 3 2
-halt
-[hay_casa] load_param 0
-push 100
-cmp_lt
-ret
-[suma]
-load_param 0
-load_param 1
-add
-ret
-[mayor_a_5]
-load_param 0
-push 5
-cmp_gt
-ret
+0: t_call
+1: 50
+2: t_read 11
+3: t_call
+4: 53
+5: t_read 10
+6: t_call
+7: 56
+8: t_read 9
+9: t_lift 8
+10: 11
+11: 77
+12: t_push
+13: 0
+14: t_folds 7
+15: 8
+16: 139
+17: t_lift2 6
+18: 8
+19: 7
+20: 127
+21: t_push
+22: 0
+23: t_folds 5
+24: 6
+25: 119
+26: t_lift 4
+27: 5
+28: 90
+29: t_lift 3
+30: 10
+31: 103
+32: t_lift 2
+33: 9
+34: 103
+35: t_lift2 1
+36: 4
+37: 3
+38: 123
+39: t_lift2 0
+40: 4
+41: 2
+42: 123
+43: t_call
+44: 59
+45: t_write 1
+46: t_call
+47: 62
+48: t_write 0
+49: t_halt
+50: t_push
+51: 1
+52: t_ret
+53: t_push
+54: 2
+55: t_ret
+56: t_push
+57: 3
+58: t_ret
+59: t_push
+60: 1
+61: t_ret
+62: t_push
+63: 2
+64: t_ret
+65: t_push
+66: 100
+67: t_ret
+68: t_push
+69: 50
+70: t_ret
+71: t_push
+72: 300
+73: t_ret
+74: t_push
+75: 150
+76: t_ret
+77: t_load_param 0
+78: t_call
+79: 65
+80: t_cmp_lt
+81: t_jump_false
+82: 87
+83: t_push
+84: 1
+85: t_jump
+86: 89
+87: t_push
+88: 0
+89: t_ret
+90: t_load_param 0
+91: t_push
+92: 5
+93: t_cmp_gte
+94: t_jump_false
+95: 100
+96: t_push
+97: 0
+98: t_jump
+99: 102
+100: t_push
+101: 100
+102: t_ret
+103: t_load_param 0
+104: t_call
+105: 68
+106: t_cmp_gt
+107: t_jump_false
+108: 113
+109: t_push
+110: 1
+111: t_jump
+112: 118
+113: t_push
+114: 1
+115: t_push
+116: 2
+117: t_div
+118: t_ret
+119: t_load_param 0
+120: t_load_param 1
+121: t_add
+122: t_ret
+123: t_load_param 0
+124: t_load_param 1
+125: t_mul
+126: t_ret
+127: t_load_param 0
+128: t_load_param 1
+129: t_op_and
+130: t_jump_false
+131: 136
+132: t_push
+133: 1
+134: t_jump
+135: 138
+136: t_push
+137: 0
+138: t_ret
+139: t_load_param 0
+140: t_load_param 1
+141: t_cmp_neq
+142: t_jump_false
+143: 148
+144: t_push
+145: 1
+146: t_jump
+147: 150
+148: t_push
+149: 0
+150: t_ret

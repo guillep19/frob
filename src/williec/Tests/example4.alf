@@ -1,31 +1,53 @@
-push 2
-store 0 // INPUT_COLOR_LEFT
-push 3
-store 1 // INPUT_COLOR_RIGHT
-push 1
-store 2 // OUTPUT_ENGINE_LEFT
-push 2
-store 3 // OUTPUT_ENGINE_RIGHT
-push 50
-store 4 // MIN_GREY
-push 300
-store 5 // MAX_SPEED
-push 150
-store 6 // MIN_SPEED
-read 0 0 // color_l = read INPUT_COLOR_LEFT
-read 1 1 // color_r = read INPUT_COLOR_RIGHT
-lift 2 0 color2speed // speed_left = lift color2speed color_l
-lift 3 1 color2speed // speed_right = lift color2speed color_r
-write 2 2 // output OUTPUT_ENGINE_LEFT speed_left
-write 3 3 // output OUTPUT_ENGINE_RIGHT speed_right
-halt
-[color2speed]
-load_param 0 // grey
-load 4 // MIN_GREY
-cmp_gt // grey > MIN_GREY
-jump_false color2speed.else
-load 6 // MAX_SPEED
-ret
-[color2speed.else]
-load 5 // MAX_SPEED
-ret
+0: t_call
+1: 19
+2: t_read 3
+3: t_call
+4: 22
+5: t_read 2
+6: t_lift 1
+7: 3
+8: 40
+9: t_lift 0
+10: 2
+11: 40
+12: t_call
+13: 25
+14: t_write 1
+15: t_call
+16: 28
+17: t_write 0
+18: t_halt
+19: t_push
+20: 2
+21: t_ret
+22: t_push
+23: 3
+24: t_ret
+25: t_push
+26: 1
+27: t_ret
+28: t_push
+29: 2
+30: t_ret
+31: t_push
+32: 50
+33: t_ret
+34: t_push
+35: 300
+36: t_ret
+37: t_push
+38: 150
+39: t_ret
+40: t_load_param 0
+41: t_call
+42: 31
+43: t_cmp_gt
+44: t_jump_false
+45: 50
+46: t_call
+47: 37
+48: t_jump
+49: 52
+50: t_call
+51: 34
+52: t_ret

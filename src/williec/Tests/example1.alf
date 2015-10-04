@@ -1,7 +1,13 @@
-push 0
-store 0 //INPUT_BUTTON
-push 1
-store 1 //OUTPUT_LED
-read 0 0 //INPUT_BUTTON 0
-write 1 0 //write OUTPUT_LED 0
-halt
+0: t_call
+1: 7
+2: t_read 0
+3: t_call
+4: 10
+5: t_write 0
+6: t_halt
+7: t_push
+8: 0
+9: t_ret
+10: t_push
+11: 1
+12: t_ret

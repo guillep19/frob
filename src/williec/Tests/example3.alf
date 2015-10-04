@@ -1,10 +1,19 @@
-push 0
-store 0  //INPUT_CLOCK
-push 1
-store 1 //OUTPUT_ENGINE_L
-push 2
-store 2 //OUTPUT_ENGINE_R
-read 0 0 //clock = read INPUT_CLOCK
-write 1 0 //output OUTPUT_ENGINE_L clock
-write 2 0 //output OUTPUT_ENGINE_R clock
-halt
+0: t_call
+1: 10
+2: t_read 0
+3: t_call
+4: 13
+5: t_write 0
+6: t_call
+7: 16
+8: t_write 0
+9: t_halt
+10: t_push
+11: 0
+12: t_ret
+13: t_push
+14: 1
+15: t_ret
+16: t_push
+17: 2
+18: t_ret

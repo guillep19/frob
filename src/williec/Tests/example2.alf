@@ -1,13 +1,25 @@
-push 0
-store 0 //INPUT_CLOCK
-push 1
-store 1 //INPUT_DISTANCE
-push 2
-store 2 //INPUT_COLOR_LEFT
-push 3
-store 3 //INPUT_COLOR_RIGHT
-read 0 0 //clock = read INPUT_CLOCK
-read 1 1 //distance = read INPUT_DISTANCE
-read 2 2 //color_l = read INPUT_COLOR_LEFT
-read 3 3 //color_r = read INPUT_COLOR_RIGHT
-halt
+0: t_call
+1: 13
+2: t_read 3
+3: t_call
+4: 16
+5: t_read 2
+6: t_call
+7: 19
+8: t_read 1
+9: t_call
+10: 22
+11: t_read 0
+12: t_halt
+13: t_push
+14: 0
+15: t_ret
+16: t_push
+17: 1
+18: t_ret
+19: t_push
+20: 2
+21: t_ret
+22: t_push
+23: 3
+24: t_ret
