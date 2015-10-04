@@ -79,11 +79,13 @@ sem Decl
   | Function
       lhs.code = ("[" ++ @name ++ "]\n" ++
                  @body.code ++
-                 "t_ret\n")
+                 show(@lhs.pos + @body.len) ++
+                 ": t_ret\n")
       lhs.len = @body.len + 1
   | Const
       lhs.code = @value.code ++ 
-                 "t_store " ++ @name ++ "\n"
+                 show(@lhs.pos + @value.len) ++
+                 ": t_store " ++ @name ++ "\n"
       lhs.len = 0
 
 sem Dodecl
@@ -113,8 +115,8 @@ sem Dodecl
   | Folds
       lhs.code = (@value.code ++
                   show(@lhs.pos + @value.len) ++
-                  "t_folds " ++ @name ++
-                  " " ++ @source  ++
+                  ": t_folds " ++ @name ++ "\n    " ++
+                  " " ++ @source  ++ "\n    " ++
                   " " ++ @function ++ "\n")
       lhs.len = @value.len + 3
 
@@ -127,11 +129,10 @@ sem Expr
       lhs.code = show(@lhs.pos) ++ ": t_load " ++ @name ++ "\n"
       lhs.len = 1
   | Int
-      lhs.code = show(@lhs.pos) ++ ": t_push " ++ show(@value) ++ "\n"
+      lhs.code = show(@lhs.pos) ++ ": t_push " ++ "\n    " ++ show(@value) ++ "\n"
       lhs.len = 2
   | If
-      lhs.code = ("/* if */]\n" ++
-                  @cond.code ++ " cond.len=" ++ show(@cond.len) ++ "\n" ++
+      lhs.code = (@cond.code ++
                   show(@lhs.pos + @cond.len) ++ 
                   ": t_jump_false " ++ 
                   show(@lhs.pos + @cond.len + 1 + @then.len + 1) ++
