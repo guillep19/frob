@@ -14,29 +14,11 @@ data Expr
   | Int
     value :: {Int}
   | If
-    cond :: {Expr}
-    then :: {Expr}
-    else :: {Expr}
+    cond :: Expr
+    then :: Expr
+    else :: Expr
   | BinExpr
     op :: {String}
-    left :: Expr
-    right :: Expr
-  | Add
-    left :: Expr
-    right :: Expr
-  | Sub
-    left :: Expr
-    right :: Expr
-  | Times
-    left :: Expr
-    right :: Expr
-  | Div
-    left :: Expr
-    right :: Expr
-  | Cmp
-    left :: Expr
-    right :: Expr
-  | BinBool
     left :: Expr
     right :: Expr
 
@@ -79,55 +61,98 @@ data Root
 deriving * : Show
 wrapper Root
 
+-- Shortcut for semantic rules
+set All = Root Decls Decl Dodecls Dodecl Expr
 -- Code generation
-attr Root Decls Decl Dodecls Dodecl Expr syn code :: String
-
-sem Decl
-  | Function
-      lhs.code = "[" ++ @name ++ "]:\n " ++ @body.code ++ "\nret\n"
-  | Const
-      lhs.code = "const: " ++ @name ++ "value: " ++ @value.code ++ "\n"
-
-sem Decls
-  | Cons
-      lhs.code =  @hd.code ++ @tl.code
-  | Nil
-      lhs.code =  ""
-
-sem Dodecls
-  | Cons
-      lhs.code = @hd.code ++ @tl.code
-  | Nil
-      lhs.code = ""
-
-sem Dodecl
-  | Read
-      lhs.code = "read " ++ @name ++ "input: TODO\n"
-  | Output
-      lhs.code = "output "
-  | Lift
-      lhs.code = "lift "
-  | Lift2
-      lhs.code = "lift2 "
-  | Folds
-      lhs.code = "folds "
 
 
-sem Expr
-  | Var
-      lhs.code = "load " ++ @name ++ "\n"
-  | Const
-      lhs.code = "push const " ++ @name ++ "\n"
-  | Int
-      lhs.code = "integer value\n"
-  | If
-      lhs.code = "if ....\n"
-  | BinExpr
-      lhs.code = "bin expr \n"
+
+attr All syn code :: String
+         syn len :: Int
 
 sem Root
   | Root
       lhs.code = @decls.code ++ @dodecls.code
+      lhs.len = @decls.len + @dodecls.len
+
+sem Decl
+  | Function
+      lhs.code = ("[" ++ @name ++ "]\n" ++
+                 @body.code ++
+                 "t_ret\n")
+      lhs.len = @body.len + 1
+  | Const
+      lhs.code = @value.code ++ 
+                 "t_store " ++ @name ++ "\n"
+      lhs.len = 0
+
+sem Decls
+  | Cons
+      lhs.code =  @hd.code ++ @tl.code
+      lhs.len = @hd.len + @tl.len
+  | Nil
+      lhs.code =  ""
+      lhs.len = 0
+
+sem Dodecls
+  | Cons
+      lhs.code = @hd.code ++ @tl.code
+      lhs.len = @hd.len + @tl.len
+  | Nil
+      lhs.code = ""
+      lhs.len = 0
+
+sem Dodecl
+  | Read
+      lhs.code = @input.code ++ "read " ++ @name ++ "\n"
+      lhs.len = @input.len + 1
+  | Output
+      lhs.code = @output.code ++ "t_write " ++ @name ++ "\n"
+      lhs.len = @output.len + 1
+  | Lift
+      lhs.code = ("t_lift " ++ @name ++
+                  " " ++ @source ++
+                  " " ++ @function ++ "\n")
+      lhs.len = 3
+  | Lift2
+      lhs.code = ("t_lift2 " ++ @name ++
+                  " " ++ @source_1 ++
+                  " " ++ @source_2 ++
+                  " " ++ @function ++ "\n")
+      lhs.len = 4
+  | Folds
+      lhs.code = (@value.code ++
+                  "t_folds " ++ @name ++
+                  " " ++ @source  ++
+                  " " ++ @function ++ "\n")
+      lhs.len = @value.len + 3
+
+
+sem Expr
+  | Var
+      lhs.code = "t_load_param " ++ @name ++ "\n"
+      lhs.len = 1
+  | Const
+      lhs.code = "t_load " ++ @name ++ "\n"
+      lhs.len = 1
+  | Int
+      lhs.code = "t_push " ++ show(@value) ++ "\n"
+      lhs.len = 2
+  | If
+      lhs.code = (@cond.code ++
+                  "t_jump_false _else_\n" ++
+                  @then.code ++
+                  "t_jump end_if\n" ++
+                  "[else]\n" ++
+                  @else.code ++
+                  "[end_if]\n")
+      lhs.len = 1 -- @cond.len + 1 + @then.len + 1 + @else.len
+  | BinExpr
+      lhs.code = (@left.code ++
+                  @right.code ++
+                  "t_" ++ @op ++ "\n")
+      lhs.len = @left.len + @right.len + 1
+
 
 -------------------------------------------
 -- Interface to the haskell world:
