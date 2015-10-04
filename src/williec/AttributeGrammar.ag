@@ -81,7 +81,7 @@ sem Root
                  ": t_halt\n" ++
                  @decls.code
       dodecls.pos = 0
-      decls.pos = @dodecls.len
+      decls.pos = @dodecls.len + 1
       decls.labels = emptyLabelMap
       decls.labelMap = @decls.labels
       dodecls.labelMap = @decls.labels
@@ -168,9 +168,9 @@ sem Expr
       lhs.len = 1
   | Const
       lhs.code = show(@lhs.pos) ++
-                 ": t_call " ++ show(getLabel @name @lhs.labels) ++
+                 ": t_call\n    " ++ show(getLabel @name @lhs.labels) ++
                  " //" ++ @name ++ "\n"
-      lhs.len = 1
+      lhs.len = 2
   | Int
       lhs.code = show(@lhs.pos) ++ ": t_push " ++ "\n    " ++ show(@value) ++ "\n"
       lhs.len = 2
