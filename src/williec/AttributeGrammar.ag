@@ -68,12 +68,11 @@ set All = Root Decls Decl Dodecls Dodecl Expr
 
 
 attr All syn code :: String
-         syn len :: Int
+         syn len use {+} {0} :: Int
 
 sem Root
   | Root
       lhs.code = @decls.code ++ @dodecls.code
-      lhs.len = @decls.len + @dodecls.len
 
 sem Decl
   | Function
@@ -89,10 +88,8 @@ sem Decl
 sem Decls
   | Cons
       lhs.code =  @hd.code ++ @tl.code
-      lhs.len = @hd.len + @tl.len
   | Nil
       lhs.code =  ""
-      lhs.len = 0
 
 sem Dodecls
   | Cons
