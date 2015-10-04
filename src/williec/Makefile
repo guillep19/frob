@@ -21,7 +21,7 @@ AttributeGrammar.o: AttributeGrammar.hs
 AttributeGrammar.hs: AttributeGrammar.ag Makefile
 	uuagc -dcfsrv --haskellsyntax -o AttributeGrammar.hs AttributeGrammar.ag
 clean:
-	rm -f *.hi *.o Lexer.hs AttributeGrammar.hs williec
+	rm -f *.hi *.o Lexer.hs AttributeGrammar.hs williec williec.aux
 test:
 	williec ./Tests/example1.willie ./Tests/out/example1.alf
 	williec ./Tests/example2.willie ./Tests/out/example2.alf
