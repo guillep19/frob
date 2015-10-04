@@ -1,47 +1,38 @@
 
 module Env where
 import qualified Data.Map as Map
+import Data.List
 
-data Env = E_Env { vars :: (Map.Map String Int),
-                   varcount :: Int,
-                   frps :: (Map.Map String Int),
-                   frpcount :: Int,
-                   labels :: (Map.Map String Int)
+data Env = E_Env {
+           frps :: [String],
+           scope :: [[String]],
+           labels :: 
          } deriving Show
 
 emptyEnv :: Env
-emptyEnv = (E_Env Map.empty 0 Map.empty 0 Map.empty)
+emptyEnv = (E_Env [] [[]])
 
-exists_var :: String -> Env -> Bool
-exists_var name = Map.member name . vars
+addFrpId :: String -> Env -> Env
+addFrpId id env = env { frps = id:(frps env) }
+                  where count = length (frps env)
 
-add_vardecl :: String -> Env -> Env
-add_vardecl name env = if (Map.member name $ vars env)
-            then env
-            else env {vars = Map.insert name count (vars env),
-                      varcount = count + 1}
-            where count = varcount env
-
-lookup_var :: String -> Env -> Int
-lookup_var str env = case Map.lookup str (vars env) of
+findFrpId :: String -> Env -> Int
+findFrpId id env = case elemIndex id (frps env) of
                    Just n -> n
-                   Nothing -> 1998
+                   Nothing -> error ("Frp id=" ++ id ++ " does not exist.")
 
-add_frp_id :: String -> Env -> Env
-add_frp_id id env = env {frps = Map.insert id count (frps env),
-                         frpcount = count + 1}
-                  where count = frpcount env
 
-find_frp_id :: String -> Env -> Int
-find_frp_id id env = case Map.lookup id (frps env) of
-                   Just n -> n
-                   Nothing -> 9999
 
-set_label_index :: String -> Int -> Env -> Env
-set_label_index label index env = let l = Map.insert label index (labels env)
-                                in env {labels = l}
 
-get_label_index :: String -> Env -> Int
-get_label_index label env = case Map.lookup label (labels env) of
-                   Just n -> n
-                   Nothing -> 9999
+type LabelMap = Map.Map String Int
+
+emptyLabelMap :: LabelMap
+emptyLabelMap = Map.empty
+
+addLabel :: String -> Int -> LabelMap -> LabelMap
+addLabel label pos labels = Map.insert label pos labels
+
+getLabel :: String -> LabelMap -> Int
+getLabel label labels = case Map.lookup label labels of
+                        Just n -> n
+                        Nothing -> error ("Function not defined: " ++ label)

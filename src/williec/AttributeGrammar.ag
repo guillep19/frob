@@ -1,6 +1,7 @@
 imports
 {
 module AttributeGrammar where
+import Env
 }
 type Decls = [Decl]
 type Dodecls = [Dodecl]
@@ -68,12 +69,14 @@ set All = Root Decls Decl Dodecls Dodecl Expr
 attr All syn code use {++} {[]}:: String
          syn len use {+} {0} :: Int
          inh pos :: Int
+         chn env :: Env
 
 sem Root
   | Root
       lhs.code = @dodecls.code ++ @decls.code
       dodecls.pos = 0
       decls.pos = @dodecls.len
+      decls.env = emptyEnv
 
 sem Decl
   | Function
@@ -153,7 +156,8 @@ sem Expr
   | BinExpr
       lhs.code = (@left.code ++
                   @right.code ++
-                  show(@lhs.pos + @left.len + @right.len) ++ ": t_" ++ @op ++
+                  show(@lhs.pos + @left.len + @right.len) ++ ": " ++ 
+                  binopToInstr(@op) ++
                   "\n")
       lhs.len = @left.len + @right.len + 1
       left.pos = @lhs.pos
@@ -172,3 +176,22 @@ sem Dodecls
 --   inh  = Inh_Root { }
 --   syn  = wrap_Root sem inh
 --   code = code_Syn_Root syn
+
+{
+binopToInstr :: String -> String
+binopToInstr "+" = "t_add"
+binopToInstr "-" = "t_sub"
+binopToInstr "*" = "t_mul"
+binopToInstr "/" = "t_div"
+binopToInstr ">" = "t_cmp_gt"
+binopToInstr "<" = "t_cmp_lt"
+binopToInstr ">=" = "t_cmp_gte"
+binopToInstr "<=" = "t_cmp_lte"
+binopToInstr "==" = "t_cmp_eq"
+binopToInstr "/=" = "t_cmp_neq"
+binopToInstr "and" = "t_op_and"
+binopToInstr "or" = "t_op_or"
+
+unaryOpInstr :: String -> String
+unaryOpInstr "not" = "t_op_not"
+}
