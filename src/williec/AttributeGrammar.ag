@@ -69,7 +69,8 @@ set All = Root Decls Decl Dodecls Dodecl Expr
 attr All syn code use {++} {[]}:: String
          syn len use {+} {0} :: Int
          inh pos :: Int
-         inh env :: Env
+         chn env :: Env
+         inh envInh :: Env
          chn labels :: LabelMap
          inh labelMap :: LabelMap
 
@@ -86,6 +87,7 @@ sem Root
       dodecls.labelMap = @decls.labels
       decls.env = emptyEnv
       dodecls.env = emptyEnv
+      dodecls.envInh = @dodecls.env
 
 sem Decl
   | Function
@@ -106,41 +108,56 @@ sem Decl
 
 sem Dodecl
   | Read
+      lhs.env = addFrpId @name @lhs.env
       lhs.code = @input.code ++
                  show(@lhs.pos + @input.len) ++
-                 ": t_read " ++ @name ++ "\n"
+                 ": t_read " ++
+                 show(findFrpId @name @lhs.envInh) ++
+                 " // " ++ @name ++ "\n"
       lhs.len = @input.len + 1
   | Output
       lhs.code = @output.code ++
                  show(@lhs.pos + @output.len) ++
-                 ": t_write " ++ @name ++ "\n"
+                 ": t_write " ++
+                 show(findFrpId @name @lhs.envInh) ++
+                 " // " ++ @name ++ "\n"
       lhs.len = @output.len + 1
   | Lift
       lhs.code = (show(@lhs.pos) ++
-                  ": t_lift " ++ @name ++ "\n" ++
-                  " " ++ @source ++ "\n" ++
-                  " " ++ show(getLabel @function @lhs.labels) ++
-                  " //" ++ @function ++
+                  ": t_lift " ++ show(findFrpId @name @lhs.envInh) ++
+                  " // " ++ @name ++ "\n" ++
+                  "    " ++ show(findFrpId @source @lhs.envInh) ++
+                  " // " ++ @source ++ "\n" ++
+                  "    " ++ show(getLabel @function @lhs.labels) ++
+                  " // " ++ @function ++
                   "\n")
       lhs.len = 3
+      lhs.env = addFrpId @name @lhs.env
   | Lift2
       lhs.code = (show(@lhs.pos) ++
-                  ": t_lift2 " ++ @name ++
-                  " //" ++ @source_1 ++ "\n" ++
-                  " //" ++ @source_2 ++ "\n" ++
-                  " " ++ show(getLabel @function @lhs.labels) ++
-                  " //" ++ @function ++
+                  ": t_lift2 " ++ show(findFrpId @name @lhs.envInh) ++
+                  " // " ++ @name ++ "\n" ++
+                  "    " ++ show(findFrpId @source_1 @lhs.envInh) ++
+                  " // " ++ @source_1 ++ "\n" ++
+                  "    " ++ show(findFrpId @source_2 @lhs.envInh) ++
+                  " // " ++ @source_2 ++ "\n" ++
+                  "    " ++ show(getLabel @function @lhs.labels) ++
+                  " // " ++ @function ++
                   "\n")
       lhs.len = 4
+      lhs.env = addFrpId @name @lhs.env
   | Folds
       lhs.code = (@value.code ++
                   show(@lhs.pos + @value.len) ++
-                  ": t_folds " ++ @name ++ "\n    " ++
-                  " " ++ @source  ++ "\n    " ++
-                  " " ++ show(getLabel @function @lhs.labels) ++
-                  " //" ++ @function ++
+                  ": t_folds " ++ show(findFrpId @name @lhs.envInh) ++
+                  " // " ++ @name ++ "\n" ++
+                  "    " ++ show(findFrpId @source @lhs.envInh) ++
+                  " // " ++ @source  ++ "\n" ++
+                  "    " ++ show(getLabel @function @lhs.labels) ++
+                  " // " ++ @function ++
                   "\n")
       lhs.len = @value.len + 3
+      lhs.env = addFrpId @name @lhs.env
 
 
 sem Expr
@@ -160,22 +177,22 @@ sem Expr
   | If
       lhs.code = (@cond.code ++
                   show(@lhs.pos + @cond.len) ++ 
-                  ": t_jump_false " ++ 
-                  show(@lhs.pos + @cond.len + 1 + @then.len + 1) ++
+                  ": t_jump_false\n    " ++ 
+                  show(@lhs.pos + @cond.len + 2 + @then.len + 2) ++
                   "\n" ++
                   @then.code ++
-                  show(@lhs.pos + @cond.len + 1 + @then.len) ++ 
-                  ": t_jump " ++ 
-                  show(@lhs.pos + @cond.len + 1 +
-                                  @then.len + 1 + @else.len) ++
+                  show(@lhs.pos + @cond.len + 2 + @then.len) ++ 
+                  ": t_jump\n    " ++ 
+                  show(@lhs.pos + @cond.len + 2 +
+                                  @then.len + 2 + @else.len) ++
                   "\n" ++
                   "[else]\n" ++
                   @else.code ++
                   "[end_if]\n")
-      lhs.len = @cond.len + 1 + @then.len + 1 + @else.len
+      lhs.len = @cond.len + 2 + @then.len + 2 + @else.len
       cond.pos = @lhs.pos
-      then.pos = @lhs.pos + @cond.len + 1
-      else.pos = @lhs.pos + @cond.len + @then.len + 2
+      then.pos = @lhs.pos + @cond.len + 2
+      else.pos = @lhs.pos + @cond.len + @then.len + 4
   | BinExpr
       lhs.code = (@left.code ++
                   @right.code ++
