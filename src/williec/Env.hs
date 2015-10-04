@@ -20,8 +20,14 @@ findFrpId id env = case elemIndex id (frps env) of
                    Just n -> n
                    Nothing -> error ("Frp id=" ++ id ++ " does not exist.")
 
+addScope :: [String] -> Env -> Env
+addScope args env = env { scope = args:(scope env) }
 
-
+getScopeVar :: String -> Env -> Int
+getScopeVar var env = case elemIndex var (head (scope env)) of
+                      Just n -> n
+                      Nothing -> error $ "Cant find variable (" ++ var ++
+                                         ") in scope"
 
 type LabelMap = Map.Map String Int
 

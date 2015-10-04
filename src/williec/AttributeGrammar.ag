@@ -69,18 +69,23 @@ set All = Root Decls Decl Dodecls Dodecl Expr
 attr All syn code use {++} {[]}:: String
          syn len use {+} {0} :: Int
          inh pos :: Int
-         --chn env :: Env
+         inh env :: Env
          chn labels :: LabelMap
          inh labelMap :: LabelMap
 
 sem Root
   | Root
-      lhs.code = @dodecls.code ++ @decls.code
+      lhs.code = @dodecls.code ++ 
+                 show(@dodecls.len) ++
+                 ": t_halt\n" ++
+                 @decls.code
       dodecls.pos = 0
       decls.pos = @dodecls.len
       decls.labels = emptyLabelMap
       decls.labelMap = @decls.labels
       dodecls.labelMap = @decls.labels
+      decls.env = emptyEnv
+      dodecls.env = emptyEnv
 
 sem Decl
   | Function
@@ -90,6 +95,7 @@ sem Decl
                  ": t_ret\n")
       lhs.len = @body.len + 1
       lhs.labels = addLabel @name @lhs.pos @lhs.labels
+      body.env = addScope @args @lhs.env
   | Const
       lhs.code = ("[" ++ @name ++ "]\n" ++
                   @value.code ++
@@ -111,8 +117,8 @@ sem Dodecl
       lhs.len = @output.len + 1
   | Lift
       lhs.code = (show(@lhs.pos) ++
-                  ": t_lift " ++ @name ++
-                  " " ++ @source ++
+                  ": t_lift " ++ @name ++ "\n" ++
+                  " " ++ @source ++ "\n" ++
                   " " ++ show(getLabel @function @lhs.labels) ++
                   " //" ++ @function ++
                   "\n")
@@ -139,7 +145,9 @@ sem Dodecl
 
 sem Expr
   | Var
-      lhs.code = show(@lhs.pos) ++ ": t_load_param " ++ @name ++ "\n"
+      lhs.code = show(@lhs.pos) ++
+                 ": t_load_param " ++ show(getScopeVar @name @lhs.env) ++
+                 " // " ++ @name ++ "\n"
       lhs.len = 1
   | Const
       lhs.code = show(@lhs.pos) ++
