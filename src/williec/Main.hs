@@ -29,9 +29,9 @@ compile :: String -> String -> IO ()
 compile source dest
   = do input <- readFile source
        let toks = tokenize source input
-       putStrLn "-- Tokens: --"
-       putStrLn (show toks)
-       putStrLn "-----------------"
+       -- putStrLn "-- Tokens: --"
+       -- putStrLn (show toks)
+       -- putStrLn "-----------------"
        root <- runParser toks
        putStrLn "-- AST: --"
        putStrLn (show root)
