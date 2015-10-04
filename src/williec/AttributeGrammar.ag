@@ -2,6 +2,7 @@ imports
 {
 module AttributeGrammar where
 import Env
+import Bytecode
 }
 type Decls = [Decl]
 type Dodecls = [Dodecl]
@@ -66,7 +67,7 @@ wrapper Root
 set All = Root Decls Decl Dodecls Dodecl Expr
 -- Code generation
 
-attr All syn code use {++} {[]}:: String
+attr All syn code use {++} {[]} :: BC
          syn len use {+} {0} :: Int
          inh pos :: Int
          chn env :: Env
@@ -76,10 +77,7 @@ attr All syn code use {++} {[]}:: String
 
 sem Root
   | Root
-      lhs.code = @dodecls.code ++ 
-                 show(@dodecls.len) ++
-                 ": t_halt\n" ++
-                 @decls.code
+      lhs.code = @dodecls.code ++ [Thalt] ++ @decls.code
       dodecls.pos = 0
       decls.pos = @dodecls.len + 1
       decls.labels = emptyLabelMap
@@ -91,114 +89,70 @@ sem Root
 
 sem Decl
   | Function
-      lhs.code = ("[" ++ @name ++ "]\n" ++
-                 @body.code ++
-                 show(@lhs.pos + @body.len) ++
-                 ": t_ret\n")
+      lhs.code = @body.code ++ [Tret]
       lhs.len = @body.len + 1
       lhs.labels = addLabel @name @lhs.pos @lhs.labels
       body.env = addScope @args @lhs.env
   | Const
-      lhs.code = ("[" ++ @name ++ "]\n" ++
-                  @value.code ++
-                  show(@lhs.pos + @value.len) ++
-                  ": t_ret\n")
+      lhs.code = @value.code ++ [Tret]
       lhs.len = @value.len + 1
       lhs.labels = addLabel @name @lhs.pos @lhs.labels
 
 sem Dodecl
   | Read
       lhs.env = addFrpId @name @lhs.env
-      lhs.code = @input.code ++
-                 show(@lhs.pos + @input.len) ++
-                 ": t_read " ++
-                 show(findFrpId @name @lhs.envInh) ++
-                 " // " ++ @name ++ "\n"
+      lhs.code = @input.code ++ [Tread (findFrpId @name @lhs.envInh)]
       lhs.len = @input.len + 1
   | Output
-      lhs.code = @output.code ++
-                 show(@lhs.pos + @output.len) ++
-                 ": t_write " ++
-                 show(findFrpId @name @lhs.envInh) ++
-                 " // " ++ @name ++ "\n"
+      lhs.code = @output.code ++ [Twrite (findFrpId @name @lhs.envInh)]
       lhs.len = @output.len + 1
   | Lift
-      lhs.code = (show(@lhs.pos) ++
-                  ": t_lift " ++ show(findFrpId @name @lhs.envInh) ++
-                  " // " ++ @name ++ "\n" ++
-                  "    " ++ show(findFrpId @source @lhs.envInh) ++
-                  " // " ++ @source ++ "\n" ++
-                  "    " ++ show(getLabel @function @lhs.labels) ++
-                  " // " ++ @function ++
-                  "\n")
+      lhs.code = [Tlift {sid=(findFrpId @name @lhs.envInh),
+                         source=(findFrpId @source @lhs.envInh),
+                         fun=(getLabel @function @lhs.labels)}]
       lhs.len = 3
       lhs.env = addFrpId @name @lhs.env
   | Lift2
-      lhs.code = (show(@lhs.pos) ++
-                  ": t_lift2 " ++ show(findFrpId @name @lhs.envInh) ++
-                  " // " ++ @name ++ "\n" ++
-                  "    " ++ show(findFrpId @source_1 @lhs.envInh) ++
-                  " // " ++ @source_1 ++ "\n" ++
-                  "    " ++ show(findFrpId @source_2 @lhs.envInh) ++
-                  " // " ++ @source_2 ++ "\n" ++
-                  "    " ++ show(getLabel @function @lhs.labels) ++
-                  " // " ++ @function ++
-                  "\n")
+      lhs.code = [Tlift2 {sid=(findFrpId @name @lhs.envInh),
+                          source1=(findFrpId @source_1 @lhs.envInh),
+                          source2=(findFrpId @source_2 @lhs.envInh),
+                          fun=(getLabel @function @lhs.labels)}]
       lhs.len = 4
       lhs.env = addFrpId @name @lhs.env
   | Folds
-      lhs.code = (@value.code ++
-                  show(@lhs.pos + @value.len) ++
-                  ": t_folds " ++ show(findFrpId @name @lhs.envInh) ++
-                  " // " ++ @name ++ "\n" ++
-                  "    " ++ show(findFrpId @source @lhs.envInh) ++
-                  " // " ++ @source  ++ "\n" ++
-                  "    " ++ show(getLabel @function @lhs.labels) ++
-                  " // " ++ @function ++
-                  "\n")
+      lhs.code = @value.code ++
+                 [Tfolds {sid=(findFrpId @name @lhs.envInh),
+                          source=(findFrpId @source @lhs.envInh),
+                          fun=(getLabel @function @lhs.labels)}]
       lhs.len = @value.len + 3
       lhs.env = addFrpId @name @lhs.env
 
 
 sem Expr
   | Var
-      lhs.code = show(@lhs.pos) ++
-                 ": t_load_param " ++ show(getScopeVar @name @lhs.env) ++
-                 " // " ++ @name ++ "\n"
+      lhs.code = [Tload_param (getScopeVar @name @lhs.env)]
       lhs.len = 1
   | Const
-      lhs.code = show(@lhs.pos) ++
-                 ": t_call\n    " ++ show(getLabel @name @lhs.labels) ++
-                 " //" ++ @name ++ "\n"
+      lhs.code = [Tcall {fun=(getLabel @name @lhs.labels)}]
       lhs.len = 2
   | Int
-      lhs.code = show(@lhs.pos) ++ ": t_push " ++ "\n    " ++ show(@value) ++ "\n"
+      lhs.code = [Tpush {value=(@value)}]
       lhs.len = 2
   | If
-      lhs.code = (@cond.code ++
-                  show(@lhs.pos + @cond.len) ++ 
-                  ": t_jump_false\n    " ++ 
-                  show(@lhs.pos + @cond.len + 2 + @then.len + 2) ++
-                  "\n" ++
-                  @then.code ++
-                  show(@lhs.pos + @cond.len + 2 + @then.len) ++ 
-                  ": t_jump\n    " ++ 
-                  show(@lhs.pos + @cond.len + 2 +
-                                  @then.len + 2 + @else.len) ++
-                  "\n" ++
-                  "[else]\n" ++
-                  @else.code ++
-                  "[end_if]\n")
+      lhs.code = @cond.code ++ 
+                 [Tjump_false (@lhs.pos + @cond.len + 2 +
+                                          @then.len + 2)] ++
+                 @then.code ++
+                 [Tjump (@lhs.pos + @cond.len + 2 +
+                                    @then.len + 2 +
+                                    @else.len)] ++ 
+                 @else.code
       lhs.len = @cond.len + 2 + @then.len + 2 + @else.len
       cond.pos = @lhs.pos
       then.pos = @lhs.pos + @cond.len + 2
       else.pos = @lhs.pos + @cond.len + @then.len + 4
   | BinExpr
-      lhs.code = (@left.code ++
-                  @right.code ++
-                  show(@lhs.pos + @left.len + @right.len) ++ ": " ++ 
-                  binopToInstr(@op) ++
-                  "\n")
+      lhs.code = @left.code ++ @right.code ++ [binopToInstr(@op)]
       lhs.len = @left.len + @right.len + 1
       left.pos = @lhs.pos
       right.pos = @lhs.pos + @left.len
@@ -218,20 +172,20 @@ sem Dodecls
 --   code = code_Syn_Root syn
 
 {
-binopToInstr :: String -> String
-binopToInstr "+" = "t_add"
-binopToInstr "-" = "t_sub"
-binopToInstr "*" = "t_mul"
-binopToInstr "/" = "t_div"
-binopToInstr ">" = "t_cmp_gt"
-binopToInstr "<" = "t_cmp_lt"
-binopToInstr ">=" = "t_cmp_gte"
-binopToInstr "<=" = "t_cmp_lte"
-binopToInstr "==" = "t_cmp_eq"
-binopToInstr "/=" = "t_cmp_neq"
-binopToInstr "and" = "t_op_and"
-binopToInstr "or" = "t_op_or"
+binopToInstr :: String -> OpCode
+binopToInstr "+" = Tadd
+binopToInstr "-" = Tsub
+binopToInstr "*" = Tmul
+binopToInstr "/" = Tdiv
+binopToInstr ">" = Tcmp_gt
+binopToInstr "<" = Tcmp_lt
+binopToInstr ">=" = Tcmp_gte
+binopToInstr "<=" = Tcmp_lte
+binopToInstr "==" = Tcmp_eq
+binopToInstr "/=" = Tcmp_neq
+binopToInstr "and" = Top_and
+binopToInstr "or" = Top_or
 
-unaryOpInstr :: String -> String
-unaryOpInstr "not" = "t_op_not"
+unaryOpInstr :: String -> OpCode
+unaryOpInstr "not" = Top_not
 }

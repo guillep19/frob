@@ -16,6 +16,7 @@ import Data.Char
 import Lexer
 import Parser
 import AttributeGrammar
+import Bytecode
 
 main :: IO ()
 main
@@ -38,15 +39,16 @@ compile source dest
        putStrLn "-----------------"
        let output = transform root
        putStrLn "-- Código: --"
-       putStrLn output
+       putStrLn (show output)
        putStrLn "-----------------"
-       writeFile dest output
+       let prettyBC = printBC output
+       writeFile dest prettyBC
 
 runParser :: [Token] -> IO Root
 runParser = parseIOMessage show pRoot
 --runParser t = parseIOMessage show pRoot $ t
 
-transform :: Root -> String
+transform :: Root -> BC
 transform r
   = code_Syn_Root syn
   where inh = Inh_Root {}
