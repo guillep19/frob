@@ -48,7 +48,7 @@ printOpcode :: OpCode -> [String]
 printOpcode (Thalt) = ["t_halt"]
 printOpcode (Tcall fun) = ["t_call", show(fun)]
 printOpcode (Tret) = ["t_ret"]
-printOpcode (Tload_param id) = ["t_load_param", show(id)]
+printOpcode (Tload_param id) = ["t_load_param " ++ show(id)]
 printOpcode (Tlift sid source fun) = ["t_lift " ++ show(sid),
                                       show(source),
                                       show(fun)]
@@ -79,13 +79,13 @@ printOpcode (Top_not) = ["t_op_not"]
 printOpcode (Tpush value) = ["t_push", show(value)]
 printOpcode (Tpop) = ["t_pop"]
 printOpcode (Tdup) = ["t_dup"]
-printOpcode (Tstore pos) = ["t_store", show(pos)]
-printOpcode (Tload pos) = ["t_load", show(pos)]
+printOpcode (Tstore pos) = ["t_store " ++ show(pos)]
+printOpcode (Tload pos) = ["t_load " ++ show(pos)]
 
 
 printBC :: BC -> String
 printBC bc = let lines = (foldr (++) [] (map printOpcode bc))
-                 lineNumbers = map (\n -> show(n) ++ ": ") [1..] in
+                 lineNumbers = map (\n -> show(n) ++ ": ") [0..] in
              foldr (++) "" (map (\(x,y) -> x ++ y ++ "\n") (zip lineNumbers lines))
 
 
