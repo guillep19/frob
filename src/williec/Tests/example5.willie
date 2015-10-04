@@ -46,6 +46,6 @@ do {
     speed_left <- lift2 multiplicar velocidad multip_izq
     speed_right <- lift2 multiplicar velocidad multip_der
 
-    output MOTOR_IZQ speed_left
-    output MOTOR_DER speed_right
+    output OUTPUT_ENGINE_LEFT speed_left
+    output OUTPUT_ENGINE_RIGHT speed_right
 }

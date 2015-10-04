@@ -91,10 +91,12 @@ sem Decl
       lhs.len = @body.len + 1
       lhs.labels = addLabel @name @lhs.pos @lhs.labels
   | Const
-      lhs.code = @value.code ++
-                 show(@lhs.pos + @value.len) ++
-                 ": t_store " ++ @name ++ "\n"
-      lhs.len = 0
+      lhs.code = ("[" ++ @name ++ "]\n" ++
+                  @value.code ++
+                  show(@lhs.pos + @value.len) ++
+                  ": t_ret\n")
+      lhs.len = @value.len + 1
+      lhs.labels = addLabel @name @lhs.pos @lhs.labels
 
 sem Dodecl
   | Read
@@ -118,8 +120,8 @@ sem Dodecl
   | Lift2
       lhs.code = (show(@lhs.pos) ++
                   ": t_lift2 " ++ @name ++
-                  " " ++ @source_1 ++
-                  " " ++ @source_2 ++
+                  " //" ++ @source_1 ++ "\n" ++
+                  " //" ++ @source_2 ++ "\n" ++
                   " " ++ show(getLabel @function @lhs.labels) ++
                   " //" ++ @function ++
                   "\n")
@@ -140,7 +142,9 @@ sem Expr
       lhs.code = show(@lhs.pos) ++ ": t_load_param " ++ @name ++ "\n"
       lhs.len = 1
   | Const
-      lhs.code = show(@lhs.pos) ++ ": t_load " ++ @name ++ "\n"
+      lhs.code = show(@lhs.pos) ++
+                 ": t_call " ++ show(getLabel @name @lhs.labels) ++
+                 " //" ++ @name ++ "\n"
       lhs.len = 1
   | Int
       lhs.code = show(@lhs.pos) ++ ": t_push " ++ "\n    " ++ show(@value) ++ "\n"
