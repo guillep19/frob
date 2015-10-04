@@ -5,8 +5,7 @@ import Data.List
 
 data Env = E_Env {
            frps :: [String],
-           scope :: [[String]],
-           labels :: 
+           scope :: [[String]]
          } deriving Show
 
 emptyEnv :: Env

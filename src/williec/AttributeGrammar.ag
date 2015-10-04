@@ -69,14 +69,18 @@ set All = Root Decls Decl Dodecls Dodecl Expr
 attr All syn code use {++} {[]}:: String
          syn len use {+} {0} :: Int
          inh pos :: Int
-         chn env :: Env
+         --chn env :: Env
+         chn labels :: LabelMap
+         inh labelMap :: LabelMap
 
 sem Root
   | Root
       lhs.code = @dodecls.code ++ @decls.code
       dodecls.pos = 0
       decls.pos = @dodecls.len
-      decls.env = emptyEnv
+      decls.labels = emptyLabelMap
+      decls.labelMap = @decls.labels
+      dodecls.labelMap = @decls.labels
 
 sem Decl
   | Function
@@ -85,8 +89,9 @@ sem Decl
                  show(@lhs.pos + @body.len) ++
                  ": t_ret\n")
       lhs.len = @body.len + 1
+      lhs.labels = addLabel @name @lhs.pos @lhs.labels
   | Const
-      lhs.code = @value.code ++ 
+      lhs.code = @value.code ++
                  show(@lhs.pos + @value.len) ++
                  ": t_store " ++ @name ++ "\n"
       lhs.len = 0
@@ -106,21 +111,27 @@ sem Dodecl
       lhs.code = (show(@lhs.pos) ++
                   ": t_lift " ++ @name ++
                   " " ++ @source ++
-                  " " ++ @function ++ "\n")
+                  " " ++ show(getLabel @function @lhs.labels) ++
+                  " //" ++ @function ++
+                  "\n")
       lhs.len = 3
   | Lift2
       lhs.code = (show(@lhs.pos) ++
                   ": t_lift2 " ++ @name ++
                   " " ++ @source_1 ++
                   " " ++ @source_2 ++
-                  " " ++ @function ++ "\n")
+                  " " ++ show(getLabel @function @lhs.labels) ++
+                  " //" ++ @function ++
+                  "\n")
       lhs.len = 4
   | Folds
       lhs.code = (@value.code ++
                   show(@lhs.pos + @value.len) ++
                   ": t_folds " ++ @name ++ "\n    " ++
                   " " ++ @source  ++ "\n    " ++
-                  " " ++ @function ++ "\n")
+                  " " ++ show(getLabel @function @lhs.labels) ++
+                  " //" ++ @function ++
+                  "\n")
       lhs.len = @value.len + 3
 
 
