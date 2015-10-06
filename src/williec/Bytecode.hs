@@ -1,6 +1,9 @@
 
 module Bytecode where
 
+import Data.Binary
+import Data.Bits
+
 data OpCode = Thalt
             | Tcall {fun :: Int}
             | Tret
@@ -88,4 +91,45 @@ printBC bc = let lines = (foldr (++) [] (map printOpcode bc))
                  lineNumbers = map (\n -> show(n) ++ ": ") [0..] in
              foldr (++) "" (map (\(x,y) -> x ++ y ++ "\n") (zip lineNumbers lines))
 
+
+
+
+printBinaryOpcode :: OpCode -> [Word16]
+printBinaryOpcode (Thalt) = [0x0000]
+printBinaryOpcode (Tcall fun) = [0x0100, (fromIntegral fun :: Word16)]
+printBinaryOpcode (Tret) = [0x0200]
+printBinaryOpcode (Tload_param id) = [0x0300 + (0x00ff .&. fromIntegral id :: Word16)]
+printBinaryOpcode (Tlift sid source fun) = [0x0400 .|. (0x00ff .&. fromIntegral sid :: Word16),
+                                            (fromIntegral source :: Word16),
+                                            (fromIntegral fun :: Word16)]
+printBinaryOpcode (Tlift2 sid source1 source2 fun) 
+   = [0x0500 .|. (0x00ff .&. fromIntegral sid :: Word16),
+     (fromIntegral source1 :: Word16),
+     (fromIntegral source2 :: Word16),
+     (fromIntegral fun :: Word16)]
+printBinaryOpcode (Tfolds sid source fun) = [0x0600 .|. (0x00ff .&. fromIntegral sid :: Word16),
+                                             (fromIntegral source :: Word16),
+                                             (fromIntegral fun :: Word16)]
+printBinaryOpcode (Tread sid) = [0x0700 .|. (0x00ff .&. fromIntegral sid :: Word16)]
+printBinaryOpcode (Twrite sid) = [0x0800 .|. (0x00ff .&. fromIntegral sid :: Word16)]
+printBinaryOpcode (Tjump pos) = [0x0900, (fromIntegral pos :: Word16)]
+printBinaryOpcode (Tjump_false pos) = [0x0a00, (fromIntegral pos :: Word16)]
+printBinaryOpcode (Tcmp_eq) = [0x0b00]
+printBinaryOpcode (Tcmp_neq) = [0x0c00]
+printBinaryOpcode (Tcmp_gt) = [0x0d00]
+printBinaryOpcode (Tcmp_gte) = [0x0d00] -- mock value (unimplemented in vm)
+printBinaryOpcode (Tcmp_lt) = [0x0e00] 
+printBinaryOpcode (Tcmp_lte) = [0x0e00] -- mock value (unimplemented in vm)
+printBinaryOpcode (Tadd) = [0x0f00]
+printBinaryOpcode (Tsub) = [0x1000]
+printBinaryOpcode (Tdiv) = [0x1100]
+printBinaryOpcode (Tmul) = [0x1200]
+printBinaryOpcode (Top_and) = [0x1300]
+printBinaryOpcode (Top_or) = [0x1400]
+printBinaryOpcode (Top_not) = [0x1500]
+printBinaryOpcode (Tpush value) = [0x1600, (fromIntegral value :: Word16)]
+printBinaryOpcode (Tpop) = [0x1700]
+printBinaryOpcode (Tdup) = [0x1800]
+printBinaryOpcode (Tstore pos) = [0x1900 .|. (0x00ff .&. fromIntegral pos :: Word16)]
+printBinaryOpcode (Tload pos) = [0x1a00 .|. (0x00ff .&. fromIntegral pos :: Word16)]
 
