@@ -3,6 +3,7 @@ module Bytecode where
 
 import Data.Binary
 import Data.Bits
+import Text.Printf
 
 data OpCode = Thalt
             | Tcall {fun :: Int}
@@ -132,4 +133,8 @@ printBinaryOpcode (Tpop) = [0x1700]
 printBinaryOpcode (Tdup) = [0x1800]
 printBinaryOpcode (Tstore pos) = [0x1900 .|. (0x00ff .&. fromIntegral pos :: Word16)]
 printBinaryOpcode (Tload pos) = [0x1a00 .|. (0x00ff .&. fromIntegral pos :: Word16)]
+
+printBinBC :: BC -> String
+printBinBC bc = let lines = (foldr (++) [] (map printBinaryOpcode bc))
+                in foldr (++) "" (map (printf "0x%04x\n") lines)
 
