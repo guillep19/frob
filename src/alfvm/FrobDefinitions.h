@@ -1,8 +1,7 @@
 #ifndef FROBDEFINITIONS_H
 #define FROBDEFINITIONS_H
 
-#include "mbed.h"
-
+#include <stdint.h>
 //VM ops
 #define t_halt       0x00
 //Functions

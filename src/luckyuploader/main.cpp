@@ -5,6 +5,7 @@
 #include <fcntl.h>   /* File control definitions */
 #include <errno.h>   /* Error number definitions */
 #include <termios.h> /* POSIX terminal control definitions */
+#include "FrobDefinitions.h"
 
 /*
  *  * 'open_port()' - Open serial port 1.
@@ -47,6 +48,16 @@ int main() {
   int n = write(fd, "ALF\r", 4);
   if (n < 0) {
     fputs("write() of 2 bytes failed!\n", stderr);
+  }
+
+  BYTE* buff = new WORD[4];
+  buff[0] = 'a';
+  buff[1] = 'l';
+  buff[2] = 'f';
+  buff[3] = '\n';
+  n = write(fd, buff, 8);
+  if (n < 0) {
+    fputs("write() of 8 bytes failed!\n", stderr);
   }
 
   /* Close resources. */
