@@ -6,7 +6,10 @@ Proyecto de grado - Guillermo Pacheco - Facultad de Ingeniería - UdelaR
 
 Noticias
 --------
-
+* Sábado 10-10-2015 - :
+  - Correcciones de Informe.
+* Domingo 05-10-2015:
+  - Finalizo implementación de compilador en haskell.
 * Sábado 23-05-2015 a Domingo 24-05-2015:
   - Cambio implementación a version final con frp.
   - Implemento ejemplo en bytecode a mano, falta poder compilar.
