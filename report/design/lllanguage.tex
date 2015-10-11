@@ -1,0 +1,131 @@
+  Para presentar el lenguaje \alf{}, primero defino las estructuras
+necesarias para explicar la semántica de cada instrucción.
+
+  TODO: Modificar toda esta sección, parece más una descripción de la máquina
+virtual que del lenguaje.
+
+\begin{enumerate}
+
+\item \emph{Inputs}
+
+  Los valores leídos en las entradas de hardware se mapean
+en esta lista. Por ejemplo si el hardware cuenta con un botón,
+y el identificador del botón es $i$,
+su valor se representará con la notación:
+
+  $Inputs_i$
+
+  A cada entrada se le asocia un conjunto de
+rutinas que deben invocarse cuando se tenga un
+valor disponible en la entrada. El mismo puede ser vacío si
+no hay rutinas esperando por su valor. Queda a criterio de quien
+implementa la máquina si éstos valores deben ser guardados o
+descartados.
+  A éste conjunto de rutinas lo denotamos cómo:
+
+  $Callbacks_i$
+
+\item \emph{Nodes}
+
+  Es utilizado para almacenar todas las transformaciones de señales.
+  Cada nodo, tiene una lista de otros nodos que dependen de él y la
+  posición del argumento por el que esperan.
+  Además el nodo almacena el último valor calculado, y una lista
+  de argumentos que le serán pasados, si son nuevos o no.
+
+  Cada aplicación de \texttt{lift}, \texttt{lift2} o \texttt{folds}
+será mapeada en un nodo.
+
+  Cada nodo $Node_i$ tiene una lista de nodos adyacentes
+que dependen de él.
+
+\item \emph{Outputs}
+
+  Mapea señales en salidas de hardware, los valores
+son asignados con la operación \texttt{output}.
+
+\item \emph{Stack}
+
+  Es una pila global, se utiliza para ejecutar operaciones y
+realizar cálculos. 
+  Es única y global, y los hilos de ejecución no pueden guardar valores
+persistentes en ella.
+
+Usaremos el símbolo $TOS$ para referirnos al elemento en el tope
+de la pila y $Stack$ para referirnos a la pila.
+
+\item \emph{Ready}
+
+Es una \emph{cola} que contiene punteros a los nodos
+listos para ser ejecutados.
+
+\item \emph{Dispatcher}
+
+  El dispatcher, es quien implementa las acciones de la máquina.
+  El mismo se encarga de recibir valores de los sensores y mapearlos
+a eventos en las entradas $Input_i$.
+
+  Éstos eventos, serán recibidos por los nodos $Nodes$.
+  Cada $Node_i$ que espera por eventos entrará en estado activo cuando
+todos los nodos por los que espera le envíen un evento.
+  A su vez, el nodo en estado activo calcula un resultado y notifica a
+todos sus nodos adyacentes.
+
+  TODO: Forzar que Nodes sea un grafo acíclico en la descripción.
+
+  El dispatcher, realizará implicitamente un orden topológico de los
+nodos, como $Nodes$ es un grafo acíclico, éste proceso es posible y
+termina, y cada salida cuenta con un valor, que será mapeado a los actuadores.
+
+\end{enumerate}
+
+\subsection{Instrucciones}
+
+  A continuación se listan las instrucciones de bajo nivel
+  más relevantes junto con su semántica.
+
+\begin{itemize}
+\item \texttt{lift id source\_id function\_pointer}
+
+ Crea un nodo que recibe valores de la fuente de
+ eventos \texttt{source\_id},
+ les aplica la función \texttt{function\_pointer} y emite el resultado
+ en la fuente de eventos $id$.\\
+ El nodo se agrega a $Nodes$ y el dispatcher se encargará de aplicar
+ la función siempre que sea necesario.
+
+\item \texttt{lift2 id source-id\_1 source-id\_2 function\_pointer}
+
+  Crea un nodo que recibe valores de \texttt{source-id\_1} y
+\texttt{source-id\_2}, les aplica la función \texttt{function\_pointer} 
+y emite el resultado en la fuente de eventos \texttt{id}.
+
+  Cuando reciba un valor nuevo por cada uno de los que espera, el
+dispatcher aplica la función y emite el resultado.
+
+\item \texttt{read id input-id}
+
+ Agrega un nodo a $Nodes$ que recibe valores de una entrada
+ y emite el resultado en la fuente de eventos $id$.
+ Cuando el dispatcher reciba un cambio en la entrada, el nodo emitirá
+ el resultado.
+
+\item \texttt{write index id}
+
+  Crea un nodo $Output$ que recibe valores de la señal \texttt{id}
+y los emite en la salida número \texttt{index}.
+  El nodo guarda dicho valor y el dispatcher decide en que momento
+debe escribirlo en la salida asociada.
+  Se intentará que sea lo más instantáneo posible
+ya que el valor depende del tiempo y a mayor demora, menos correcto
+será el comportamiento.
+
+\end{itemize}
+
+TODO: Comentario de Marcos: Sólo ésto? Describir más instrucciones.
+Mostrar que es una máquina de stack. Mostrar ejemplos. 
+Hacer referencia al apéndice A.2.
+
+
+\pagebreak
+

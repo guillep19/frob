@@ -1,0 +1,40 @@
+  Las entradas en el robot se puden manipular utilizando la función \texttt{read}.
+  La misma crea una señal que cambia de acuerdo a los valores recibidos en la entrada.\\
+
+  Para aplicar una función a una señal, se aplica el combinador \texttt{lift} el cuál toma
+  una función y una señal y produce una nueva señal resultado de la aplicación.
+
+  Luego se usa una lista de aplicaciones de \texttt{lift},
+\texttt{lift2} y \texttt{folds} para combinar las señales hasta
+obtener los valores que conformarán la salida del robot y su estado.\\
+  La función \texttt{output} se utiliza para mapear esas señales a las
+salidas correspondientes.\\
+
+  La función \texttt{lift} combina una función y un valor
+dependiente del tiempo, y crea un nuevo valor dependiente
+del tiempo, es decir, aplica una función que transforma
+una señal en otra:\\
+
+$lift :: (a \rightarrow b) \rightarrow Signal\ a \rightarrow Signal\ b$\\
+
+  Para combinar señales, se utiliza la función \texttt{lift2}
+que recibe dos señales y produce una nueva aplicando una
+función.\\
+
+$lift2 :: (a \rightarrow b \rightarrow c) \rightarrow Signal\ a \rightarrow Signal\ b \rightarrow Signal\ c$\\
+
+Utilizando \texttt{lift2} se pueden definir funciones \texttt{liftN}
+combinándola sucesivas veces, por ejemplo:\\
+\\
+$lift3 :: (a \rightarrow b \rightarrow c \rightarrow d) \rightarrow Signal\ a \rightarrow Signal\ b \rightarrow Signal\ c \rightarrow Signal\ d$\\
+$lift3\ f\ sa\ sb\ sc = lift2\ ((lift2\ f\ sa\ sb)\ sc)$\\
+
+  Para crear señales que no sólo dependen de otra señal, sino que dependen
+de ella y además de su historia (los valores anteriores),
+se define otro combinador \texttt{folds},
+que cuando recibe los valores de la señal los combina y acumula. Éste
+combinador es análogo a la operación \texttt{fold} sobre listas.\\
+
+$folds :: (a \rightarrow b \rightarrow b) \rightarrow b \rightarrow Signal\ a \rightarrow Signal\ b$\\
+
+

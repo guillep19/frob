@@ -1,0 +1,41 @@
+
+TODO: Describir el algoritmo de traducción.
+
+Dado el siguiente programa de ejemplo en alto nivel:
+
+\begin{verbatim}
+# Este programa de prueba muestra con un led si se esta frente a una casa.
+
+#Inputs
+sensor_distancia = 1
+#Outputs
+led = 1
+
+hay_casa = \distancia -> (distancia < 100)
+
+do {
+  signal_distancia = read sensor_distancia,
+  signal_viendo = lift hay_casa sensor_distancia,
+  write led signal_viendo
+}
+\end{verbatim}
+
+El mismo se representaría en bajo nivel de la siguiente forma:
+
+\begin{verbatim}
+01:  push 1
+02:  store 0 //sensor_distancia = 1
+03:  push 1
+04:  store 1 //led = 1
+05:  read 0 0 //signal_distancia = read 0
+06:  lift 1 0 hay_casa //signal_viendo = lift hay_casa sensor_distancia
+07:  write 1 1 //write led signal_viendo
+08:  halt
+09:  load_arg 0 //hay_casa:
+10:  push 100
+11:  cmp_le //distancia < 100
+12:  return
+\end{verbatim}
+
+TODO: Poner bien y sin comentarios. Comentar abajo.
+

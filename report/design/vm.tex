@@ -1,0 +1,17 @@
+  La máquina virtual será la encargada de recibir el bytecode creado por
+el compilador, e interpretarlo en la plataforma que esté ejecutando.
+  A diferencia del compilador, es necesario implementar una máquina virtual
+para cada arquitectura objetivo.\\
+
+  Por ejemplo, para ejecutar programas en un robot
+  con un procesador \emph{arduino}, debe
+  existir una implementación de la máquina para ese modelo
+  de \emph{arduino}.
+
+  Al momento de implementar la máquina, se tomará en cuenta ésto para
+  factorizar partes en común y sólo implementar por arquitectura, las
+  partes que realmente sean diferentes como ser la comunicación con
+  los periféricos de entrada/salida y las llamadas al sistema.
+
+
+TODO: Describir el diseño de la máquina virtual.

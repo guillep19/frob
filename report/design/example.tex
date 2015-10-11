@@ -1,0 +1,54 @@
+  En el siguiente ejemplo se muestra un programa \frob{} que detiene un
+robot cuando su sensor de distancia muestra un valor menor a un mínimo dado.
+
+\begin{verbatim}
+INPUT_DISTANCE = 1
+OUTPUT_MOTOR = 1
+
+MIN_DISTANCE = 30
+FULL_SPEED = 100
+STOP = 0
+
+distanceToSpeed n = if (n < MIN_DISTANCE) then STOP else FULL_SPEED
+
+do {
+  distance <- read INPUT_DISTANCE,
+  speed <- lift distanceToSpeed distance,
+  output OUTPUT_MOTOR speed
+}
+
+\end{verbatim}
+
+Primero se definió una señal llamada \emph{distance},
+de tipo \emph{Event Number}.
+
+\begin{verbatim}
+  distance <- read INPUT_DISTANCE
+\end{verbatim}
+
+  La misma emitirá un evento con la distancia en \emph{centímetros} leída
+por un sensor en el robot.
+
+  Se quiere que cuando la distancia sea menor al valor
+\emph{MINIMO} dado, el robot se detenga completamente, esto
+quiere decir, que la velocidad sea $0$, en otro caso el mismo
+se mueve a velocidad $100$, la cual asumimos es una velocidad
+apropiada.
+  Para esto se crea una nueva fuente de eventos, definida a partir
+de \emph{distance}, aplicandole la función \texttt{distanceToSpeed} 
+a cada valor para obtener la velocidad.
+
+\begin{verbatim}
+  speed <- lift distanceToSpeed distance
+\end{verbatim}
+
+  Esta expresión también es una fuente de eventos
+de tipo \emph{Event Number}.
+
+  Finalmente se aplica la función nativa \texttt{output}, cuyo
+primer parámetro es el $id$ de la salida (en éste caso 
+es \texttt{OUTPUT\_MOTOR}) y su segundo parámetro es una
+fuente de eventos, en éste caso es la velocidad (\texttt{speed}).
+
+TODO: Explicar si se pueden definir más eventos, combinarlos y cuántas veces
+se ejecuta el bloque do.

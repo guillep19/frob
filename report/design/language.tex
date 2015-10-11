@@ -1,0 +1,51 @@
+  El lenguaje \frob{} es funcional, tipado y con inferencia de tipos. No
+cuenta con evaluación a demanda (\emph{lazy evaluation}).
+  Para simplificar la implementación, solo se permiten valores
+naturales ($\mathcal{N}$), y funciones de naturales en naturales. 
+($\mathcal{N} \rightarrow \mathcal{N}$).
+
+  Un programa constará de dos secciones, una sección de
+declaraciones, donde se declararán funciones y una sección donde se
+aplicarán combinadores de programación funcional reactiva, especificando
+cómo son transformadas las señales para especificar el comportamiento de
+los robots.
+
+  En \frob{} todos los valores son inmutables, una vez que son declarados
+no se pueden modificar.
+  Las funciones declaradas son puras, por lo tanto no pueden tener efectos
+secundarios.
+  
+TODO: Explicar que es funcional, \ref{fig:grammar} sin currying, es tipado, se infieren
+los tipos.
+
+\input{design/grammar.tex}
+
+\subsection{Declaraciones}
+
+  Las funciones se declaran de la siguiente manera.
+
+\begin{verbatim}
+nombre argumento_1 .. argumento_n = expresion
+\end{verbatim}
+
+  Donde una expresión puede ser un valor,
+una expresión aritmética (por ejemplo una suma o multiplicación),
+una aplicación de una función, o una expresión condicional.\\
+
+%  La sintaxis es muy similar a la del lenguaje \texttt{Haskell}, aunque
+% no se permiten funciones anónimas,
+
+  Para declarar un valor constante simplemente se escribe:
+
+\begin{verbatim}
+    NOMBRE_CONSTANTE = valor
+\end{verbatim}
+
+  Ejemplo de declaración:
+
+\begin{verbatim}
+    # fibonacci
+    fibo n = if (n < 2) then 1 else fibo(n-1) + fibo(n-2)
+\end{verbatim}
+
+

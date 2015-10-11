@@ -1,0 +1,39 @@
+Acaaaaaa
+
+\begin{figure}
+  \begin{center}
+    \caption{Gramática de \frob{}}
+    \begin{Verbatim}[frame=single]
+program := definitions "do {" frps "}";
+
+definitions := definition | definition definitions;
+
+definition := ident arg_list "=" expr;
+
+frps = frp | frp frps;
+
+frp := ident "<- read" expr
+     | ident "<- lift" ident ident
+     | ident "<- lift2" ident ident ident
+     | ident "<- folds" ident value ident
+     | "output" expr ident
+
+expr := name
+      | number
+      | expr binop expr
+      | "if" expr "then" expr "else" expr;
+
+arg_list := ident | ident arg_list;
+
+ident := [a-z_A-Z]+;
+
+number := [-+]?[0-9]*\.?[0-9]+;
+
+binop := '+' | '-' | '/' | '*' | 'or' | 'and'
+       | '==' | '<=' | '>' | '<' | '<>' | '>=';
+     \end{Verbatim}
+   \label{fig:grammar}
+   \end{center}
+ \end{figure}
+
+ Y??
