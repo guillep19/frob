@@ -1,47 +1,5 @@
 
-\section{Gramática del lenguaje de alto nivel}
-
-\subsection{Sintaxis}
-
-La gramática del lenguaje es la siguiente:
-
-\begin{verbatim}
-
-number := [-+]?[0-9]*\.?[0-9]+
-
-name := [a-z_A-Z]+
-
-value := number | name
-
-binop := '+' | '-' | '/' | '*'
-       | 'or' | 'and' | '==' | '<='
-       | '>' | '<' | '<>' | '>=';
-
-arg_list := name arg_list | name;
-
-expr := value
-      | expr binop expr
-      | "if" expr "then" expr "else" expr;
-
-assign := name "<- read" name
-        | name "<- lift" name name
-        | name "<- lift2" name name name
-        | name "<- folds" value name
-        | "output" name name
-
-assign_list = assign assign_list | assign;
-
-definitions := name arg_list "=" expr;
-
-main_block := "do {" assign_list "}";
-
-program := definitions main_block;
-
-\end{verbatim}
-
-
-
-\subsection{Instrucciones de bajo nivel}
+\section{Instrucciones de bajo nivel}
 
   A continuación se presenta el resto de las instrucciones
 de bajo nivel y pseudocódigo indicando su semántica.
