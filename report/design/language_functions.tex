@@ -1,0 +1,49 @@
+
+  Las funciones se definen con un nombre, una lista de argumentos y una 
+expresión. Las variables libres de la expresión son sustituídas al evaluar
+la función.
+
+\begin{verbatim}
+nombre argumento_1 .. argumento_n = expresion
+\end{verbatim}
+
+  Una expresión puede ser un valor primitivo,
+una expresión aritmética (por ejemplo una suma o multiplicación),
+la aplicación de una función, o una expresión condicional.
+  Todas las expresiones retornan un valor al evaluarse.
+
+  La sintaxis es muy similar a la del lenguaje \texttt{Haskell}, aunque
+no se permiten funciones anónimas.
+
+  Para declarar un valor constante simplemente se escribe una función sin
+argumentos. Por convención se escriben con mayúsculas, pero no es una
+restricción.
+
+\begin{verbatim}
+    NOMBRE_CONSTANTE = valor
+\end{verbatim}
+
+  Una expresión condicional, debe retornar un valor para cada posible
+resultado de la condición.
+
+  En la figura \ref{fig:fibo} se ve la implementación
+de la función que retorna un número en la sucesión de Fibonacci,
+utilizando una expresión condicional.
+
+  Se puede ver que una función puede invocarse a si misma, está permitida
+la recursión.
+
+\begin{figure}
+\begin{center}
+  \caption{Función de Fibonacci}
+  \begin{Verbatim}[frame=single]
+# fibonacci
+fibo n = if (n < 2) then 1 else fibo(n-1) + fibo(n-2)
+  \end{Verbatim}
+   \label{fig:fibo}
+\end{center}
+\end{figure}
+
+Un comentario es una línea que comienza con el símbolo \texttt{\#}.
+
+La gramática completa del lenguaje se puede ver en la Figura \ref{fig:grammar}.

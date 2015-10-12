@@ -1,51 +1,36 @@
-  El lenguaje \frob{} es funcional, tipado y con inferencia de tipos. No
-cuenta con evaluación a demanda (\emph{lazy evaluation}).
+%%En \frob{} un programa constará de dos secciones, una sección de
+%%declaraciones, donde se declararán funciones y una sección donde se
+%%aplicarán combinadores de programación funcional reactiva, especificando
+%%cómo son transformadas las señales para especificar el comportamiento de
+%%los robots.
+
+  En \frob{} los programas consisten de un conjunto de funciones, y un
+conjunto de primitivas del paradigma de programación funcional reactiva.
+  
+  Es un lenguaje funcional, tipado y con inferencia de tipos.
+  En el todos los valores son inmutables, una vez que son declarados
+no se pueden modificar.
+  Las funciones declaradas son puras, por lo tanto no pueden tener efectos
+secundarios.
+
+  Para controlar un robot se debe declarar un conjunto de señales utilizando
+las primitivas de FRP.
+
+  La primitiva \texttt{read} crea una señal a partir de un sensor del robot.
+  La primitiva \texttt{output} envía a un actuador, el valor de una señal.
+
   Para simplificar la implementación, solo se permiten valores
 naturales ($\mathcal{N}$), y funciones de naturales en naturales. 
 ($\mathcal{N} \rightarrow \mathcal{N}$).
 
-  Un programa constará de dos secciones, una sección de
-declaraciones, donde se declararán funciones y una sección donde se
-aplicarán combinadores de programación funcional reactiva, especificando
-cómo son transformadas las señales para especificar el comportamiento de
-los robots.
-
-  En \frob{} todos los valores son inmutables, una vez que son declarados
-no se pueden modificar.
-  Las funciones declaradas son puras, por lo tanto no pueden tener efectos
-secundarios.
+  El lenguaje evalúa las expresiones, tan pronto como es posible. Las
+funciones tienen un conjunto de variables libres, cuando un valor les es
+asignado, el resultado es calculado.
   
-TODO: Explicar que es funcional, \ref{fig:grammar} sin currying, es tipado, se infieren
-los tipos.
-
-\input{design/grammar.tex}
-
-\subsection{Declaraciones}
-
-  Las funciones se declaran de la siguiente manera.
-
-\begin{verbatim}
-nombre argumento_1 .. argumento_n = expresion
-\end{verbatim}
-
-  Donde una expresión puede ser un valor,
-una expresión aritmética (por ejemplo una suma o multiplicación),
-una aplicación de una función, o una expresión condicional.\\
-
-%  La sintaxis es muy similar a la del lenguaje \texttt{Haskell}, aunque
-% no se permiten funciones anónimas,
-
-  Para declarar un valor constante simplemente se escribe:
-
-\begin{verbatim}
-    NOMBRE_CONSTANTE = valor
-\end{verbatim}
-
-  Ejemplo de declaración:
-
-\begin{verbatim}
-    # fibonacci
-    fibo n = if (n < 2) then 1 else fibo(n-1) + fibo(n-2)
-\end{verbatim}
-
+  En lenguajes como Haskell las expresiones no son evaluadas hasta que es
+estrictamente necesario (evaluación a demanda,
+del inglés: \emph{lazy evaluation}). En la programación funcional reactiva
+esto puede llevar a aumentar el uso de memoria considerablemente, y al no
+evaluar incrementalmente, al necesitar un valor puede demorar el cálculo,
+enlenteciendo la evaluación de todo el programa y reduciendo la reactividad.
 
