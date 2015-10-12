@@ -16,8 +16,6 @@ secundarios.
   Para controlar un robot se debe declarar un conjunto de señales utilizando
 las primitivas de FRP.
 
-  La primitiva \texttt{read} crea una señal a partir de un sensor del robot.
-  La primitiva \texttt{output} envía a un actuador, el valor de una señal.
 
   Para simplificar la implementación, solo se permiten valores
 naturales ($\mathcal{N}$), y funciones de naturales en naturales. 
@@ -33,4 +31,5 @@ del inglés: \emph{lazy evaluation}). En la programación funcional reactiva
 esto puede llevar a aumentar el uso de memoria considerablemente, y al no
 evaluar incrementalmente, al necesitar un valor puede demorar el cálculo,
 enlenteciendo la evaluación de todo el programa y reduciendo la reactividad.
+
 

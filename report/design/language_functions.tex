@@ -33,7 +33,7 @@ utilizando una expresión condicional.
   Se puede ver que una función puede invocarse a si misma, está permitida
 la recursión.
 
-\begin{figure}
+\begin{figure}[h!]
 \begin{center}
   \caption{Función de Fibonacci}
   \begin{Verbatim}[frame=single]
@@ -44,6 +44,10 @@ fibo n = if (n < 2) then 1 else fibo(n-1) + fibo(n-2)
 \end{center}
 \end{figure}
 
-Un comentario es una línea que comienza con el símbolo \texttt{\#}.
+  Un comentario es una línea que comienza con el símbolo \texttt{\#}.
 
-La gramática completa del lenguaje se puede ver en la Figura \ref{fig:grammar}.
+  La gramática completa del lenguaje se puede ver en la
+Figura \ref{fig:grammar}.
+
+\input{design/grammar.tex}
+

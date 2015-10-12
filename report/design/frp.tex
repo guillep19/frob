@@ -1,40 +1,151 @@
-  Las entradas en el robot se puden manipular utilizando la función \texttt{read}.
-  La misma crea una señal que cambia de acuerdo a los valores recibidos en la entrada.\\
 
-  Para aplicar una función a una señal, se aplica el combinador \texttt{lift} el cuál toma
-  una función y una señal y produce una nueva señal resultado de la aplicación.
+  Un robot cuenta con un conjunto de sensores y un conjunto de actuadores,
+cada uno identificados con un número entero.
 
-  Luego se usa una lista de aplicaciones de \texttt{lift},
-\texttt{lift2} y \texttt{folds} para combinar las señales hasta
-obtener los valores que conformarán la salida del robot y su estado.\\
-  La función \texttt{output} se utiliza para mapear esas señales a las
-salidas correspondientes.\\
+  Para especificar el comportamiento de un robot en un programa, se crean
+señales a partir de las entradas (sensores), se les aplican funciones
+y combinan utilizando los combinadores de FRP, y se mapean señales
+a las salidas (actuadores).
 
-  La función \texttt{lift} combina una función y un valor
-dependiente del tiempo, y crea un nuevo valor dependiente
-del tiempo, es decir, aplica una función que transforma
-una señal en otra:\\
+  Los combinadores \texttt{lift}, \texttt{lift2} y \texttt{folds},
+y las primitivas de entrada/salida \texttt{read}, \texttt{output} se
+encuentran dentro del bloque \texttt{do} del programa.
 
-$lift :: (a \rightarrow b) \rightarrow Signal\ a \rightarrow Signal\ b$\\
+  Con las primitivas de entrada/salida se define cómo se conectan
+las señales con sensores y actuadores, y con los combinadores se
+define un grafo de señales que especifica el comportamiento del robot.
 
-  Para combinar señales, se utiliza la función \texttt{lift2}
-que recibe dos señales y produce una nueva aplicando una
-función.\\
+  El bloque \texttt{do} permite de manera declarativa expresar las
+relaciones entre las señales y que funciones se deben aplicar.
 
-$lift2 :: (a \rightarrow b \rightarrow c) \rightarrow Signal\ a \rightarrow Signal\ b \rightarrow Signal\ c$\\
+  La máquina virtual que interpreta el programa, será la encargada de
+darle valores a las señales y actualizarlas, así como actualizar las
+salidas de acuerdo a que señal está conectada a ellas.
 
-Utilizando \texttt{lift2} se pueden definir funciones \texttt{liftN}
-combinándola sucesivas veces, por ejemplo:\\
-\\
-$lift3 :: (a \rightarrow b \rightarrow c \rightarrow d) \rightarrow Signal\ a \rightarrow Signal\ b \rightarrow Signal\ c \rightarrow Signal\ d$\\
-$lift3\ f\ sa\ sb\ sc = lift2\ ((lift2\ f\ sa\ sb)\ sc)$\\
+  A continuación se presenta el conjunto de primitivas y combinadores.
 
-  Para crear señales que no sólo dependen de otra señal, sino que dependen
-de ella y además de su historia (los valores anteriores),
-se define otro combinador \texttt{folds},
-que cuando recibe los valores de la señal los combina y acumula. Éste
-combinador es análogo a la operación \texttt{fold} sobre listas.\\
+\subsection{Read}
+%%read 
+  Para crear una señal a partir de una entrada, se utiliza la
+primitiva \texttt{read}.
 
-$folds :: (a \rightarrow b \rightarrow b) \rightarrow b \rightarrow Signal\ a \rightarrow Signal\ b$\\
+  Asumiendo que un robot tiene un sensor de distancia en la entrada
+\texttt{INPUT\_DISTANCE} se puede definir una señal \texttt{distance},
+que contendrá la distancia en centímetros para cada instante de tiempo.
+
+\begin{center}
+\begin{Verbatim}[frame=single]
+distance <- read INPUT_DISTANCE
+\end{Verbatim}
+\end{center}
+
+El tipo de la primitiva \texttt{read} es:
+
+\begin{center}
+  $read :: IO\ a \rightarrow Signal\ a $
+\end{center}
+
+\subsection{Lift}
+%%lift
+  Usando la primitiva \texttt{lift} se puede aplicar una función
+a la señal, y obtener una nueva señal más compleja resultado de la
+aplicación.
+
+  Se puede definir una función \texttt{distanceToSpeed} que de acuerdo
+a la distancia, calcula la velocidad apropiada a la que se debe mover
+el robot, para detenerse si hay un objeto muy cercano y evitar una colisión.
+
+\begin{center}
+\begin{Verbatim}[frame=single]
+distanceToSpeed n = if (n < MIN_DIST) then STOP else MAX_SPEED
+\end{Verbatim}
+\end{center}
+
+%%  La primitiva \texttt{lift} combina una función y un valor
+%%dependiente del tiempo, y crea un nuevo valor dependiente
+%%del tiempo, es decir, aplica una función que transforma
+%%una señal en otra:
+%%
+
+  Se puede definir la señal \texttt{speed}, resultado de aplicar la
+función \texttt{distanceToSpeed} a la señal \texttt{distance}.
+
+\begin{center}
+\begin{Verbatim}[frame=single]
+speed <- lift distanceToSpeed distance
+\end{Verbatim}
+\end{center}
+
+El tipo de la primitiva lift es
+
+\begin{center}
+  $lift :: (a \rightarrow b) \rightarrow Signal\ a \rightarrow Signal\ b$
+\end{center}
+
+\subsection{Output}
+%%output
+  La primitiva \texttt{output} envía a un actuador, el valor de una señal.
+  Asumiendo que el motor del robot está identificado con el valor entero
+\texttt{OUTPUT\_ENGINE}:
+
+\begin{center}
+\begin{Verbatim}[frame=single]
+output OUTPUT_ENGINE speed
+\end{Verbatim}
+\end{center}
+
+  El tipo de la primitiva output es
+
+\begin{center}
+$output :: Signal\ a \rightarrow Int \rightarrow IO\ a$
+\end{center}
+ 
+  En la Figura \ref{fig:example1} se puede ver el ejemplo completo.
+
+\input{design/example.tex}
+
+\subsection{LiftN}
+
+  Para combinar más de una señal, se utiliza la función \texttt{lift2}
+que recibe dos señales y produce una nueva aplicando una función.
+
+\begin{center}
+$lift2 :: (a \rightarrow b \rightarrow c) \rightarrow Signal\ a \rightarrow Signal\ b \rightarrow Signal\ c$
+\end{center}
+
+  Utilizando \texttt{lift2} se pueden definir funciones \texttt{liftN}
+combinándola sucesivas veces, por ejemplo:
+
+\begin{center}
+$lift3 :: (a \rightarrow b \rightarrow c \rightarrow d) \rightarrow Signal\ a \rightarrow Signal\ b \rightarrow Signal\ c \rightarrow Signal\ d$
+$lift3\ f\ sa\ sb\ sc = lift2\ ((lift2\ f\ sa\ sb)\ sc)$
+\end{center}
+
+\subsection{Folds}
+
+  En \frob{} para mantener un valor que dependa de la historia, se utiliza
+el combinador \texttt{folds}.
+
+  El mismo es análogo a la operación \texttt{fold} sobre listas, viendo
+una señal como una lista de valores en el tiempo, el combinador aplica una
+función al valor actual de una señal y a un valor acumulado.
+  De ésta manera se puede crear una nueva señal para representar estado.
+
+  Por ejemplo si se asume definida una señal \texttt{button} que tiene
+el valor $1$ cuando se apreta un botón y sinó el valor $0$, se puede
+contar cuántas veces se apretó el botón utilizando el combinador \texttt{folds}
+y una función para sumar el valor acumulado y el nuevo.
+
+\begin{center}
+\begin{Verbatim}[frame=single]
+count <- folds suma 0 button
+\end{Verbatim}
+\end{center}
+
+El tipo del combinador \texttt{folds} es:
+
+\begin{center}
+$folds :: (a \rightarrow b \rightarrow b) \rightarrow b \rightarrow Signal\ a \rightarrow Signal\ b$
+\end{center}
 
 
