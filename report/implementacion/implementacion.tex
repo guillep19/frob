@@ -9,6 +9,9 @@ implementación a otra plataforma.
 
 \section{Compilador}
 
+  El compilador será el encargado de leer el programa \frob{} y traducirlo
+a \alf{}.
+
   El lenguaje utilizado para desarrollar el compilador fue \textit{Haskell}.
 Las razones que llevaron a su elección son la portabilidad y la expresividad
 del mismo.
@@ -27,20 +30,50 @@ herramientas estándar para cada etapa.
 
   TODO: Reescribir ésto con Alex, UU.Scanner, UU.Parser, UUAGC.
 
+  El compilador constará de dos etapas principales.
+
   La primera fase del compilador utiliza las dos herramientas mencionadas,
 recibe el programa en lenguaje \frob (.willie) y genera un árbol de
-sintaxis abstracta (\emph{AST}).\\
+sintaxis abstracta (\emph{AST}\footnote{Del inglés Abstract Syntax Tree}).\\
+  
+  Dicha etapa es llamada análisis sintáctico.
 
   TODO: Explicar que es una gramática de atributos.
 
-  La segunda etapa utiliza gramáticas de atributos (\emph{Attribute Grammars}),
-definiendo atributos en el \emph{AST}.
+  La segunda etapa utiliza gramáticas de atributos 
+(\emph{Attribute Grammars}), definiendo atributos en el \emph{AST}.
   Uno de dichos atributos será el código en bajo nivel, que será la salida
 de esta etapa.
   Esta salida se escribe en un archivo (.alf) terminando el proceso
 de compilación.
 
   TODO:Explicar las etapas de la gramática de atributos.
+
+  En la Figura \ref{fig:compiler} se puede ver la estructura más detallada
+del compilador.
+
+\begin{figure}[h!]
+\begin{center}
+\caption{Diagrama del compilador}
+\includegraphics[width=0.9\textwidth]{graphs/compiler.png}
+\label{fig:compiler}
+\end{center}
+\end{figure}
+
+  TODO: Describir la Figura.
+
+%%  El programa resultado tendrá al principio las traducción de las
+%%instrucciones correspondientes al bloque \texttt{do}.
+%%  Las mismas al ser ejecutadas armarán el grafo de señales del programa.
+%%
+%%  Al final del bloque, habrá una instrucción \texttt{halt} que cederá el
+%%control al $dispatcher$.
+%%
+%%  Luego estará el código correspondiente a cada función definida.
+%%  Cada invocación a función, tendrá la referencia directa hacia la
+%%posición en el código de la misma.
+
+
 
   Para utilizar el compilador, dado un archivo \textit{Ejemplo.willie}, se
   ejecuta:
