@@ -88,11 +88,8 @@ printOpcode (Tload pos) = ["t_load " ++ show(pos)]
 
 
 printBC :: BC -> String
-printBC bc = let lines = (foldr (++) [] (map printOpcode bc))
-                 lineNumbers = map (\n -> show(n) ++ ": ") [0..] in
-             foldr (++) "" (map (\(x,y) -> x ++ y ++ "\n") (zip lineNumbers lines))
-
-
+printBC bc = let lines = (foldr (++) [] (map printOpcode bc)) in
+             foldr (++) "" (zipWith (\x y -> show(x) ++ ": " ++ y ++ "\n") [0..] lines)
 
 
 printBinaryOpcode :: OpCode -> [Word16]
@@ -134,7 +131,16 @@ printBinaryOpcode (Tdup) = [0x1800]
 printBinaryOpcode (Tstore pos) = [0x1900 .|. (0x00ff .&. fromIntegral pos :: Word16)]
 printBinaryOpcode (Tload pos) = [0x1a00 .|. (0x00ff .&. fromIntegral pos :: Word16)]
 
-printBinBC :: BC -> String
-printBinBC bc = let lines = (foldr (++) [] (map printBinaryOpcode bc))
-                in foldr (++) "" (map (printf "0x%04x\n") lines)
+--import qualified Data.ByteString.Lazy as BL
+--import Data.Binary.Put
+ 
+--serialiseSomething :: Put
+--serialiseSomething = do
+--   putWord16be 2
+        
+--main :: IO ()
+--main = BL.putStr $ runPut serialiseSomething
+
+printBinBC :: BC -> [Word16]
+printBinBC bc = foldr (++) [] (map printBinaryOpcode bc)
 

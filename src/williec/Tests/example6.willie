@@ -1,0 +1,12 @@
+#Inputs                                                                      
+INPUT_DISTANCE = 1                                                           
+#Outputs                                                                     
+OUTPUT_LED = 1                                                               
+                                                                             
+isHouse distance = if (distance < 100) then 1 else 0                        
+                                                                             
+do {                                                                         
+  signal_distance <- read INPUT_DISTANCE
+  signal_house <- lift isHouse signal_distance
+  output OUTPUT_LED signal_house                                             
+}                                                                            

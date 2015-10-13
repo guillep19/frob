@@ -31,3 +31,5 @@ test4: williec
 	./williec ./Tests/example4.willie ./Tests/out/example4.alf
 test5: williec
 	./williec ./Tests/example5.willie ./Tests/out/example5.alf
+test6: williec
+	./williec ./Tests/example6.willie ./Tests/out/example6.alf

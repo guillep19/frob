@@ -43,9 +43,9 @@ compile source dest
        putStrLn "-----------------"
        let prettyBC = printBC output
        writeFile dest prettyBC
-       let destBin = dest ++ ".hex"
-           hexBC = printBinBC output
-       writeFile destBin hexBC
+       --let destBin = dest ++ ".bin"
+       --    hexBC = printBinBC output
+       --writeFile destBin hexBC
 
 runParser :: [Token] -> IO Root
 runParser = parseIOMessage show pRoot
