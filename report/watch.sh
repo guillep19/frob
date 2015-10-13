@@ -11,6 +11,7 @@
  
 build() {
   echo -en " building...\n\n"
+  make clean
   timeout 10 make
   echo -en "\n-->"
 }

@@ -1,41 +1,57 @@
 
 TODO: Describir el algoritmo de traducción.
 
-Dado el siguiente programa de ejemplo en alto nivel:
+El siguiente programa \frob{} muestra con un led si el robot está
+frente a una casa:
 
-\begin{verbatim}
-# Este programa de prueba muestra con un led si se esta frente a una casa.
-
+\begin{Verbatim}
 #Inputs
-sensor_distancia = 1
+INPUT_DISTANCE = 1
 #Outputs
-led = 1
+OUTPUT_LED = 1
 
-hay_casa = \distancia -> (distancia < 100)
+isHouse distance = if (distance < 100) then 1 else 0
 
 do {
-  signal_distancia = read sensor_distancia,
-  signal_viendo = lift hay_casa sensor_distancia,
-  write led signal_viendo
+  signal_distance <- read INPUT_DISTANCE
+  signal_house <- lift isHouse signal_distance
+  output OUTPUT_LED signal_house
 }
-\end{verbatim}
+\end{Verbatim}
 
-El mismo se representaría en bajo nivel de la siguiente forma:
+El mismo se traduce a \alf{} de la siguiente forma:
 
-\begin{verbatim}
-01:  push 1
-02:  store 0 //sensor_distancia = 1
-03:  push 1
-04:  store 1 //led = 1
-05:  read 0 0 //signal_distancia = read 0
-06:  lift 1 0 hay_casa //signal_viendo = lift hay_casa sensor_distancia
-07:  write 1 1 //write led signal_viendo
-08:  halt
-09:  load_arg 0 //hay_casa:
-10:  push 100
-11:  cmp_le //distancia < 100
-12:  return
-\end{verbatim}
+\begin{Verbatim}
+0: t_call
+1: 10
+2: t_read 1
+3: t_lift 0
+4: 1
+5: 16
+6: t_call
+7: 13
+8: t_write 0
+9: t_halt
+10: t_push
+11: 1
+12: t_ret
+13: t_push
+14: 1
+15: t_ret
+16: t_load_param 0
+17: t_push
+18: 100
+19: t_cmp_lt
+20: t_jump_false
+21: 26
+22: t_push
+23: 1
+24: t_jump
+25: 28
+26: t_push
+27: 0
+28: t_ret
+\end{Verbatim}
 
-TODO: Poner bien y sin comentarios. Comentar abajo.
+TODO: Poner comentarios. Comentar abajo.
 
