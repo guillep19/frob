@@ -4,48 +4,51 @@ intermedio llamado lenguaje \alf{}.
   Para lograr ésto, se define el lenguaje como un conjunto de instrucciones
 con su semántica y una máquina abstracta que las ejecuta.
 
-  TODO: Modificar toda esta sección, parece más una descripción de la máquina
-virtual que del lenguaje.
-
 \subsection{Instrucciones}
 
   Utilizaré la siguiente notación para describir las instrucciones:
 
   $\texttt{codigo}\ \textit{inmediato}\ [{arg}_1 \dotsb {arg}_n]$
- 
-  TODO: Ver si ésto debería ir aca o en implementación:
-
-  Las instrucciones van a tener la siguiente representación en memoria:
-
-  \begin{center}
-      \begin{tabular}{|c|c|}
-      \hline
-      codigo de 8 bit & \cellcolor{gray!25}inmediato de 8 bit \\
-      \hline
-      \multicolumn{2}{|c|}{argumento $1$ opcional de 16 bit} \\
-      \hline
-      \multicolumn{2}{|c|}{...} \\
-      \hline
-      \multicolumn{2}{|c|}{argumento $n$ opcional de 16 bit} \\
-      \hline
-      \end{tabular}
-  \end{center}
 
 \begin{itemize}
 
 \item \texttt{read id}
 
-  Toma el tope del stack (\texttt{TOS}) como identificador de una entrada.
+  Toma el tope del stack (\texttt{TOS}\footnote{Del inglés: Top of stack}) como identificador de una entrada.
   Crea una señal \texttt{id} que contendrá el valor de la entrada asociada.
   Como precondición, la señal \texttt{id} no debe existir.
 
 \begin{tikzpicture}
 \selectlanguage{english}
- \begin{scope}[xshift=0cm,yshift=-5cm,very thick,
+  \begin{scope}[xshift=0cm,yshift=-5cm,very thick,
     node distance=2cm,on grid,>=stealth',
     block/.style={rectangle,draw,fill=cyan!20},
-    comp/.style={circle,draw,fill=orange!40}]
-   \node [comp]  (ca2)      {$\textit{S}_{id}$};
+    comp/.style={circle,draw,fill=orange!40},
+    stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
+  \node[stack=5]  {
+    \nodepart{one}
+    \nodepart{two}TOS
+    \nodepart{three} $s_n$
+    \nodepart{four} $\dotsb$
+    \nodepart{five} $s_o$
+  };
+   \node [block] (s2) [yshift=1.5cm,xshift=2cm] {$\textit{Input}_{TOS}$};
+ \end{scope} 
+ \draw [dashed] (4.5,-3) -- (4.5,-5.5);
+ \begin{scope}[xshift=8cm,yshift=-5cm,very thick,
+    node distance=2cm,on grid,>=stealth',
+    block/.style={rectangle,draw,fill=cyan!20},
+    comp/.style={circle,draw,fill=orange!40},
+  stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
+  \node[stack=5]  {
+    \nodepart{one}
+    \nodepart{two}
+    \nodepart{three} $s_n$
+    \nodepart{four} $\dotsb$
+    \nodepart{five} $s_o$
+  };
+
+  \node [comp]  (ca2) [xshift=2cm]     {$\textit{S}_{id}$};
    \node [block] (s2) [above=of ca2]   {$\textit{Input}_{TOS}$} edge [->] (ca2);
    \end{scope} 
 \selectlanguage{spanish}
@@ -59,7 +62,15 @@ a la señal \texttt{src}.
 
 \begin{tikzpicture}
 \selectlanguage{english}
- \begin{scope}[xshift=0cm,yshift=-5cm,very thick,
+  \begin{scope}[xshift=0cm,yshift=-5cm,very thick,
+    node distance=2cm,on grid,>=stealth',
+    block/.style={rectangle,draw,fill=cyan!20},
+    func/.style={rectangle,draw,fill=green!20},
+    comp/.style={circle,draw,fill=orange!40}]
+    \node [comp]  (ca1) [yshift=1.5cm] {$S_{src}$};
+ \end{scope} 
+  \draw [dashed] (4.5,-3) -- (4.5,-5.5);
+ \begin{scope}[xshift=8cm,yshift=-5cm,very thick,
     node distance=2cm,on grid,>=stealth',
     block/.style={rectangle,draw,fill=cyan!20},
     func/.style={rectangle,draw,fill=green!20},
@@ -70,8 +81,6 @@ a la señal \texttt{src}.
    \end{scope} 
 \selectlanguage{spanish}
 \end{tikzpicture}
-
-
 
 
 \item \texttt{lift2 id src\_1 src\_2 f}
@@ -107,29 +116,49 @@ la función \texttt{f}, y las señales \texttt{src\_1} y \texttt{src\_2}.
 
 \item \texttt{write index id}
 
-  Crea un nodo $Output$ que recibe valores de la señal \texttt{id}
-y los emite en la salida número \texttt{index}.
-  El nodo guarda dicho valor y el dispatcher decide en que momento
-debe escribirlo en la salida asociada.
-  Se intentará que sea lo más instantáneo posible
-ya que el valor depende del tiempo y a mayor demora, menos correcto
-será el comportamiento.
+  Envía los valores de la señal \texttt{id} a la salida identificada
+con el tope del stack (TOS).
 
 \begin{tikzpicture}
 \selectlanguage{english}
- \begin{scope}[xshift=0cm,yshift=-5cm,very thick,
+  \begin{scope}[xshift=0cm,yshift=-5cm,very thick,
     node distance=2cm,on grid,>=stealth',
     block/.style={rectangle,draw,fill=cyan!20},
-    comp/.style={circle,draw,fill=orange!40}]
-   \node [block] (re)         {Receiver};
-   \node [comp]  (cb) [above=of re]     {B}  edge [->] (re);
-   \node [comp]  (ca1)  [above=of cb,xshift=-1cm] {A1} edge [->] (cb);
-   \node [comp]  (ca2)  [right=of ca1]      {A2} edge [->] (cb);
-   \node [block] (s1) [above=of ca1]    {Source1} edge [->] (ca1);
-   \node [block] (s2) [right=of s1]   {Source2} edge [->] (ca2);
+    comp/.style={circle,draw,fill=orange!40},
+    stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
+  \node[stack=5]  {
+    \nodepart{one}
+    \nodepart{two}TOS
+    \nodepart{three} $s_n$
+    \nodepart{four} $\dotsb$
+    \nodepart{five} $s_o$
+  };
+   \node [block] (s2) [yshift=1.5cm,xshift=2cm] {$\textit{Output}_{TOS}$};
+ \end{scope} 
+ \draw [dashed] (4.5,-3) -- (4.5,-5.5);
+ \begin{scope}[xshift=8cm,yshift=-5cm,very thick,
+    node distance=2cm,on grid,>=stealth',
+    block/.style={rectangle,draw,fill=cyan!20},
+    comp/.style={circle,draw,fill=orange!40},
+  stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
+  \node[stack=5]  {
+    \nodepart{one}
+    \nodepart{two}
+    \nodepart{three} $s_n$
+    \nodepart{four} $\dotsb$
+    \nodepart{five} $s_o$
+  };
+
+   \node [block] (s2) [xshift=2cm] {$\textit{Output}_{TOS}$};
+   \node [comp] (ca2) [above=of s2] {$\textit{S}_{id}$} edge [->] (s2);
    \end{scope} 
 \selectlanguage{spanish}
 \end{tikzpicture}
+
+
+
+
+
 
 
 \end{itemize}
