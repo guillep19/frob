@@ -3,170 +3,100 @@ intermedio llamado lenguaje \alf{}.
   El mismo es independiente de la plataforma en la que va a ser ejecutado.
   Para lograr ésto, se define el lenguaje como un conjunto de instrucciones
 con su semántica y una máquina abstracta que las ejecuta.
+La máquina que interpreta el lenguaje \alf{} es una
+\textit{máquina de stack}.\footnote{Stack machine en inglés}.
 
-\subsection{Instrucciones}
+  En una máquina de stack las instrucciones están en notación
+  postfija.\footnote{RPN (\textit{Reverse polish notation}) del inglés}
+  Para evaluar expresiones se colocan sus argumentos en una pila, y luego
+se ejecuta la operación asociada.
+  
+  Por ejemplo la expresión ``$5 + 19 * 8$'' en RPN se
+  escribe ``$5\ 19\ 8 * +$''.
+  
+  En \alf{} se utilizan 5 instrucciones para ésto:
 
+  \begin{Verbatim}[frame=single]
+  push 5
+  push 19
+  push 8
+  mul
+  add
+  \end{Verbatim}
+  
   Utilizaré la siguiente notación para describir las instrucciones:
+  \begin{center}
+    $\texttt{codigo}  [\textit{inmediato}],  [ {arg}_1 \dotsb {arg}_n ]$
+  \end{center}
 
-  $\texttt{codigo}\ \textit{inmediato}\ [{arg}_1 \dotsb {arg}_n]$
+\subsection{Instrucciones básicas}
 
 \begin{itemize}
 
-\item \texttt{read id}
+\item {
+    \texttt{push} ,\textit{value}
 
-  Toma el tope del stack (\texttt{TOS}\footnote{Del inglés: Top of stack}) como identificador de una entrada.
-  Crea una señal \texttt{id} que contendrá el valor de la entrada asociada.
-  Como precondición, la señal \texttt{id} no debe existir.
+    Coloca el valor \textit{value} como tope del stack (\texttt{TOS}\footnote{Del inglés: Top
+    of stack}).
 
-\begin{tikzpicture}
-\selectlanguage{english}
-  \begin{scope}[xshift=0cm,yshift=-5cm,very thick,
-    node distance=2cm,on grid,>=stealth',
-    block/.style={rectangle,draw,fill=cyan!20},
-    comp/.style={circle,draw,fill=orange!40},
-    stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
-  \node[stack=5]  {
-    \nodepart{one}
-    \nodepart{two}TOS
-    \nodepart{three} $s_n$
-    \nodepart{four} $\dotsb$
-    \nodepart{five} $s_o$
-  };
-   \node [block] (s2) [yshift=1.5cm,xshift=2cm] {$\textit{Input}_{TOS}$};
- \end{scope} 
- \draw [dashed] (4.5,-3) -- (4.5,-5.5);
- \begin{scope}[xshift=8cm,yshift=-5cm,very thick,
-    node distance=2cm,on grid,>=stealth',
-    block/.style={rectangle,draw,fill=cyan!20},
-    comp/.style={circle,draw,fill=orange!40},
-  stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
-  \node[stack=5]  {
-    \nodepart{one}
-    \nodepart{two}
-    \nodepart{three} $s_n$
-    \nodepart{four} $\dotsb$
-    \nodepart{five} $s_o$
-  };
-
-  \node [comp]  (ca2) [xshift=2cm]     {$\textit{S}_{id}$};
-   \node [block] (s2) [above=of ca2]   {$\textit{Input}_{TOS}$} edge [->] (ca2);
-   \end{scope} 
-\selectlanguage{spanish}
-\end{tikzpicture}
-
-
-\item \texttt{lift id src f}
-
- Crea una señal \texttt{id} aplicando la función \texttt{f}
-a la señal \texttt{src}.
-
-\begin{tikzpicture}
-\selectlanguage{english}
-  \begin{scope}[xshift=0cm,yshift=-5cm,very thick,
-    node distance=2cm,on grid,>=stealth',
-    block/.style={rectangle,draw,fill=cyan!20},
-    func/.style={rectangle,draw,fill=green!20},
-    comp/.style={circle,draw,fill=orange!40}]
-    \node [comp]  (ca1) [yshift=1.5cm] {$S_{src}$};
- \end{scope} 
-  \draw [dashed] (4.5,-3) -- (4.5,-5.5);
- \begin{scope}[xshift=8cm,yshift=-5cm,very thick,
-    node distance=2cm,on grid,>=stealth',
-    block/.style={rectangle,draw,fill=cyan!20},
-    func/.style={rectangle,draw,fill=green!20},
-    comp/.style={circle,draw,fill=orange!40}]
-   \node [func]  (f1) [xshift=1.3cm]     {f} ;
-   \node [comp]  (cb)  []   {$S_{id}$} edge [-] (f1);
-   \node [comp]  (ca1)  [above=of cb] {$S_{src}$} edge [->] (cb);
-   \end{scope} 
-\selectlanguage{spanish}
-\end{tikzpicture}
-
-
-\item \texttt{lift2 id src\_1 src\_2 f}
-
-  Crea una señal \texttt{id} aplicando el combinador \texttt{lift2} usando
-la función \texttt{f}, y las señales \texttt{src\_1} y \texttt{src\_2}.
-
-\begin{tikzpicture}
-\selectlanguage{english}
-  \begin{scope}[xshift=0cm,yshift=-4cm,very thick,
-    node distance=2cm,on grid,>=stealth',
-    block/.style={rectangle,draw,fill=cyan!20},
-    func/.style={rectangle,draw,fill=green!20},
-    comp/.style={circle,draw,fill=orange!40}]
-   \node [comp] (ca1) [xshift=-1cm] {$S_{src_1}$};
-   \node [comp]  (ca2) [right=of ca1] {$S_{src_2}$};
-   \end{scope}
-  \draw [dashed] (4.5,-3) -- (4.5,-5.5);
- \begin{scope}[xshift=8cm,yshift=-5cm,very thick,
-    node distance=2cm,on grid,>=stealth',
-    block/.style={rectangle,draw,fill=cyan!20},
-    func/.style={rectangle,draw,fill=green!20},
-    comp/.style={circle,draw,fill=orange!40}]
-   \node [func] (f1) [xshift=1.3cm] {f};
-   \node [comp] (cb) {$S_{id}$} edge [-] (f1);
-   \node [comp] (ca1) [above=of cb,xshift=-1cm] {$S_{src_1}$} edge [->] (cb);
-   \node [comp]  (ca2) [right=of ca1] {$S_{src_2}$} edge [->] (cb);
-   \end{scope} 
-\selectlanguage{spanish}
-\end{tikzpicture}
-
-
-
-\item \texttt{write index id}
-
-  Envía los valores de la señal \texttt{id} a la salida identificada
-con el tope del stack (TOS).
-
-\begin{tikzpicture}
-\selectlanguage{english}
-  \begin{scope}[xshift=0cm,yshift=-5cm,very thick,
-    node distance=2cm,on grid,>=stealth',
-    block/.style={rectangle,draw,fill=cyan!20},
-    comp/.style={circle,draw,fill=orange!40},
-    stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
-  \node[stack=5]  {
-    \nodepart{one}
-    \nodepart{two}TOS
-    \nodepart{three} $s_n$
-    \nodepart{four} $\dotsb$
-    \nodepart{five} $s_o$
-  };
-   \node [block] (s2) [yshift=1.5cm,xshift=2cm] {$\textit{Output}_{TOS}$};
- \end{scope} 
- \draw [dashed] (4.5,-3) -- (4.5,-5.5);
- \begin{scope}[xshift=8cm,yshift=-5cm,very thick,
-    node distance=2cm,on grid,>=stealth',
-    block/.style={rectangle,draw,fill=cyan!20},
-    comp/.style={circle,draw,fill=orange!40},
-  stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
-  \node[stack=5]  {
-    \nodepart{one}
-    \nodepart{two}
-    \nodepart{three} $s_n$
-    \nodepart{four} $\dotsb$
-    \nodepart{five} $s_o$
-  };
-
-   \node [block] (s2) [xshift=2cm] {$\textit{Output}_{TOS}$};
-   \node [comp] (ca2) [above=of s2] {$\textit{S}_{id}$} edge [->] (s2);
-   \end{scope} 
-\selectlanguage{spanish}
-\end{tikzpicture}
-
-
-
-
-
-
+    \input{design/ll_diagram_push.tex}
+}
 
 \end{itemize}
 
-TODO: Comentario de Marcos: Describir más instrucciones.
-Mostrar que es una máquina de stack. Mostrar ejemplos. 
-Hacer referencia al apéndice A.2.
+\subsection{Instrucciones para manipular señales}
+  
+  A continuación se presentan las instrucciones utilizadas para manipular
+señales.
 
+\begin{itemize}
 
-\pagebreak
+\item {
+    \texttt{read} \textit{id}
 
+      Toma el tope del stack como identificador de una entrada.
+      Crea una señal \textit{id} que contendrá el valor de la entrada
+    asociada. 
+      Como precondición, la señal \textit{id} no debe existir.
+
+    \input{design/ll_diagram_read.tex}
+}
+\item {
+    \texttt{lift id src f}
+
+      Crea una señal \texttt{id} aplicando la función \texttt{f}
+    a la señal \texttt{src}.
+  
+    \input{design/ll_diagram_lift.tex}
+}
+\item {
+    \texttt{lift2 id src\_1 src\_2 f}
+
+      Crea una señal \texttt{id} aplicando el combinador \texttt{lift2}
+    usando la función \texttt{f}, y las señales \texttt{src\_1} y
+    \texttt{src\_2}.
+
+    \input{design/ll_diagram_lift2.tex}
+}
+\item {
+    \texttt{folds id src f}
+
+      Crea una señal \texttt{id} aplicando el combinador \texttt{folds}.
+    El valor inicial de la señal está dado por el tope del stack, luego
+    el mismo se actualiza aplicando la función \texttt{f} al valor actual
+    y a los valores recibidos de la señal \texttt{src}.
+
+    \input{design/ll_diagram_folds.tex}
+}
+\item {
+    \texttt{write index id}
+
+      Envía los valores de la señal \texttt{id} a la salida identificada
+    con el tope del stack (TOS).
+    
+    \input{design/ll_diagram_write.tex}
+}
+\end{itemize}
+
+  En el apéndice A.2 se encuentra el listado completo de operaciones y su
+descripción.

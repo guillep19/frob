@@ -1,0 +1,37 @@
+\begin{tikzpicture}
+\selectlanguage{english}
+  \begin{scope}[xshift=0cm,yshift=-5cm,very thick,
+    node distance=2cm,on grid,>=stealth',
+    block/.style={rectangle,draw,fill=cyan!20},
+    comp/.style={circle,draw,fill=orange!40},
+    stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
+  \node[stack=5]  {
+    \nodepart{one}
+    \nodepart{two}TOS
+    \nodepart{three} $s_n$
+    \nodepart{four} $\dotsb$
+    \nodepart{five} $s_o$
+  };
+   \node [block] (s2) [yshift=1.5cm,xshift=2cm] {$\textit{Input}_{TOS}$};
+ \end{scope} 
+ \draw [dashed] (4.5,-3) -- (4.5,-5.5);
+ \begin{scope}[xshift=8cm,yshift=-5cm,very thick,
+    node distance=2cm,on grid,>=stealth',
+    block/.style={rectangle,draw,fill=cyan!20},
+    comp/.style={circle,draw,fill=orange!40},
+  stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
+  \node[stack=5]  {
+    \nodepart{one}
+    \nodepart{two}
+    \nodepart{three} $s_n$
+    \nodepart{four} $\dotsb$
+    \nodepart{five} $s_o$
+  };
+
+  \node [comp]  (ca2) [xshift=2cm]     {$\textit{S}_{id}$};
+   \node [block] (s2) [above=of ca2]   {$\textit{Input}_{TOS}$} edge [->] (ca2);
+   \end{scope} 
+\selectlanguage{spanish}
+\end{tikzpicture}
+
+

@@ -1,0 +1,25 @@
+\begin{tikzpicture}
+\selectlanguage{english}
+  \begin{scope}[xshift=0cm,yshift=-4cm,very thick,
+    node distance=2cm,on grid,>=stealth',
+    block/.style={rectangle,draw,fill=cyan!20},
+    func/.style={rectangle,draw,fill=green!20},
+    comp/.style={circle,draw,fill=orange!40}]
+   \node [comp] (ca1) [xshift=-1cm] {$S_{src_1}$};
+   \node [comp]  (ca2) [right=of ca1] {$S_{src_2}$};
+   \end{scope}
+  \draw [dashed] (4.5,-3) -- (4.5,-5.5);
+ \begin{scope}[xshift=8cm,yshift=-5cm,very thick,
+    node distance=2cm,on grid,>=stealth',
+    block/.style={rectangle,draw,fill=cyan!20},
+    func/.style={rectangle,draw,fill=green!20},
+    comp/.style={circle,draw,fill=orange!40}]
+   \node [func] (f1) [xshift=1.3cm] {f};
+   \node [comp] (cb) {$S_{id}$} edge [-] (f1);
+   \node [comp] (ca1) [above=of cb,xshift=-1cm] {$S_{src_1}$} edge [->] (cb);
+   \node [comp]  (ca2) [right=of ca1] {$S_{src_2}$} edge [->] (cb);
+   \end{scope} 
+\selectlanguage{spanish}
+\end{tikzpicture}
+
+
