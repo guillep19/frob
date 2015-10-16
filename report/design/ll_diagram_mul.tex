@@ -6,34 +6,28 @@
     block/.style={rectangle,draw,fill=cyan!20},
     comp/.style={circle,draw,fill=orange!40},
     stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
-  \node[stack=5,xshift=4cm,yshift=2cm,
-        text width=1.1cm,align=center,text height=0.3cm]  {
-    \nodepart{one} \vphantom{fruit}
-    \nodepart{two} $s_n$
-    \nodepart{three} $s_{n-1}$
-    \nodepart{four} $\dotsb$
-    \nodepart{five} $s_o$
+  \node[stack=4,xshift=2cm,yshift=2cm,
+        text width=1.1cm,align=center,text height=0.3cm] {
+    \nodepart{one} $s_n$
+    \nodepart{two} $s_{n-1}$
+    \nodepart{three} $\dotsb$
+    \nodepart{four} $s_o$
   };
-   \node [block] (s2) [yshift=1cm,xshift=1cm] {$\textit{Output}_{s_n}$};
+ \draw [->,line width=1pt] (0,2.9) -- node[below]{\small{TOS}} (1.2, 2.9);
  \end{scope} 
  \draw [->,line width=1.7pt] (5,2) -- (7,2);
-
- \begin{scope}[xshift=7cm,yshift=0cm,very thick,
+ \begin{scope}[xshift=8cm,yshift=0cm,very thick,
     node distance=2cm,on grid,>=stealth',
     block/.style={rectangle,draw,fill=cyan!20},
     comp/.style={circle,draw,fill=orange!40},
   stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
-  \node[stack=5,xshift=4cm,yshift=2cm,
-        text width=1.1cm,align=center,text height=0.3cm]  {
+  \node[stack=4,xshift=2cm,yshift=2cm,text width=1.1cm,align=center]  {
     \nodepart{one} \vphantom{fruit}
-    \nodepart{two} \vphantom{fruit}
-    \nodepart{three} $s_{n-1}$
-    \nodepart{four} $\dotsb$
-    \nodepart{five} $s_o$
-  };
-
-   \node [block] (s2) [xshift=1cm,yshift=1cm] {$\textit{Output}_{s_n}$};
-   \node [comp] (ca2) [above=of s2] {$\textit{S}_{id}$} edge [->] (s2);
+    \nodepart{two} \tiny{$s_n * s_{n-1}$}
+    \nodepart{three} $\dotsb$
+    \nodepart{four} $s_o$
+   };
+ \draw [->,line width=1pt] (0,2.2) -- node[below]{\small{TOS}} (1.2, 2.2);
    \end{scope} 
 \selectlanguage{spanish}
 \end{tikzpicture}
