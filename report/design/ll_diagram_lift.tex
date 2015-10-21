@@ -7,7 +7,7 @@
     block/.style={rectangle,draw,fill=cyan!20},
     func/.style={rectangle,draw,fill=green!20},
     comp/.style={circle,draw,fill=orange!40}]
-    \node [comp] (ca1) [xshift=2cm, yshift=3cm] {$S_{src}$};
+    \node [comp] (ca1) [xshift=2cm, yshift=3cm] {$\texttt{S}_{src}$};
    \end{scope} 
    \draw [->,line width=1.7pt](5,2) -- (7,2);
    \begin{scope}[xshift=10cm,yshift=0cm,very thick,
@@ -16,9 +16,9 @@
     func/.style={rectangle,draw,fill=green!20},
     comp/.style={circle,draw,fill=orange!40}]
    \node [func]  (f1) [xshift=1cm, yshift=1cm]  {f} ;
-   \node [comp]  (cb)  [yshift=1cm]   {$S_{id}$} edge [-] (f1);
-   \node [comp]  (ca1)  [above=of cb] {$S_{src}$} edge [->] (cb);
-   \end{scope} 
+   \node [comp]  (cb)  [yshift=1cm]   {$\texttt{S}_{id}$} edge [-] (f1);
+   \node [comp]  (ca1)  [above=of cb] {$\texttt{S}_{src}$} edge [->] (cb);
+   \end{scope}
 \selectlanguage{spanish}
 \end{tikzpicture}
 \end{center}

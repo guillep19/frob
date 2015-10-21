@@ -26,8 +26,8 @@ salidas de acuerdo a que señal está conectada a ellas.
 
   A continuación se presenta el conjunto de primitivas y combinadores.
 
-\subsection{Read}
-%%read 
+\subsubsection{Read}
+%%read
   Para crear una señal a partir de una entrada, se utiliza la
 primitiva \texttt{read}.
 
@@ -47,7 +47,7 @@ El tipo de la primitiva \texttt{read} es:
   $read :: IO\ a \rightarrow Signal\ a $
 \end{center}
 
-\subsection{Lift}
+\subsubsection{Lift}
 %%lift
   Usando la primitiva \texttt{lift} se puede aplicar una función
 a la señal, y obtener una nueva señal más compleja resultado de la
@@ -84,7 +84,7 @@ El tipo de la primitiva lift es
   $lift :: (a \rightarrow b) \rightarrow Signal\ a \rightarrow Signal\ b$
 \end{center}
 
-\subsection{Output}
+\subsubsection{Output}
 %%output
   La primitiva \texttt{output} envía a un actuador, el valor de una señal.
   Asumiendo que el motor del robot está identificado con el valor entero
@@ -106,7 +106,7 @@ $output :: Signal\ a \rightarrow Int \rightarrow IO\ a$
 
 \input{design/example.tex}
 
-\subsection{LiftN}
+\subsubsection{LiftN}
 
   Para combinar más de una señal, se utiliza la función \texttt{lift2}
 que recibe dos señales y produce una nueva aplicando una función.
@@ -123,7 +123,7 @@ $lift3 :: (a \rightarrow b \rightarrow c \rightarrow d) \rightarrow Signal\ a \r
 $lift3\ f\ sa\ sb\ sc = lift2\ ((lift2\ f\ sa\ sb)\ sc)$
 \end{center}
 
-\subsection{Folds}
+\subsubsection{Folds}
 
   En \frob{} para mantener un valor que dependa de la historia, se utiliza
 el combinador \texttt{folds}.

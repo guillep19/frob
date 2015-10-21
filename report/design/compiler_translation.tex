@@ -1,8 +1,7 @@
 
-TODO: Describir el algoritmo de traducción.
-
-El siguiente programa \frob{} muestra con un led si el robot está
-frente a una casa:
+Dado un robot con un sensor de distancia y un led, el siguiente
+programa \frob{} enciende el led cuando el robot detecta una
+casa.
 
 \begin{Verbatim}
 #Inputs
@@ -53,5 +52,58 @@ El mismo se traduce a \alf{} de la siguiente forma:
 28: t_ret
 \end{Verbatim}
 
-TODO: Poner comentarios. Comentar abajo.
+Para entender el programa \alf{}, primero se divide en dos secciones.
+Entre la línea $0$ y la línea $9$ está el código correspondiente a
+la sección \texttt{do}.
+
+A partir de la línea $10$ están las declaraciones de funciones.
+
+La declaración:
+
+\begin{Verbatim}
+10: t_push
+11: 1
+12: t_ret
+\end{Verbatim}
+
+se corresponde con la definición de la constante \texttt{INPUT\_DISTANCE}, y la declaración
+
+\begin{Verbatim}
+13: t_push
+14: 1
+15: t_ret
+\end{Verbatim}
+
+es la definición de la constance \texttt{OUTPUT\_LED}.
+
+La función \texttt{isHouse} se traduce a:
+
+\begin{Verbatim}
+16: t_load_param 0
+17: t_push
+18: 100
+19: t_cmp_lt
+20: t_jump_false
+21: 26
+22: t_push
+23: 1
+24: t_jump
+25: 28
+26: t_push
+27: 0
+28: t_ret
+\end{Verbatim}
+
+En el bloque \texttt{do} la señal \texttt{signal\_distance} se
+crea cargando el valor de \texttt{INPUT\_DISTANCE} en la pila,
+y luego usando la instrucción \texttt{read}.
+El argumento $1$ de la instrucción \texttt{read} será el
+identificador de la señal.
+
+\begin{Verbatim}
+0: t_call
+1: 10
+2: t_read 1
+\end{Verbatim}
+
 

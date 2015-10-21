@@ -6,8 +6,8 @@
     block/.style={rectangle,draw,fill=cyan!20},
     func/.style={rectangle,draw,fill=green!20},
     comp/.style={circle,draw,fill=orange!40}]
-   \node [comp] (ca1) [xshift=1cm,yshift=3cm] {$S_{src_1}$};
-   \node [comp]  (ca2) [right=of ca1] {$S_{src_2}$};
+    \node [comp] (ca1) [xshift=1cm,yshift=3cm] {$\texttt{S}_{src_1}$};
+    \node [comp]  (ca2) [right=of ca1] {$\texttt{S}_{{src}_2}$};
    \end{scope}
    \draw [->,line width=1.7pt] (5,2) -- (7,2);
  \begin{scope}[xshift=8cm,yshift=0cm,very thick,
@@ -16,9 +16,9 @@
     func/.style={rectangle,draw,fill=green!20},
     comp/.style={circle,draw,fill=orange!40}]
    \node [func] (f1) [xshift=3cm,yshift=1cm] {f};
-   \node [comp] (cb) [left=of f1] {$S_{id}$} edge [-] (f1);
-   \node [comp] (ca1) [above=of cb,xshift=-1cm] {$S_{src_1}$} edge [->] (cb);
-   \node [comp]  (ca2) [right=of ca1] {$S_{src_2}$} edge [->] (cb);
+   \node [comp] (cb) [left=of f1] {$\texttt{S}_{id}$} edge [-] (f1);
+   \node [comp] (ca1) [above=of cb,xshift=-1cm] {$\texttt{S}_{src_1}$} edge [->] (cb);
+   \node [comp]  (ca2) [right=of ca1] {$\texttt{S}_{src_2}$} edge [->] (cb);
    \end{scope} 
 \selectlanguage{spanish}
 \end{tikzpicture}

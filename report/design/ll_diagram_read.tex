@@ -15,7 +15,7 @@
     \nodepart{four} $\dotsb$
     \nodepart{five} $s_0$
   };
-   \node [block] (s2) [yshift=3cm,xshift=1cm] {$\textit{Input}_{s_n}$};
+   \node [block] (s2) [yshift=3cm,xshift=1cm] {$\texttt{I}_{s_n}$};
  \draw [->,line width=1pt] (2.6,2.5) -- node[below]{\tiny{TOS}} (3.3, 2.5);
  \end{scope} 
 
@@ -35,8 +35,8 @@
     \nodepart{four} $\dotsb$
     \nodepart{five} $s_0$
   };
-   \node [comp]  (ca2) [xshift=1cm,yshift=1cm] {$\textit{S}_{id}$};
-   \node [block] (s2) [above=of ca2]   {$\textit{Input}_{s_n}$} edge [->] (ca2);
+   \node [comp]  (ca2) [xshift=1cm,yshift=1cm] {$\texttt{S}_{id}$};
+   \node [block] (s2) [above=of ca2]   {$\texttt{I}_{s_n}$} edge [->] (ca2);
    \draw [->,line width=1pt] (2.6,1.9) -- node[below]{\tiny{TOS}} (3.3, 1.9);
    \end{scope} 
 \selectlanguage{spanish}

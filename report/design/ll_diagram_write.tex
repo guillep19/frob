@@ -14,7 +14,8 @@
     \nodepart{four} $\dotsb$
     \nodepart{five} $s_o$
   };
-   \node [block] (s2) [yshift=1cm,xshift=1cm] {$\textit{Output}_{s_n}$};
+  \draw [->,line width=1pt] (2.7,2.5) -- node[below]{\tiny{\texttt{TOS}}} (3.3, 2.5);
+   \node [block] (s2) [yshift=1cm,xshift=1cm] {$\texttt{O}_{s_n}$};
  \end{scope} 
  \draw [->,line width=1.7pt] (5,2) -- (7,2);
 
@@ -31,9 +32,10 @@
     \nodepart{four} $\dotsb$
     \nodepart{five} $s_o$
   };
+  \draw [->,line width=1pt] (2.7,1.9) -- node[below]{\tiny{\texttt{TOS}}} (3.3, 1.9);
 
-   \node [block] (s2) [xshift=1cm,yshift=1cm] {$\textit{Output}_{s_n}$};
-   \node [comp] (ca2) [above=of s2] {$\textit{S}_{id}$} edge [->] (s2);
+   \node [block] (s2) [xshift=1cm,yshift=1cm] {$\texttt{O}_{s_n}$};
+   \node [comp] (ca2) [above=of s2] {$\texttt{S}_{id}$} edge [->] (s2);
    \end{scope} 
 \selectlanguage{spanish}
 \end{tikzpicture}

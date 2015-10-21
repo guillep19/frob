@@ -1,13 +1,13 @@
   Al compilar un programa \frob{}, se obtiene como salida un código
-intermedio llamado lenguaje \alf{}.
+intermedio en lenguaje \alf{}.
   El mismo es independiente de la plataforma en la que va a ser ejecutado.
   Para lograr ésto, se define el lenguaje como un conjunto de instrucciones
 con su semántica y una máquina abstracta que las ejecuta.
-La máquina que interpreta el lenguaje \alf{} es una
+  La máquina que interpreta el lenguaje \alf{} es una
 \textit{máquina de stack}.\footnote{Stack machine en inglés}.
 
   En una máquina de stack las instrucciones están en notación
-  postfija.\footnote{RPN (\textit{Reverse polish notation}) del inglés}
+postfija.\footnote{RPN (\textit{Reverse polish notation}) del inglés}
   Para evaluar expresiones se colocan sus argumentos en una pila, y luego
 se ejecuta la operación asociada.
   
@@ -23,11 +23,52 @@ se ejecuta la operación asociada.
   mul
   add
   \end{Verbatim}
-  
+
+  La explicación de la semántica de las mismas, se da a continuación.
+
   Utilizaré la siguiente notación para describir las instrucciones:
   \begin{center}
-    $\texttt{codigo}  [\textit{inmediato}],  [ {arg}_1 \dotsb {arg}_n ]$
+    $\texttt{codigo} [\textit{inmediato}] [, {arg}_1, \dotsb, {arg}_n ]$
   \end{center}
+
+  La máquina abstracta cuenta con un conjunto \textit{Inputs} de $m$
+  entradas fijas. Cada una se identifica con un entero único entre
+  $1$ y $m$.
+
+  Cada $\texttt{I}_i, i \in (1 \dotsb m)$ se corresponderá con un sensor
+  definido en el robot.
+  
+
+  \begin{center}
+    $\textit{Inputs} = \{\texttt{I}_1 \dotsb \texttt{I}_m\}$.
+  \end{center}
+
+  También cuenta con un conjunto \textit{Outputs} de $k$ salidas,
+  identificadas de $1$ a $k$.
+  
+  Cada $\texttt{O}_i, i \in (1 \dotsb k)$ se corresponderá con un actuador
+  del robot.
+
+  \begin{center}
+    $\textit{Outputs} = \{\texttt{O}_1 \dotsb \texttt{I}_k\}$.
+  \end{center}
+
+  Las señales que se definan se denotarán $\texttt{S}_i$, siendo $i$ un
+  índice único que las identifica. El conjunto de las señales se llama
+  \textit{Signals}.
+
+  \begin{center}
+    $\textit{Signals} = \{\texttt{S}_1 \dotsb \texttt{S}_s\}$.
+  \end{center}
+
+  La máquina tendrá una pila global, denotada \textit{Stack}.
+  El \textit{Stack} lo representaré graficamente con la notación:
+
+  \input{design/ll_diagram_stack.tex}
+
+  Donde \texttt{TOS}\footnote{Del inglés: Top
+    of stack} indica el tope del mismo.
+
 
 \subsection{Instrucciones básicas}
 
@@ -36,8 +77,7 @@ se ejecuta la operación asociada.
 \item {
     \texttt{push} ,\textit{value}
 
-    Coloca el valor \textit{value} como tope del stack (\texttt{TOS}\footnote{Del inglés: Top
-    of stack}).
+    Coloca el valor \textit{value} como tope del stack .
 
     \input{design/ll_diagram_push.tex}
 }
@@ -63,8 +103,7 @@ se ejecuta la operación asociada.
   
   A continuación se presentan las instrucciones utilizadas para manipular
 señales.
-
-\begin{itemize}
+  \begin{itemize}
 
 \item {
     \texttt{read} \textit{id}
@@ -77,37 +116,38 @@ señales.
     \input{design/ll_diagram_read.tex}
 }
 \item {
-    \texttt{lift id src f}
+    \texttt{lift} \textit{id}, \textit{src} \textit{f}
 
-      Crea una señal \texttt{id} aplicando la función \texttt{f}
-    a la señal \texttt{src}.
+      Crea una señal \textit{id} aplicando la función \textit{f}
+    a la señal \textit{src}.
   
     \input{design/ll_diagram_lift.tex}
 }
 \item {
-    \texttt{lift2 id src\_1 src\_2 f}
+  \texttt{lift2} \textit{id}, $\textit{src}_1$ $\textit{src}_2$ \textit{f}
 
-      Crea una señal \texttt{id} aplicando el combinador \texttt{lift2}
-    usando la función \texttt{f}, y las señales \texttt{src\_1} y
-    \texttt{src\_2}.
+      Crea una señal \textit{id} aplicando el combinador \texttt{lift2}
+    usando la función \textit{f}, y las señales $\textit{src}_1$ y
+  $\textit{src}_2$.
 
     \input{design/ll_diagram_lift2.tex}
 }
 \item {
-    \texttt{folds id src f}
+    \texttt{folds} \textit{id}, \textit{src} \textit{f}
 
-      Crea una señal \texttt{id} aplicando el combinador \texttt{folds}.
+      Crea una señal \textit{id} aplicando el combinador \texttt{folds}.
     El valor inicial de la señal está dado por el tope del stack, luego
-    el mismo se actualiza aplicando la función \texttt{f} al valor actual
-    y a los valores recibidos de la señal \texttt{src}.
+    el mismo se actualiza aplicando la función \textit{f} al valor actual
+    y a los valores recibidos de la señal \textit{src}.
 
     \input{design/ll_diagram_folds.tex}
 }
 \item {
-    \texttt{write index id}
+    \texttt{write} \textit{id}
 
-      Envía los valores de la señal \texttt{id} a la salida identificada
-    con el tope del stack (TOS).
+    Envía los valores de la señal \textit{id} a la salida identificada
+     con el valor $s_n$ ($\texttt{O}_{s_n}$) que se encuentra en el
+     tope del stack (\texttt{TOS}).
     
     \input{design/ll_diagram_write.tex}
 }
