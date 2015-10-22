@@ -2,82 +2,37 @@
 intermedio en lenguaje \alf{}.
   El mismo es independiente de la plataforma en la que va a ser ejecutado.
   Para lograr ésto, se define el lenguaje como un conjunto de instrucciones
-con su semántica y una máquina abstracta que las ejecuta.
-  La máquina que interpreta el lenguaje \alf{} es una
-\textit{máquina de stack}.\footnote{Stack machine en inglés}.
+con su semántica y una máquina virtual abstracta que las ejecuta.
 
-  En una máquina de stack las instrucciones están en notación
-postfija.\footnote{RPN (\textit{Reverse polish notation}) del inglés}
-  Para evaluar expresiones se colocan sus argumentos en una pila, y luego
-se ejecuta la operación asociada.
-  
-  Por ejemplo la expresión ``$5 + 19 * 8$'' en RPN se
-  escribe ``$5\ 19\ 8 * +$''.
-  
-  En \alf{} se utilizan 5 instrucciones para ésto:
 
-  \begin{Verbatim}[frame=single]
-  push 5
-  push 19
-  push 8
-  mul
-  add
-  \end{Verbatim}
 
-  La explicación de la semántica de las mismas, se da a continuación.
+\subsubsection{Máquina virtual}
+\input{design/vm.tex}
+
+
+  Las instrucciones están formadas por un código, un argumento inmediato
+  opcional y una lista de argumentos extra opcionales dependiendo del
+  código.
 
   Utilizaré la siguiente notación para describir las instrucciones:
   \begin{center}
     $\texttt{codigo} [\textit{inmediato}] [, {arg}_1, \dotsb, {arg}_n ]$
   \end{center}
 
-  La máquina abstracta cuenta con un conjunto \textit{Inputs} de $m$
-  entradas fijas. Cada una se identifica con un entero único entre
-  $1$ y $m$.
 
-  Cada $\texttt{I}_i, i \in (1 \dotsb m)$ se corresponderá con un sensor
-  definido en el robot.
-  
+\subsection{Conjunto de Instrucciones}
 
-  \begin{center}
-    $\textit{Inputs} = \{\texttt{I}_1 \dotsb \texttt{I}_m\}$.
-  \end{center}
-
-  También cuenta con un conjunto \textit{Outputs} de $k$ salidas,
-  identificadas de $1$ a $k$.
-  
-  Cada $\texttt{O}_i, i \in (1 \dotsb k)$ se corresponderá con un actuador
-  del robot.
-
-  \begin{center}
-    $\textit{Outputs} = \{\texttt{O}_1 \dotsb \texttt{I}_k\}$.
-  \end{center}
-
-  Las señales que se definan se denotarán $\texttt{S}_i$, siendo $i$ un
-  índice único que las identifica. El conjunto de las señales se llama
-  \textit{Signals}.
-
-  \begin{center}
-    $\textit{Signals} = \{\texttt{S}_1 \dotsb \texttt{S}_s\}$.
-  \end{center}
-
-  La máquina tendrá una pila global, denotada \textit{Stack}.
-  El \textit{Stack} lo representaré graficamente con la notación:
-
-  \input{design/ll_diagram_stack.tex}
-
-  Donde \texttt{TOS}\footnote{Del inglés: Top
-    of stack} indica el tope del mismo.
-
-
-\subsection{Instrucciones básicas}
+\subsubsection{Instrucciones básicas}
 
 \begin{itemize}
 
 \item {
     \texttt{push} ,\textit{value}
 
-    Coloca el valor \textit{value} como tope del stack .
+    La instrucción \texttt{push} coloca el
+    valor \textit{value} como tope del stack.
+    En el diagrama a la izquierda se muestra el estado del stack antes
+    de la operación y a la derecha el estado luego de su ejecución.
 
     \input{design/ll_diagram_push.tex}
 }
@@ -110,7 +65,7 @@ señales.
 
       Toma el tope del stack como identificador de una entrada.
       Crea una señal \textit{id} que contendrá el valor de la entrada
-    asociada. 
+    en el tiempo.
       Como precondición, la señal \textit{id} no debe existir.
 
     \input{design/ll_diagram_read.tex}
@@ -120,6 +75,8 @@ señales.
 
       Crea una señal \textit{id} aplicando la función \textit{f}
     a la señal \textit{src}.
+      Cada vez que la señal \textit{src} cambie de valor, se le aplica
+      la función \textit{f} y la señal \textit{id} cambia de valor.
   
     \input{design/ll_diagram_lift.tex}
 }
@@ -129,6 +86,8 @@ señales.
       Crea una señal \textit{id} aplicando el combinador \texttt{lift2}
     usando la función \textit{f}, y las señales $\textit{src}_1$ y
   $\textit{src}_2$.
+      Cuando ambas señales cambien de valor, se aplica la función
+      y la señal \textit{id} cambia de valor.
 
     \input{design/ll_diagram_lift2.tex}
 }
@@ -146,8 +105,8 @@ señales.
     \texttt{write} \textit{id}
 
     Envía los valores de la señal \textit{id} a la salida identificada
-     con el valor $s_n$ ($\texttt{O}_{s_n}$) que se encuentra en el
-     tope del stack (\texttt{TOS}).
+    con el valor $s_n$ ($\texttt{O}_{s_n}$) que se encuentra en el
+    tope del stack (\texttt{TOS}).
     
     \input{design/ll_diagram_write.tex}
 }
