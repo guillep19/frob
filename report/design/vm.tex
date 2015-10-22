@@ -105,19 +105,20 @@ escribe ``$5\ 19\ 8 * +$''.
 %%  partes que realmente sean diferentes como ser la comunicación con
 %%  los periféricos de entrada/salida y las llamadas al sistema.
 
-  El dispatcher, es quien implementa las acciones de la máquina.
-  El mismo se encarga de recibir valores de los sensores y mapearlos
-  a eventos en las entradas $\texttt{I}_i$.
-
-  Éstos eventos, serán recibidos por los nodos $Nodes$.
-  Cada $Node_i$ que espera por eventos entrará en estado activo cuando
-todos los nodos por los que espera le envíen un evento.
-  A su vez, el nodo en estado activo calcula un resultado y notifica a
-todos sus nodos adyacentes.
-
-  TODO: Forzar que Nodes sea un grafo acíclico en la descripción.
-
-  El dispatcher, realizará implicitamente un orden topológico de los
-nodos, como $Nodes$ es un grafo acíclico, éste proceso es posible y
-termina, y cada salida cuenta con un valor, que será mapeado a los actuadores.
+%% TODO: Re-redactar esto
+%%  El dispatcher, es quien implementa las acciones de la máquina.
+%%  El mismo se encarga de recibir valores de los sensores y mapearlos
+%%  a eventos en las entradas $\texttt{I}_i$.
+%%
+%%  Éstos eventos, serán recibidos por los nodos $Nodes$.
+%%  Cada $Node_i$ que espera por eventos entrará en estado activo cuando
+%%todos los nodos por los que espera le envíen un evento.
+%%  A su vez, el nodo en estado activo calcula un resultado y notifica a
+%%todos sus nodos adyacentes.
+%%
+%%  TODO: Forzar que Nodes sea un grafo acíclico en la descripción.
+%%
+%%  El dispatcher, realizará implicitamente un orden topológico de los
+%%nodos, como $Nodes$ es un grafo acíclico, éste proceso es posible y
+%%termina, y cada salida cuenta con un valor, que será mapeado a los actuadores.
 
