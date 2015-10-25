@@ -4,21 +4,20 @@ herramientas
 que permitan programar robots utilizando el paradigma de
 programación funcional reactiva.
 
-  Para ello se define el lenguaje \frob\ de alto nivel,
+  Para ello se define el lenguaje \frob{} de alto nivel,
 que permite expresar los comportamientos de un robot y sus
 interacciones.
   El lenguaje permite expresar los mismos en base a
-\emph{Eventos} y relaciones entre ellos, que permiten
+\emph{Señales} y relaciones entre ellas, que permiten
 capturar la naturaleza reactiva del dominio.
 
-% @makam: ... se sabe que cualquier proy. de grado
-% es con fines académicos. Esta en la tapa esto, no? 
-  Este lenguaje fue construído con fines académicos y de
-investigación, uno de los objetivos es que sea simple de
+  Éste lenguaje fue construído para
+enseñar conceptos de robótica, por lo tanto
+uno de los objetivos es que sea simple de
 utilizar e intuitivo.
 
   Otro objetivo planteado es que debe ser posible programar
-con el sistema robótico embebido en plataformas de
+sistemas robóticos embebidos en plataformas de
 hardware de baja capacidad de cómputo, y en lo posible
 bajo costo.
 
@@ -27,13 +26,13 @@ programación funcional reactiva, junto con sus variantes y
 algunos ejemplos.
   Luego de decidir cuál de éstas variantes es más útil
 en nuestro dominio, se muestra la definición del lenguaje
-\frob\ y cuál es el proceso desde que se escribe un programa
-hasta que es ejecutado dentro de una plataforma.
+\frob{} y cuál es el proceso desde que se escribe un programa
+hasta que es ejecutado dentro de una plataforma de hardware.
 
   Para cumplir con el objetivo de que la implementación sea
 portable, se separó la misma en dos fases. Los programas son
-compilados a código de menor abstracción, el cuál es
-ejecutado por una máquina virtual que definiremos.
+compilados a código \alf{} de menor nivel de abstracción,
+el cuál es ejecutado por una máquina virtual que definiremos.
   La misma puede ser portada a distintas plataformas.
 
   Para finalizar se trata un caso de estudio completo, en el
