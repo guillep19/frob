@@ -1,0 +1,48 @@
+  La segunda fase del compilador, recibe la lista de lexemas (\texttt{[Token]}) y
+reconoce el lenguaje, generando un árbol de
+sintaxis abstracta (\emph{AST}\footnote{Del inglés Abstract Syntax Tree}).
+
+  Para reconocer la gramática se implementó un parser recursivo descendente.
+  Utilizando la herramienta \textit{UU.Parser} \cite{uuparser}, se definió un tipo de datos
+  \texttt{TokenParser a} que representa un parser que recibe una secuencia de lexemas de tipo \texttt{Token}
+  y retorna un \emph{AST} de tipo \texttt{a}.
+
+  \begin{Verbatim}
+  type TokenParser a = Parser Token a
+  \end{Verbatim}
+
+  \textit{UU.Parser} define un conjunto de combinadores de parsers y utilizándolos se construyen parsers
+  complejos a partir de parsers simples.
+
+  Para representar el \emph{AST} se utiliza una gramática de atributos.
+  Una gramática de atributos es como una gramática libre de contexto, pero agrega semántica a la misma.
+  Para el análisis sintáctico, la semántica no es utilizada, pero será usada en la próxima etapa.
+
+  El sistema de gramáticas de atributos
+  \textit{UUAG}\cite{uuag} fue usado para la implementación.
+
+  Se define un tipo de datos \texttt{Root} que representa la raíz del árbol.
+  El mismo tiene un único constructor \texttt{Root\_Root} que recibe un árbol de tipo
+  \texttt{Decls} que representa las declaraciones, y un árbol de tipo \texttt{Dodecls} que
+  representa el bloque \texttt{do}.
+
+  Para crear el \emph{AST} usando \textit{UU.Parser} se define el parser \texttt{pRoot}:
+
+  \begin{Verbatim}
+  pRoot :: TokenParser Root
+  pRoot
+    = (\x y -> Root_Root x y) <$> pDecls <*> pDodecls
+  \end{Verbatim}
+
+  El cuál asume definido un parser de declaraciones \texttt{pDecls} y un parser
+  del bloque \texttt{do} (\texttt{pDodecls}).
+
+  \begin{Verbatim}
+  pDecls :: TokenParser Decls
+
+  pDodecls :: TokenParser Dodecls
+  \end{Verbatim}
+
+  Se va refinando sucesivamente en parsers mas específicos, hasta construir completamente el \emph{AST}.
+
+
