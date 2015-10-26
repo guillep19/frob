@@ -1,0 +1,19 @@
+  La primera etapa se llama análisis léxico, en esta se lee el código
+  fuente en lenguaje \frob{} (.willie) y lo transforma en una
+  lista de lexemas.
+
+  Un lexema puede ser una palabra reservada (ej: \texttt{do}),
+  un valor (ej: $19$), un identificador (eg: \texttt{distance}) o un símbolo reservado (eg: \texttt{+}).
+
+  Para representar los lexemas, se utiliza la herramienta \textit{UU.Scanner}
+  \cite{uuparser} que estandariza los mismos en el tipo de
+  datos \texttt{Token}.
+  Usando \textit{Alex} se procesa el código fuente, se reconocen los lexemas y se retorna una lista de tipo \texttt{[Token]}.
+
+  La etapa se puede resumir en la implementación de la función \texttt{tokenize}.
+
+\begin{Verbatim}
+  tokenize :: String -> String -> [Token]
+\end{Verbatim}
+
+
