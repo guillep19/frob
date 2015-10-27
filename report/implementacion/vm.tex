@@ -27,25 +27,18 @@ trabajo no es el más práctico para desarrollar la máquina virtual, por
 lo que se descargaron de la página de mbed \cite{mbeddev}, las herramientas
 de desarrollo para compilar offline.
 
-TODO: Faltan muchos detalles.
-TODO: Esto iría en el manual de usuario:
-  El código de la máquina virtual está en el directorio
-  /src/alfvm, para compilarlo se ejecuta:
+  La máquina tendrá dos partes principales, una que interpreta el código e
+  implementa el despachador que actualiza las señales.
+  Ésta parte es común y puede ser portada a diferentes plataformas sin
+  necesidad de modificarla.
 
-\begin{verbatim}
-  > cd src/alfvm
-  > make
-\end{verbatim}
-
-  Ésto genera un archivo \emph{mbed\_alfvm.bin}.
-  Para cargar la máquina en la placa \textit{MBED}, alcanza con conectarla
-a un puerto USB y pegar el archivo en la carpeta /media/MBED.
-
-
- 
-  TODO: Colocar donde vaya:
-
-  Las instrucciones van a tener la siguiente representación en memoria:
+  Las instrucciones en memoria tendrán un ancho de palabra de 16 bit.
+  La primer palabra contiene en los 8 bits más representativos, el código
+  de la operación (\texttt{opcode}).
+  Los 8 bits menos representativos, contienen un argumento inmediato
+  opcional.
+  Luego según el \texttt{opcode}, algunas instrucciones pueden tener
+  argumentos adicionales, en las siguientes palabras de 16 bit.
 
   \begin{center}
       \begin{tabular}{|c|c|}
@@ -61,4 +54,67 @@ a un puerto USB y pegar el archivo en la carpeta /media/MBED.
       \end{tabular}
   \end{center}
 
+  La máquina mantiene un puntero a la siguiente instrucción a ejecutar llamado
+  \texttt{ip} \footnote{IP: del inglés, Instruction Pointer significa puntero a instrucción}.
+  Cuando \texttt{ip} no es nulo, la máquina ejecuta todas las instrucciones hasta
+  que el mismo se haga nulo.
+  El pseudocódigo de la máquina es:
 
+\begin{Verbatim}
+  1 - Crear grafo de señales vacío, inicializar pila.
+  2 - Apuntar ip al inicio del código.
+  3 - Ejecutar código hasta que ip se haga nulo.
+  4 - Para siempre:
+    4.1 - Leer entradas.
+    4.2 - Propagar valor de las señales.
+    4.3 - Escribir salidas.
+\end{Verbatim}
+
+  Al principio se crea un grafo de señales vacío, y se reserva espacio para la pila, todo es memoria estática, tanto
+  para los nodos del grafo como para la pila.
+  En el punto 2, se interpretan las instrucciones del programa, hasta llegar a la instrucción \texttt{halt}. Las 
+  instrucciones al inicio del código se corresponden con el bloque \texttt{do} del programa, por lo tanto
+  al ejecutarlo se obtiene el grafo de las señales completo.
+
+  Con el grafo armado, luego se obtienen los valores de las entradas necesarias, y para cada señal se
+  calcula su valor.
+  Las señales que estén conectadas a una salida, se usan para actualizar el valor de las mismas.
+
+
+  Para cada instrucción hay una función definida que interpreta, el despachador
+  tomará una a una las instrucciones e invocará la función que la maneja de acuerdo
+  a que operación es.
+  Las funciones son de tipo \texttt{void} y realizan cambios sobre el estado
+  de la máquina. La referencia a las mismas es guardada en un vector \texttt{functions}.
+  La posición de cada instrucción en el vector, coincide con el código de operación.
+
+\begin{Verbatim}
+  void (*functions[])() = {
+      f_halt,
+      f_call, f_ret, f_load_param,
+      f_lift, f_lift2, f_folds,
+      f_read, f_write,
+      f_jump, f_jump_false,
+      f_cmp_eq, f_cmp_neq, f_cmp_gt, f_cmp_lt,
+      f_add, f_sub, f_div,
+      f_mul, f_op_and, f_op_or,
+      f_op_not,
+      f_push, f_pop, f_dup,
+      f_store, f_load
+  };
+\end{Verbatim}
+
+  Por ejemplo, al despachar el operador \texttt{push}, la siguiente palabra contiene
+  el valor a colocar en el stack. El código en lenguaje \texttt{C} que maneja la instrucción es:
+
+\begin{Verbatim}
+  void f_push() {
+      *++sp = *ip++;
+  }
+\end{Verbatim}
+
+  Se creó un archivo \texttt{Makefile} para construir una imagen
+  binaria de la máquina virtual.
+  Ésto genera un archivo \emph{mbed\_alfvm.bin}.
+  Para cargar la máquina en la placa \textit{MBED}, alcanza con conectarla
+a un puerto USB y pegar el archivo en la carpeta /media/MBED.
