@@ -1,0 +1,25 @@
+0: t_call
+1: 13
+2: t_read 3
+3: t_call
+4: 16
+5: t_read 2
+6: t_call
+7: 19
+8: t_read 1
+9: t_call
+10: 22
+11: t_read 0
+12: t_halt
+13: t_push
+14: 0
+15: t_ret
+16: t_push
+17: 1
+18: t_ret
+19: t_push
+20: 2
+21: t_ret
+22: t_push
+23: 3
+24: t_ret

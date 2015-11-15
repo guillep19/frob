@@ -8,17 +8,16 @@
 #include "FrobDefinitions.h"
 
 /*
- *  * 'open_port()' - Open serial port 1.
- *  *
- *  * Returns the file descriptor on success or -1 on error.
- *  */
+ * 'open_port()' - Open serial port.
+ * Returns the file descriptor on success or -1 on error.
+ */
 
 int open_port(void) {
   int fd; /* File descriptor for the port */
   //fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY | O_NDELAY);
-  fd = open("/dev/stdout", O_RDWR | O_NOCTTY | O_NDELAY);
+  fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY | O_NDELAY);
   if (fd == -1) {
-    perror("open_port: Unable to open /dev/ttyf1 - ");
+    perror("open_port: Unable to open /dev/stdout - ");
   } else {
     fcntl(fd, F_SETFL, 0);
   }
@@ -47,7 +46,7 @@ int main() {
 
   int n = write(fd, "ALF\r", 4);
   if (n < 0) {
-    fputs("write() of 2 bytes failed!\n", stderr);
+    fputs("write() of 4 bytes failed!\n", stderr);
   }
 
   FILE * fp;
@@ -55,90 +54,24 @@ int main() {
   size_t len = 0;
   ssize_t read;
 
-  fp = fopen("example2.alf", "r");
+  fp = fopen("example.hex", "r");
   if (fp == NULL) return 2;
 
-  int readd;
-  WORD val;
-  int v;
-  while ((read = getline(&line, &len, fp)) != -1) {
-    readd = sscanf(line, "%s %s %s", s1, s2, s3);
-    if (readd == 3) {
-      WORD opcode;
-      sscanf(s3, "%d", &v);
-      if (strcmp(s2, "t_halt") == 0) {
-        opcode = t_halt;
-      } else if (strcmp(s2, "t_call") == 0) {
-        opcode = t_call;
-      } else if (strcmp(s2, "t_ret") == 0) {
-        opcode = t_ret;
-      } else if (strcmp(s2, "t_load_param") == 0) {
-        opcode = t_load_param;
-      } else if (strcmp(s2, "t_lift") == 0) {
-        opcode = t_lift;
-      } else if (strcmp(s2, "t_lift2") == 0) {
-        opcode = t_lift2;
-      } else if (strcmp(s2, "t_folds") == 0) {
-        opcode = t_folds;
-      } else if (strcmp(s2, "t_read") == 0) {
-        opcode = t_read;
-      } else if (strcmp(s2, "t_write") == 0) {
-        opcode = t_write;
-      } else if (strcmp(s2, "t_jump") == 0) {
-        opcode = t_jump;
-      } else if (strcmp(s2, "t_jump_false") == 0) {
-        opcode = t_jump_false;
-      } else if (strcmp(s2, "t_cmp_eq") == 0) {
-        opcode = t_cmp_eq;
-      } else if (strcmp(s2, "t_cmp_neq") == 0) {
-        opcode = t_cmp_neq;
-      } else if (strcmp(s2, "t_cmp_gt") == 0) {
-        opcode = t_cmp_gt;
-      } else if (strcmp(s2, "t_cmp_lt") == 0) {
-        opcode = t_cmp_lt;
-      } else if (strcmp(s2, "t_add") == 0) {
-        opcode = t_add;
-      } else if (strcmp(s2, "t_sub") == 0) {
-        opcode = t_sub;
-      } else if (strcmp(s2, "t_div") == 0) {
-        opcode = t_div;
-      } else if (strcmp(s2, "t_mul") == 0) {
-        opcode = t_mul;
-      } else if (strcmp(s2, "t_op_and") == 0) {
-        opcode = t_op_and;
-      } else if (strcmp(s2, "t_op_or") == 0) {
-        opcode = t_op_or;
-      } else if (strcmp(s2, "t_op_not") == 0) {
-        opcode = t_op_not;
-      } else if (strcmp(s2, "t_push") == 0) {
-        opcode = t_push;
-      } else if (strcmp(s2, "t_pop") == 0) {
-        opcode = t_pop;
-      } else if (strcmp(s2, "t_dup") == 0) {
-        opcode = t_dup;
-      } else if (strcmp(s2, "t_store") == 0) {
-        opcode = t_store;
-      } else if (strcmp(s2, "t_load") == 0) {
-        opcode = t_load;
-      }
-      val = opcode << 8 | v;
-    } else {
-      sscanf(s2, "%d", &v);
-      val = (WORD) v;
-    }
-    printf("%.4x %s", val, line);
+  WORD* buffer = new WORD[1024];
+  WORD word;
+  int count;
+  for (count = 0; (read = getline(&line, &len, fp)) != -1; count++) {
+    sscanf(line, "%x", &word);
+    buff[count] = word;
   }
 
-  printf("Read %d strings", readd);
-
-  WORD* buff = new WORD[4];
-  buff[0] = 'a';
-  buff[1] = 'l';
-  buff[2] = 'f';
-  buff[3] = '\n';
-  n = write(fd, buff, 8);
-  if (n < 0) {
-    fputs("write() of 8 bytes failed!\n", stderr);
+  int index = 0;
+  for (index = 0; index < count; index++) {
+      int n = write(fd, buffer+index, 2);
+      if (n != 2) {
+        fputs("write() of 2 bytes failed!\n", stderr);
+      }
+      printf("%.4x %s", val, line);
   }
 
   /* Close resources. */
