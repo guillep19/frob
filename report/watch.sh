@@ -15,13 +15,14 @@ build() {
   timeout 10 make
   echo -en "\n-->"
 }
-trap build SIGINT
-trap exit SIGQUIT
+trap build SIGQUIT
+trap exit SIGINT
 
 #python -m SimpleHTTPServer &
 
 echo -e  "--> Press Ctrl+C to force build, Ctrl+\\ to exit."
 while true; do
   build
-  sleep 5
+  mv Informe.pdf IInforme.pdf
+  sleep 10
 done
