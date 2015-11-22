@@ -44,7 +44,7 @@ distance <- read INPUT_DISTANCE
 El tipo de la primitiva \texttt{read} es:
 
 \begin{center}
-  $read :: IO\ a \rightarrow Signal\ a $
+  $read :: IO\ a \rightarrow Int \rightarrow Signal\ a $
 \end{center}
 
 \subsubsection{Lift}
@@ -54,8 +54,8 @@ a la señal, y obtener una nueva señal más compleja resultado de la
 aplicación.
 
   Se puede definir una función \texttt{distanceToSpeed} que de acuerdo
-a la distancia, calcula la velocidad apropiada a la que se debe mover
-el robot, para detenerse si hay un objeto muy cercano y evitar una colisión.
+a una distancia, calcula la velocidad apropiada a la que se debe mover
+un robot, para detenerse si hay un objeto muy cercano y evitar una colisión.
 
 \begin{center}
 \begin{Verbatim}[frame=single]
@@ -77,6 +77,10 @@ función \texttt{distanceToSpeed} a la señal \texttt{distance}.
 speed <- lift distanceToSpeed distance
 \end{Verbatim}
 \end{center}
+
+Se puede ver en una línea de tiempo, los valores que toma
+cada señal.
+\input{design/language_combinators_lift.tex}
 
 El tipo de la primitiva lift es
 
@@ -144,10 +148,14 @@ count <- folds suma 0 button
 \end{Verbatim}
 \end{center}
 
+Se pueden ver las señales \texttt{button} y \texttt{count} como los
+valores en una línea de tiempo:
+
+\input{design/language_combinators_folds.tex}
+
 El tipo del combinador \texttt{folds} es:
 
 \begin{center}
 $folds :: (a \rightarrow b \rightarrow b) \rightarrow b \rightarrow Signal\ a \rightarrow Signal\ b$
 \end{center}
-
 

@@ -1,14 +1,9 @@
-%%En \frob{} un programa constará de dos secciones, una sección de
-%%declaraciones, donde se declararán funciones y una sección donde se
-%%aplicarán combinadores de programación funcional reactiva, especificando
-%%cómo son transformadas las señales para especificar el comportamiento de
-%%los robots.
-
   En \frob{} los programas consisten de un conjunto de funciones, y un
-conjunto de primitivas del paradigma de programación funcional reactiva.
+conjunto de aplicaciones de primitivas del paradigma de programación
+funcional reactiva.
   
   Es un lenguaje funcional, tipado y con inferencia de tipos.
-  En el todos los valores son inmutables, una vez que son declarados
+  En él todos los valores son inmutables, una vez que son declarados
 no se pueden modificar.
   Las funciones declaradas son puras, por lo tanto no pueden tener efectos
 secundarios.
@@ -16,9 +11,9 @@ secundarios.
   Para controlar un robot se debe declarar un conjunto de señales utilizando
 las primitivas de FRP.
 
-
-  Para simplificar la implementación, solo se permiten valores
-naturales ($\mathcal{N}$), y funciones de naturales en naturales. 
+  Para simplificar la implementación dentro del alcance del proyecto,
+en el lenguaje solo se permitirán valores
+naturales ($\mathcal{N}$), y funciones de naturales en naturales.
 ($\mathcal{N} \rightarrow \mathcal{N}$).
 
   El lenguaje evalúa las expresiones, tan pronto como es posible. Las

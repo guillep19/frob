@@ -21,11 +21,11 @@ expr := name
       | expr binop expr
       | "if" expr "then" expr "else" expr;
 
-arg_list := ident | ident arg_list;
+arg_list := "" | ident arg_list;
 
 ident := [a-z_A-Z]+;
 
-number := [-+]?[0-9]*\.?[0-9]+;
+number := [-+]?[0-9]+;
 
 binop := '+' | '-' | '/' | '*' | 'or' | 'and'
        | '==' | '<=' | '>' | '<' | '<>' | '>=';
