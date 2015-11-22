@@ -52,17 +52,49 @@ Se armó un robot móvil (Figura \ref{fig:deliverybot}) que cuenta con 3 sensore
 \end{center}
 \end{figure}
 
-TODO: Explicar diagrama y corregirlo.
+  El diagrama muestra los componentes físicos que son montados en el robot
+para resolver el problema y cómo se interconectan.
+  Arriba se pueden ver los dos motores, que irán uno a cada lado
+del robot y sólo se moverán hacia adelante.
+  Se utilizan salidas \textit{pwm} \footnote{PWM: Del inglés, pulse width
+modulation; Modulación por ancho de pulsos. Se utiliza para crear señales
+de voltaje en ciclos periódicos y controlar la cantidad de energía que
+se envía.} del MBED para controlar la velocidad de cada motor.
 
-  El robot utilizará los sensores de grises para mantenerse sobre
-la línea y el sensor de distancia para saber cuándo está frente
-a una casa.
+  Los motores necesitan más energía que la que se puede entregar con
+los pines de salida del MBED, y para ésto tienen su propia fuente de
+voltaje.
+  Se utilizan dos transistores para amplificar la señal que
+controla cada motor.
 
-  Con los motores se moverá hacia adelante inicialmente, e irá corrigiendo
-  su dirección desacelerando el motor del lado que se salga de la línea.
+  El robot utilizará dos sensores de grises montados al frente
+para mantenerse sobre la línea, ambos pueden verse a la derecha abajo
+en la figura \ref{fig:deliverybot}.
+  Con los motores el robot se moverá hacia adelante inicialmente, e
+irá corrigiendo su dirección desacelerando el motor del lado que
+se salga de la línea.
+  Junto a cada sensor de grises se montará una luz led, que de acuerdo
+a el color del suelo, se reflejará y se podrá decidir si se está viendo
+algo oscuro (la línea) o algo claro (fuera de la línea).
 
-  Durante el trayecto contará las casas, y se detendrá cuando la cuenta
-llegue al valor 5.
+  El sensor de distancia a la izquierda debajo en la figura, se montará
+en el robot apuntando hacia la derecha, para saber cuándo el mismo
+está pasando frente a una casa.
+
+  Durante el trayecto se mantendrá la cuenta de las casas, y el robot
+se detendrá totalmente cuando la cuenta llegue al valor 5.
+
+  En la Figura \ref{fig:robotfisico} se puede ver el
+robot físico creado como prototipo para probar el caso de estudio.
+
+\begin{figure}[hbtp]
+\begin{center}
+\caption{Robot físico implementado}
+\includegraphics[width=0.9\textwidth]{graphs/alf.jpg}
+\label{fig:robotfisico}
+\end{center}
+\end{figure}
+
 
   En la Figura \ref{fig:delivery} se puede ver gráficamente de qué forma
 se combinan los eventos para lograr el objetivo.
@@ -75,9 +107,7 @@ se combinan los eventos para lograr el objetivo.
 \end{center}
 \end{figure}
 
-  TODO: Explicar el algoritmo en lenguaje natural.
-
-  Luego se llega a la implementación en el lenguaje \frob :
+Luego se llega a la implementación en el lenguaje \frob{}:
 
 \begin{verbatim}
 
@@ -124,62 +154,36 @@ do {
 
 \end{verbatim}
 
-\section{Solución sin utilizar \frob}
+%\section{Solución sin utilizar \frob}
 
-TODO: Corregirlo, elegir un lenguaje, decir en que está implementado, etc.
+%\begin{verbatim}
 
-\begin{verbatim}
-
-INPUT_DISTANCE = 1
-INPUT_COLOR_LEFT = 2
-INPUT_COLOR_RIGHT = 3
-OUTPUT_ENGINE_LEFT = 1
-OUTPUT_ENGINE_RIGHT = 2
-
-MIN_DISTANCE = 100
-MIN_GREY = 50
-
-hay_casa d = if (d < MIN_DISTANCE) then 1 else 0
-distinto a b = if (a /= b) then 1 else 0
-velocidad_casa num = if (num >= 5) then 0 else 100
-color_a_vel gris = if (gris > MIN_GREY) 1 else 1/2
-
-bool viendo = false
-int velocidad = 100
-int cuenta = 0
-
-while (cuenta < 5) {
-  //chequear si hay casa
-  distance = read(INPUT_DISTANCE)
-  if (hay_casa(distance)) {
-    if (!viendo) {
-      cuenta = cuenta + 1
-      viendo = true
-    }
-  } else {
-    viendo = false
-  }
-  //chequear que no estoy fuera de la linea
-  color_izq = read(INPUT_COLOR_LEFT)
-  color_der = read(INPUT_COLOR_RIGHT)
-  if (color_izq > MIN_GREY) {
-    write(MOTOR_DER, velocidad)
-  } else {
-    write(MOTOR_DER, 1/2 * velocidad)
-  }
-  if (color_der > MIN_GREY) {
-    write(MOTOR_DER, velocidad)
-  } else {
-    write(MOTOR_DER, 1/2 * velocidad)
-  }
-}
-//Detener robot
-write(MOTOR_IZQ, 0)
-write(MOTOR_DER, 0)
-
-\end{verbatim}
+%\end{verbatim}
 
 
 \section {Conclusiones del caso}
 
+  A diferencia de un programa imperativo tradicional, en el programa
+\frob{} dentro del bloque \texttt{do} se puede ver claramente cómo
+se procesan las entradas, para generar los valores de las salidas y
+razonar sobre los comportamientos.
 
+  Además al estar obligado a escribir funciones puras, el desarrollador
+puede abstraerse mejor al pensar que funciones necesita implementar,
+y que entradas tomarán. En un programa imperativo, es normal realizar
+operaciones de entrada y salida dentro de cualquier función, lo que
+dificulta ver cuándo hay efectos secundarios de invocar cada función.
+
+  Finalmente, no es necesario preocuparse por la concurrencia, sinó
+por la semántica del programa, la máquina virtual se encargará de
+respetar las definiciones del desarrollador.
+
+  Tampoco es necesario preocuparse por las interacciones de entrada
+y salida, ya que por decisión de diseño existen abstracciones en
+la máquina bien definidas para cada una.
+
+  Si bien \frob{} es muy diferente a los lenguajes de
+programación imperativos tradicionales y ésto puede ocasionar una
+curva inicial de aprendizaje pronunciada, finalmente puede enseñar al
+desarrollador una forma diferente de razonar y pensar la solución
+a los problemas de robótica.
