@@ -1,18 +1,30 @@
 
-Intro .... que se hizo, puntos a favor, etc..
+
+  Conclusiones..........................
 
 \section{Trabajo futuro}
 
-El principal trabajo futuro sería ...
-
-Sería muy útil contar con una funcionalidad de depuración, la cuál
+  Sería muy útil contar con una funcionalidad de depuración, la cuál
 mostrara dependiendo del tiempo los valores de cada fuente de eventos.
+
+  También durante el desarrollo, se notó la necesidad de un simulador,
+que permita simular un robot, para no tener que construir un robot
+físico para resolver el problema.
 
 Una opción es comunicar mediante el puerto serial el valor de cada
 señal al cambiar, y mostrarlo en una interfaz web como la que provee
 RXMarbles (ver \cite{rxmarbles}). 
+
 El lenguaje Elm provee de una herramienta que permite viajar en el 
 tiempo, modificar y mostrar la ejecución de un programa, en nuestro
 caso no sería posible modificar lo que el robot físico realiza, pero
 si sería útil ver en la línea de tiempo que valores tomaron sus
 señales. (ver \cite{elmdebug})
+
+  También luego del desarrollo de todos los componentes de la solución,
+se concluyó que la implementación de un lenguaje de bajo nivel específico
+es compleja y no puede ser reutilizada.
+  Sería interesante intentar utilizar LLVM \ref{llvm} como lenguaje de
+bajo nivel, o lenguaje intermedio ya que muchos lenguajes en la 
+industria lo toman como estándar y producen código LLVM desde sus
+compiladores.
