@@ -65,8 +65,13 @@ de desarrollo para compilar offline.
   2 - Apuntar ip al inicio del código.
   3 - Ejecutar código hasta que ip se haga nulo.
   4 - Para siempre:
-    4.1 - Leer entradas.
-    4.2 - Propagar valor de las señales.
+    4.1 - Leer entradas
+    4.2 - Actualizar señales conectadas a las mismas, marcar como listas.
+    4.2 - Mientras hay señales listas para procesar:
+      4.2.1 - Cargar valores en stack.
+      4.2.2 - Apuntar ip a inicio de la función asociada.
+      4.2.3 - Ejecutar hasta que ip se haga nulo.
+      4.2.4 - Actualiza señales conectadas a la misma.
     4.3 - Escribir salidas.
 \end{Verbatim}
 
@@ -76,10 +81,17 @@ de desarrollo para compilar offline.
   instrucciones al inicio del código se corresponden con el bloque \texttt{do} del programa, por lo tanto
   al ejecutarlo se obtiene el grafo de las señales completo.
 
-  Con el grafo armado, luego se obtienen los valores de las entradas necesarias, y para cada señal se
-  calcula su valor.
-  Las señales que estén conectadas a una salida, se usan para actualizar el valor de las mismas.
+  Con el grafo armado, luego se obtienen los valores de las entradas
+necesarias, y para cada señal conectada se calcula su valor.
 
+  Luego, en el punto 4.2 el grafo de señales se recorre en orden
+topológico, actualizando el valor de cada señal.
+
+  Es sencillo notar, que la actualización de las señales listas para
+procesar es un punto que con pocas modificaciones, puede ser realizado
+en paralelo en un entorno multiprogramado.
+
+  Las señales que estén conectadas a una salida, se usan para actualizar el valor de las mismas.
 
   Para cada instrucción hay una función definida que interpreta, el despachador
   tomará una a una las instrucciones e invocará la función que la maneja de acuerdo
