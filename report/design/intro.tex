@@ -1,15 +1,16 @@
 
   En este capítulo se describe el diseño del lenguaje \frob{} junto con su semántica.
-  Luego se explica de qué manera es traducido al lenguaje \alf{} de bajo nivel, mas
-simple de interpretar, el cual podrá ser interpretado por implementaciones de
-una máquina virtual en diferentes plataformas de hardware.
+  Luego se explica de qué manera es traducido al lenguaje \alf{} de
+bajo nivel, mas simple de interpretar, el cual podrá ser interpretado
+por implementaciones de una misma máquina virtual en diferentes
+plataformas de hardware.
 
   También se describirán las etapas de compilación, desde que se escribe
-un programa en alto nivel hasta que el mismo es ejecutado en una
+un programa en alto nivel hasta que es ejecutado en una
 plataforma objetivo.
 
   El diagrama de la Figura \ref{fig:compilacion} resume todas las etapas y
-componentes necesarios:
+componentes necesarios.
 
 \begin{figure}[h]
 \begin{center}
@@ -19,12 +20,14 @@ componentes necesarios:
 \end{center}
 \end{figure}
 
-  El desarrollador escribirá su programa en el lenguaje \frob{} de alto
-nivel, ejecutará el compilador y obtendrá un archivo \alf{} binario.
+  En la parte de arriba de la Figura se ve un programa en el
+lenguaje \frob{} de alto nivel.
+  El desarrollador escribe dicho programa y
+ejecuta el compilador \compilador{} y obtiene un archivo \alf{} binario.
 
-  Por otro lado el robot objetivo, tendrá instalada la máquina
-virtual (alfvm) correspondiente a la plataforma del mismo.
+  Debajo se muestran diversas plataformas, cada una
+con su implementación de la máquina virtual \maquinavirtual{} instalada.
 
-  El desarrollador podrá enviar su código \alf{} al robot, y la máquina
+  El desarrollador podrá cargar el mismo código \alf{} en cualquier robot que
+esté construido utilizando cualquiera de las plataformas, y la máquina
 virtual se encargará de interpretarlo.
-

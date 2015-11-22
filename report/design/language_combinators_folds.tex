@@ -1,0 +1,45 @@
+\begin{tikzpicture}
+  %draw horizontal line   
+  \draw (0,0) -- (2,0);
+  \draw (2,0) -- (4,0);
+  \draw (4,0) -- (5,0);
+  \draw (5,0) -- (7,0);
+
+  %draw vertical lines
+  \foreach \x in {0,1,2,3,4,5}
+     \draw (\x cm,3pt) -- (\x cm,-3pt);
+
+  %draw nodes
+  \draw (0,0) node[below=3pt] {$  $} node[above=3pt] {$ 0 $};
+  \draw (1,0) node[below=3pt] {$  $} node[above=3pt] {$ 1 $};
+  \draw (2,0) node[below=3pt] {$  $} node[above=3pt] {$ 0 $};
+  \draw (3,0) node[below=3pt] {$  $} node[above=3pt] {$ 0 $};
+  \draw (4,0) node[below=3pt] {$  $} node[above=3pt] {$ 1 $};
+  \draw (5,0) node[below=3pt] {$  $} node[above=3pt] {$ 0 $};
+  \draw (6,0) node[below=3pt] {$  $} node[above=3pt] {$ ... $};
+  \draw (0,0) node[left=5pt] {\texttt{button}};
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  %draw horizontal line   
+  \draw (0,0) -- (2,0);
+  \draw (2,0) -- (4,0);
+  \draw (4,0) -- (5,0);
+  \draw (5,0) -- (7,0);
+
+  %draw vertical lines
+  \foreach \x in {0,1,2,3,4,5}
+     \draw (\x cm,3pt) -- (\x cm,-3pt);
+
+  %draw nodes
+  \draw (0,0) node[below=3pt] {$  $} node[above=3pt] {$ 0 $};
+  \draw (1,0) node[below=3pt] {$  $} node[above=3pt] {$ 1 $};
+  \draw (2,0) node[below=3pt] {$  $} node[above=3pt] {$ 1 $};
+  \draw (3,0) node[below=3pt] {$  $} node[above=3pt] {$ 1 $};
+  \draw (4,0) node[below=3pt] {$  $} node[above=3pt] {$ 2 $};
+  \draw (5,0) node[below=3pt] {$  $} node[above=3pt] {$ 2 $};
+  \draw (6,0) node[below=3pt] {$  $} node[above=3pt] {$ ... $};
+  \draw (0,0) node[left=11pt] {\texttt{count}};
+\end{tikzpicture}
+
+
