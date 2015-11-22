@@ -1,30 +1,73 @@
 
 
-  Conclusiones..........................
+  Se realizó una implementación modelo de cada parte del diseño
+necesaria para poder escribir programas en alto nivel, usando
+el paradigma de programación funcional reactiva, y se logró
+seguir todos los pasos necesarios para ejecutar dichos programas
+en plataformas con bajas capacidades de cómputo.
+
+  A diferencia de otros trabajos, en éste proyecto los robots
+resultantes son autónomos y no requieren de contacto con el
+exterior ni directivas para realizar sus tareas.
+
+  Es posible escribir programas cortos, en alto nivel, que permitan
+pensar en los problemas y sus soluciones, sin necesidad de detenerse
+a ver cada parte a bajo nivel.
+
+  Se logró recortar el alcance de cada parte del proyecto para
+poder ser implementado por una sola persona.
+  Se diseñaron los lenguajes \frob{} y \alf{} que podrán ser
+retomados en futuros trabajos para ser mejorados y extender
+su funcionalidad, eliminando las restricciones impuestas
+por el alcance actual.
+
+  La elección del lenguaje \textit{Haskell} para implementar el
+compilador fue correcta, ya que fácilmente se pueden realizar
+modificaciones, algo que durante el proyecto agregó mucho valor.
+
+  Se implementó la máquina virtual para la plataforma \textit{MBED}
+y el tamaño de la misma, así como la capacidad de procesamiento no
+fue un problema, al utilizar \texttt{C} como lenguaje y controlar
+el uso de la memoria y las estructuras usadas.
+  Lamentablemente dado el alcance, no se pudo hacer pruebas
+con plataformas aún mas pequeñas como \texttt{Arduino} y \texttt{PIC}.
+
+  Se construyó un robot físico, que permitió completar el flujo
+de trabajo y ver como resultado final, la ejecución del caso de
+estudio, utilizando todas las herramientas desarrolladas.
+
+  A pesar de las limitaciones impuestas por el alcance, sería
+posible luego de algunas mejoras utilizar el lenguaje para enseñar
+conceptos de robótica.
 
 \section{Trabajo futuro}
 
-  Sería muy útil contar con una funcionalidad de depuración, la cuál
-mostrara dependiendo del tiempo los valores de cada fuente de eventos.
+  Como principal trabajo futuro, se notó la necesidad de contar con
+un simulador, para eliminar la necesidad de construir un robot físico
+para resolver un problema. Permitiría también crear diversos escenarios
+y tener una mayor diversidad de ambientes de prueba, para luego
+crear el robot físico deseado e interactuar con el mismo.
 
-  También durante el desarrollo, se notó la necesidad de un simulador,
-que permita simular un robot, para no tener que construir un robot
-físico para resolver el problema.
+  También sería muy útil contar con una funcionalidad de depuración, la cuál
+mostrara dependiendo del tiempo los valores de cada entrada, cada señal y cada
+salida.
 
-Una opción es comunicar mediante el puerto serial el valor de cada
-señal al cambiar, y mostrarlo en una interfaz web como la que provee
+  Una posible opción de implementar depuración es comunicar
+mediante el puerto serial el valor de cada señal al cambiar,
+y mostrarlo en una interfaz web como la que provee
 RXMarbles (ver \cite{rxmarbles}). 
 
-El lenguaje Elm provee de una herramienta que permite viajar en el 
-tiempo, modificar y mostrar la ejecución de un programa, en nuestro
-caso no sería posible modificar lo que el robot físico realiza, pero
-si sería útil ver en la línea de tiempo que valores tomaron sus
-señales. (ver \cite{elmdebug})
+  El lenguaje \textit{Elm} provee de una herramienta que permite "viajar en el 
+tiempo", no solo permite ver los valores de las señales sinó también
+modificarlos y seguir la ejecución de un programa.
+  En nuestro caso no sería posible modificar lo que el robot físico
+realiza, pero si sería útil ver en la línea de tiempo que valores
+tomaron sus señales. (ver \cite{elmdebug}) Además, si se contara
+con un simulador sería posible.
 
   También luego del desarrollo de todos los componentes de la solución,
-se concluyó que la implementación de un lenguaje de bajo nivel específico
-es compleja y no puede ser reutilizada.
-  Sería interesante intentar utilizar LLVM \ref{llvm} como lenguaje de
-bajo nivel, o lenguaje intermedio ya que muchos lenguajes en la 
-industria lo toman como estándar y producen código LLVM desde sus
-compiladores.
+se concluyó que estaría bueno que el compilador pudiera generar código
+intermedio utilizando LLVM \ref{llvm}.
+Muchos lenguajes en la industria lo toman como estándar y producen
+código LLVM desde sus compiladores, sería interesante ver si es posible
+utilizarlo.
