@@ -24,5 +24,5 @@ echo -e  "--> Press Ctrl+C to force build, Ctrl+\\ to exit."
 while true; do
   build
   mv Informe.pdf IInforme.pdf
-  sleep 10
+  sleep 4
 done
