@@ -1,46 +1,115 @@
 
-La empresa robotis apunta a desarrollar robots para uso educativo, así como una gama de robots para uso competitivo. Los kits de Robotis están diseñados para uso final, es decir, proveen los controladores, así como los componentes para armar la estructura, sensores y actuadores. También la intención es que para el uso de los kits se utilicen sus herramientas de desarrollo.
-Procesadores y arquitectura
-  CM-510, controlador ATMega128. Arquitectura AVR.
-  CM-530, controlador ARM Cortex M3 de 32bit. Arquitectura ARM.
-  CM-100A, controlador ATMega 8.
-Lenguajes
-  C embebido. Archivos .tsk, lenguaje Task.
-Herramientas de desarrollo
-  IDE RoboPlus, se pueden generar tareas, movimientos programados del robot en base a movimiento de motores y un diseño tridimensional. Se pueden editar las tareas generadas en el entorno de desarrollo.
+  La empresa \texttt{Robotis} desarrolla robots para uso
+educativo, así como una gama de robots para uso competitivo.
+  Los kits de Robotis están diseñados para uso final, es decir,
+proveen los controladores, así como los componentes para armar
+la estructura, sensores y actuadores.
 
+  Para el uso de los kits se deben utilizar las herramientas de desarrollo
+de Robotis.
+
+  No es un proyecto abierto, por lo que no puede ser fácilmente
+extendido, ni modificado.
+  Es posible programar utilizando \texttt{C} embebido, descargando
+los archivos fuente para sus plataformas, aunque es un proceso
+bastante complejo y no cuenta con buena documentación.
+
+  Robotis cuenta con un lenguaje llamado \texttt{Task} y se necesita
+  un entorno de desarrollo integrado propietario llamado 
+  \texttt{IDE Roboplus} para utilizarlo.
+  En el \texttt{IDE} se pueden generar tareas y programar
+  movimientos del robot en base a movimiento de motores y un
+  diseño tridimensional gráfico.
+
+  Los microcontroladores utilizados se llaman \texttt{CM-510},
+  \texttt{CM-530} y \texttt{CM-100A}. Algunos con
+  arquitectura AVR y otros con ARM internamente.
+
+  El \texttt{CM-510} contiene un microprocesador \texttt{ATMega128},
+  el \texttt{CM-530} un \texttt{ARM Cortex-M3} y el
+  \texttt{CM-100A} un controlador {ATMega8}.
+
+  En la Tabla \ref{table-robotis} se pueden ver las especificaciones
+  técnicas de los diferentes kits de \textit{Robotis}.
+
+\begin{table}[htbp]
+    \centering
+    \scriptsize
+    \caption{Modelos Robotis}
+    \label{table-robotis}
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+      Modelo & Flash & RAM (kb) & EEPROM (kb) & Procesador & Arquitectura & Frecuencia \\
+    \hline
+      CM-100A & 8 KB & 1 (sram) & 512 & ATmega8 & 8 bit AVR & 16 MHz \\
+    \hline
+      CM-5 & 128 KB & 4 (sram) & 4 & ATmega128 & 8 bit AVR & 16 MHz \\
+    \hline
+      CM-510 & 256 KB & 8 (sram) & 8 & ATmega2561 & 8 bit AVR & 16 MHz \\
+    \hline
+      CM-530 & 512 KB & 64 & - & STM32F103RE & ARM Cortex-M3 & 72 MHz \\
+    \hline
+      CM-700 & 256 KB & 8 (sram) & 8 & ATMega2561 & 8 bit AVR & 16 MHz \\
+    \hline
+      CM-730 & 512 KB & 64 & - & STM32F103RE & ARM Cortex-M3 & 72 MHz \\
+    \hline
+      CM-900 & 64 KB & 20 (sram) & - & STM32F103C8 & ARM Cortex-M3 & 72 MHz \\
+    \hline
+    \end{tabular}
+  \end{table}
 
 \subsection{Bioloid STEM}
-Creado para uso educativo y competencias robóticas. El kit provee el hardware y clases enseñando a construir distintos robots para distintos usos, involucrando conceptos de ciencias, tecnología, ingeniería y matemáticas.
-Controlador:
-CM-530
-Componentes:
-Sensor Infrarrojo, array de 7 sensores infrarrojos (detectan objetos), alimentación con 6 baterías AA o LR6, control remoto y receptor, 6 motores dinamixel (2 AX-12W de alta velocidad para funcionar como ejes de ruedas y 4 AX-12A). Contiene un kit de piezas y partes para dar estructura, compatible con las piezas del kit Robotis OLLO.
+  Creado para uso educativo y competencias robóticas.
+  El kit provee el hardware y clases enseñando a construir distintos
+  robots para distintos usos, involucrando conceptos de ciencias,
+  tecnología, ingeniería y matemáticas.
+
+  Utiliza el controlador \texttt{CM-530} internamente.
+
+  Cuenta con un conjunto de componentes que son:
+
+  \begin{itemize}
+  \item Sensor Infrarrojo
+  \item Array de 7 sensores infrarrojos (detectan objetos)
+  \item Control remoto y receptor
+  \item 6 motores dinamixel
+  \item Piezas para crear estructura de un robot
+  \end{itemize}
 
 \subsection{Bioloid Premium}
-Diseñado para educación, competiciones y entretenimiento. Se pueden construir variedad de robots de ejemplo como humanoide, araña, animales. El kit contiene 29 ejemplos de robot y programas de ejemplo.
-Controlador:
-CM-530
-Componentes:
-18 motores dinamixel (AX-12A), batería Li-Po, sensor giroscópico, receptor infrarrojo, control remoto y receptor, sensor de distancia, sensor infrarrojo para detección de objetos. Contiene kit de piezas para armar esqueleto compatibles con OLLO.
+  Diseñado para educación, competiciones y entretenimiento.
+  Se pueden construir variedad de robots como humanoide y animales.
+  El kit contiene 29 ejemplos de robot y programas de ejemplo.
+  Utiliza el controlador \texttt{CM-530}.
+
+  Incluye los siguientes componentes:
+
+  \begin{itemize}
+  \item 18 motores dinamixel (AX-12A)
+  \item Sensor giroscópico
+  \item Receptor infrarrojo
+  \item Control remoto y receptor
+  \item Sensor de distancia
+  \item Sensor infrarrojo para detección de objetos.
+  \item Piezas para crear estructura de robot.
+  \end{itemize}
 
 \subsection{Bioloid GP}
-Humanoide optimizado para competencias robóticas. Esqueleto liviano y resistente. Instrucciones para jugar al fútbol y hacer tareas de recolección pre-programadas. Ajuste automático de postura con sensor giroscópico.
-Controlador:
-CM-530
-Componentes:
-18 motores dinamixel (8xAX-12A, 10xAX-18A), batería Li-Po, sensor giroscópico, control remoto y receptor, sensor de distancia, marco de piezas de aluminio.
+  Humanoide optimizado para competencias robóticas.
+  Esqueleto liviano y resistente.
+  Instrucciones para jugar al fútbol y hacer tareas de recolección
+  pre-programadas.
+  Ajuste automático de postura con sensor giroscópico.
 
-\subsection{Ollo}
-Diseñado para aprender y jugar con robots. Incluye variedad de piezas interconectables. 
-Los circuitos están ocultos para poder ser utilizados por niños sin peligro. 
-Existen varios kits diseñados especialmente para educación, con currículas de ejercicios variados incrementales. Entre ellos se encuentran el kit Ollo Starter, Explorer, Inventor. Hay kits de entretenimiento como Ollo Figure, Ollo Action y Ollo Bug.
-Los ejercicios están organizados para comenzar con el diseño de la estructura del robot, luego aprender nociones de física y ciencias, y luego nociones de programación integrando sensores y actuadores.
-Cuenta con una batería de larga duración, la cuál dura hasta 10 horas.
-Se integra con el IDE RoboPlus de Robotis, y las piezas son reutilizables con los kits de Robotis Bioloid.
-Para programarlo hay que utilizar el software RoboPlus, o generar archivos .tsk respetando el formato del lenguaje de las Tasks de RoboPlus.
-Controlador:
-CM-100A
-Componentes:
-Varían según el kit, generalmente todos tienen sensores infrarrojos, el CM-100A tiene 3 conectores para sensores infrarrojos. Tiene lugar para agregar un receptor inalámbrico. También hay motores similares a los dinamixel.
+  Utiliza el controlador \texttt{CM-530}.
+
+  Cuenta con los siguientes componentes:
+
+  \begin{itemize}
+    \item 18 motores dinamixel
+    \item Sensor giroscópico
+    \item Control remoto y receptor
+    \item Sensor de distancia
+    \item Piezas de aluminio.
+  \end{itemize}
 

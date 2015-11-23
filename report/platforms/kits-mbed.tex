@@ -1,39 +1,126 @@
 
-Los kits de Mbed están diseñados para prototipar rápidamente. Mbed desarrolló herramientas web colaborativas como ser un IDE web y interfaz web con control de versiones, donde se pueden publicar proyectos, extender y colaborar con proyectos de otros usuarios.
-También hay variedad de bibliotecas desarrolladas para los kits mbed, que implementan funcionalidades básicas como ser protocolos de comunicación y otros.
+  Mbed, al igual que Arduino es una plataforma abierta de prototipado,
+su objetivo es que se puedan desarrollar prototipos en un tiempo corto.
 
-Procesadores y arquitectura:
-  ARM Cortex-M3 (ARM)
-  ARM Cortex-M0 (ARM)
+  Cuenta con herramientas colaborativas como ser un entorno de
+  desarrollo integrado (IDE) web, interfaz web de control de versiones,
+donde se pueden publicar proyectos, extender y colaborar con
+proyectos de otros usuarios.
 
-Herramientas de desarrollo:
-  Mbed Online Compiler. Compilador web de mbed para aplicaciones. 
-  Entorno web para crear aplicaciones y herramienta de control de versiones basada en Mercurial integrada. Las aplicaciones pueden ser cargadas en las placas usando el entorno web sin necesitar drivers extra ni instalación del compilador.
-  SDK C/C++ especializado para mbed.
-  También existe un HDK (Hardware development kit) para diseño de hardware especializado.
+  Existe una gran variedad de bibliotecas desarrolladas para los
+kits Mbed, que al igual que en Arduino, implementan funcionalidades
+básicas como ser protocolos de comunicación e interacción con
+componentes externos.
 
-\subsection{NXP LPC11U24}
+  La arquitectura usada por Mbed es \texttt{ARM}, principalmente
+\texttt{ARM Cortex-M3} y \texttt{ARM Cortex-M0}.
 
-Homepage:
-https://mbed.org/handbook/mbed-NXP-LPC11U24
-Características:
-Diseñada para prototipado rápido, programador USB integrado, aplicaciones de bajo consumo eléctrico.
-8KB RAM, 32KB FLASH
-USB, 2xSPI, I2C, UART, 6xADC, GPIO 
-Procesador:
-32-bit ARM Cortex-M0, 48MHz
+  El compilador web es práctico para colaborar con otros
+usuarios y no tener que armar un entorno local.
+  Las aplicaciones pueden ser cargadas en las placas usando el
+entorno web sin necesitar instalación del compilador.
 
-\subsection{NXP LPC1768}
-Homepage:
-http://mbed.org/platforms/mbed-LPC1768/
-Características generales:
-Diseñada para prototipado rápido de aplicaciones de microcontroladores en general, Ethernet, USB.
-Tiene flexibilidad para varios periféricos y memoria FLASH.
-Ethernet, USB Host y Device, 2xSPI, 2xI2C, 3xUART, CAN, 6xPWM, 6xADC, GPIO.
-40 pines de entrada/salida.
-Interfaz de programación por USB integrada (drag and drop programmer)
-Procesador:
-32-bit ARM Cortex-M3, 96MHz
-Memoria:
-512kb FLASH, 32kb RAM
+  El lenguaje utilizado es \texttt{C/C++} con bibliotecas especializadas
+de Mbed.
+  Mbed también cuenta con un HDK (Hardware development kit) para diseño de
+hardware especializado, luego de prototipar.
+
+  En la Tabla \ref{table-mbed} se muestra un listado con los modelos
+más relevantes y sus características.
+  La memoria RAM varía entre 16 kilobytes y 1 megabyte, bastante similar
+a Arduino. Sin embargo, el modelo más popular es el \texttt{LPC1768}
+con 512 KB de Flash y 64 KB de memoria RAM.
+  Éste modelo será utilizado para la implementación, al no ser tan
+reducido, se puede crear una implementación modelo para el mismo, y luego
+evaluar si es posible reducir el tamaño para trabajar con modelos
+con menor capacidad de cómputo.
+
+\begin{table}[htbp]
+  \centering
+  \scriptsize
+  \caption{Modelos Mbed}
+  \label{table-mbed}
+  \begin{tabular}{|c|c|c|c|c|}
+  \hline
+    Modelo & Flash & RAM (KB) & Procesador & Frecuencia \\
+  \hline
+    NXP LPC1768 & 512 KB & 64 (sram) & ARM Cortex-M3 & 96 MHz \\
+  \hline
+    NXP LPC11U24 & 32 KB & 8 & ARM Cortex-M0 & 48 MHz \\
+  \hline
+    Freescale FRDM-KL25Z & 128 & 16 KB & ARM Cortex-M0+ & 48 MHz \\
+  \hline
+    NXP LPC800-MAX & 16 KB & 4 & ARM Cortex-M0+ & 30 MHz \\
+  \hline
+    NXP EA LPC4088 & 512 KB & 96 (sram) & ARM Cortex-M4 & 120 MHz \\
+  \hline
+    NXP DipCortex M0 & 32 KB & 8 & ARM Cortex-M0 & 50 MHz \\
+  \hline
+    NXP DipCortex M3 & 64 KB & 12 & ARM Cortex-M3 & 72 MHz \\
+  \hline
+    NXP BlueBoard-LPC11U24 & 32 KB & 8 & ARM Cortex-M0 & 48 MHz \\
+  \hline
+    NXP WiFi DipCortex & 64 KB & 12 & ARM Cortex-M3 & 72 MHz \\
+  \hline
+    NXP Seeeduino-Arch & 32 KB & 8 & ARM Cortex-M0 & 48 MHz \\
+  \hline
+    NXP mbed LPC1114FN28 & 32 KB & 4 & ARM Cortex-M0 & 50 MHz \\
+  \hline
+    Ublox U-blox C027 & 512 KB & 32 & ARM Cortex-M3 & 96 MHz \\
+  \hline
+    NXP EA LPC11U35 & 64 KB & 10 & ARM Cortex-M0 & 48 MHz \\
+  \hline
+    ST Nucleo F103RB & 128 KB & 20 (sram) & ARM Cortex-M3 & 72 MHz \\
+  \hline
+    Freescale FRDM-KL46Z & 256 KB & 32 & ARM Cortex-M0+ & 48 MHz \\
+  \hline
+    NXP Seeeduino-Arch-Pro & 512 KB & 32 & ARM Cortex-M3 & 96 MHz \\
+  \hline
+    ST Nucleo F302R8 & 64 KB & 16 (sram) & ARM Cortex-M4 & 72 MHz \\
+  \hline
+    ST Nucleo L152RE & 512 KB & 80 (sram) & ARM Cortex-M3 & 32 MHz \\
+  \hline
+    ST Nucleo F401RE & 512 KB & 96 (sram) & ARM Cortex-M4 & 84 MHz \\
+  \hline
+    ST Nucleo F030R8 & 64 KB & 8 (sram) & ARM Cortex-M0 & 48 MHz \\
+  \hline
+    Freescale FRDM-K64F & 1 MB & 256 & ARM Cortex-M4 & 120 MHz \\
+  \hline
+    Nordic nRF51822 & 128 KB & 16 & ARM Cortex-M0 & 16 MHz \\
+  \hline
+    FRDM-KL05Z & 32 KB & 4 & ARM Cortex-M0+ & 48 MHz \\
+  \hline
+    LPCXpresso1549 & 256 KB & 36 & ARM Cortex-M3 & 72 MHz \\
+  \hline
+    LPCXpresso11U68 & 256 KB & 36 & ARM Cortex-M0+ & 50 MHz \\
+  \hline
+  \end{tabular}
+\end{table}
+
+
+%\subsection{NXP LPC11U24}
+%
+%Homepage:
+%https://mbed.org/handbook/mbed-NXP-LPC11U24
+%Características:
+%Diseñada para prototipado rápido, programador USB integrado, aplicaciones de bajo consumo eléctrico.
+%8KB RAM, 32KB FLASH
+%USB, 2xSPI, I2C, UART, 6xADC, GPIO 
+%Procesador:
+%32-bit ARM Cortex-M0, 48MHz
+
+%\subsection{NXP LPC1768}
+%
+%Homepage:
+%http://mbed.org/platforms/mbed-LPC1768/
+%Características generales:
+%Diseñada para prototipado rápido de aplicaciones de microcontroladores en general, Ethernet, USB.
+%Tiene flexibilidad para varios periféricos y memoria FLASH.
+%Ethernet, USB Host y Device, 2xSPI, 2xI2C, 3xUART, CAN, 6xPWM, 6xADC, GPIO.
+%40 pines de entrada/salida.
+%Interfaz de programación por USB integrada (drag and drop programmer)
+%Procesador:
+%32-bit ARM Cortex-M3, 96MHz
+%Memoria:
+%512kb FLASH, 32kb RAM
 

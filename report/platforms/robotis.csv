@@ -1,0 +1,8 @@
+Modelo,Flash,RAM (kb),EEPROM (kb),Procesador,Arquitectura,Frecuencia
+CM-100A,8 KB,1 (sram), 512,ATmega8,8 bit AVR,16 MHz
+CM-5,128 KB,4 (sram), 4,ATmega128,8 bit AVR,16 MHz
+CM-510,256 KB,8 (sram), 8,ATmega2561,8 bit AVR,16 MHz
+CM-530,512 KB,64,-,STM32F103RE,ARM Cortex-M3,72 MHz
+CM-700,256 KB,8 (sram),8,ATMega2561,8 bit AVR,16 MHz
+CM-730,512 KB,64,-,STM32F103RE,ARM Cortex-M3,72 MHz
+CM-900,64 KB,20 (sram),-,STM32F103C8,ARM Cortex-M3,72 MHz
