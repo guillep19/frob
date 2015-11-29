@@ -21,18 +21,14 @@ En FRP para representar estado, éste se modela como valores dependientes
 del paso del tiempo.
 
 Para esto, Fran define dos abstracciones principales,
-que son \emph{Eventos} y \emph{Comportamientos}
-\footnote{La definición de comportamientos en Fran no coincide con
-la definición de comportamiento normalmente utilizada en robótica.
-En bibliografía posterior, comportamientos fue cambiado por señales
-para evitar ésta ambiguedad.}.
+que son \emph{Eventos} y \emph{Comportamientos}.
 
-%TODO(Jorge): Poner referencia a definicion.
-%TODO(Jorge): Me confundo entre signal y behaviour, poner signal y
-% poner distincion en la nota al pie.
-%TODO(Marcos): Quizas sea mejor usar Senal en lugar de Comportamiento.
 \begin{definicion}
-  Comportamiento (Behaviour).\\
+  Comportamiento (Behaviour). \cite{petersonhudakelliot99:lambdainmotion} 
+      \footnote{La definición de comportamientos en Fran no coincide con
+      la definición de comportamiento normalmente utilizada en robótica.
+      En bibliografía posterior, comportamientos fue cambiado por señales
+      para evitar ésta ambiguedad.}\\
 
   Un comportamiento es una función que dado un instante de tiempo
   retorna un valor.
@@ -69,14 +65,13 @@ comportamientos incluyen:
 %TODO(Marcos): No entiendo, se pueden por ejemplo sumar comportamientos?
 % Quizas un ejemplo sea util.
 
-
 \begin{definicion}
-  Eventos. (Events)\\
+  Eventos. (Events)\cite{petersonhudakelliot99:lambdainmotion} \\
 
   Los eventos representan una colección discreta finita o infinita de valores
   junto al instante de tiempo en el que cada uno ocurre.
 
-  \center{$\textbf{Events}\ \alpha = [(\textbf{Time}, \alpha)]$}
+  \center{$\textit{type}\ \textbf{Events}\ \alpha = [(\textbf{Time}, \alpha)]$}
 
 \end{definicion}
 
@@ -101,7 +96,6 @@ usando las funciones \texttt{map} y \texttt{filter}:
   }
 \end{itemize}
 
-%TODO(Marcos): Para que se presentan estas funciones? Poner un poco de texto antes.
-% Se podrian poner pequenos ejemplos de aplicaciones, como tambien antes
-% se podrian poner ejemplos de comportamientos y eventos.
+%TODO(Marcos): Se podrian poner pequenos ejemplos de aplicaciones,
+% como tambien antes se podrian poner ejemplos de comportamientos y eventos.
 
