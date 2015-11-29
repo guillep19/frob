@@ -28,12 +28,12 @@ lo que se descargaron de la página de mbed \cite{mbeddev}, las herramientas
 de desarrollo para compilar offline.
 
   La máquina tendrá dos partes principales, una que interpreta el código e
-  implementa el despachador que actualiza las señales.
-  Ésta parte es común y puede ser portada a diferentes plataformas sin
-  necesidad de modificarla.
+implementa el despachador que actualiza las señales.
+  Esta parte es común y puede ser portada a diferentes plataformas sin
+necesidad de modificarla.
 
   Las instrucciones en memoria tendrán un ancho de palabra de 16 bit.
-  La primer palabra contiene en los 8 bits más representativos, el código
+  La primera palabra contiene en los 8 bits más representativos, el código
   de la operación (\texttt{opcode}).
   Los 8 bits menos representativos, contienen un argumento inmediato
   opcional.
@@ -75,7 +75,7 @@ de desarrollo para compilar offline.
     4.3 - Escribir salidas.
 \end{Verbatim}
 
-  Al principio se crea un grafo de señales vacío, y se reserva espacio para la pila, todo es memoria estática, tanto
+  Al principio se crea un grafo de señales vacío, y se reserva espacio para la pila, todo en memoria estática, tanto
   para los nodos del grafo como para la pila.
   En el punto 2, se interpretan las instrucciones del programa, hasta llegar a la instrucción \texttt{halt}. Las 
   instrucciones al inicio del código se corresponden con el bloque \texttt{do} del programa, por lo tanto
@@ -98,7 +98,7 @@ en paralelo en un entorno multiprogramado.
   a que operación es.
   Las funciones son de tipo \texttt{void} y realizan cambios sobre el estado
   de la máquina. La referencia a las mismas es guardada en un vector \texttt{functions}.
-  La posición de cada instrucción en el vector, coincide con el código de operación.
+  La posición de cada instrucción en el vector coincide con el código de operación.
 
 \begin{Verbatim}
   void (*functions[])() = {

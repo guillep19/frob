@@ -1,20 +1,26 @@
   Para la última etapa se utiliza la gramática de atributos para definir
 semántica sobre el \emph{AST}.
 
+% TODO(Marcos): Corregir cita.
+
 Las gramáticas de atributos \cite{attributegrammar}(\emph{Attribute Grammars}) simplifican
 la tarea de escribir catamorfismos.
 Un catamorfismo es una función análoga a la función de alto orden
 \texttt{foldr} pero aplicada sobre cualquier tipo de datos recursivo.
 
-  De ésta manera se pueden definir atributos sintéticos,
+  De ésta manera se pueden definir atributos sintetizados,
   heredados o mixtos en el \emph{AST}.
 
-  Uno de dichos atributos será el código en bajo nivel, que será la salida
+  Los atributos sintetizados son valores que se distribuyen desde las
+hojas hacia la raiz del \emph{AST}, y los heredados aquellos que
+se distribuyen desde la raiz hacia las hojas.
+
+  Uno de dichos atributos será el código en bajo nivel, la salida
 de esta etapa.
 
   Se implementó una gramática de atributos usando \textit{UUAG}, y con
   el compilador de gramáticas \textit{UUAGC}\cite{uuagc} se
-  compiló a haskell.
+  compiló a \haskell{}.
 
   El compilador \textit{UUAGC} toma la gramática y construye los
   catamorfismos necesarios para procesar todos los atributos.
@@ -39,6 +45,7 @@ data Root
   Para ésto se define un atributo sintetizado (\texttt{syn})
   llamado \texttt{code}.
 
+
 \begin{Verbatim}
 set All = Root Decls Decl Dodecls Dodecl Expr
 attr All syn code use {++} {[]} :: BC
@@ -48,21 +55,27 @@ sem Root
     lhs.code = @dodecls.code ++ [Thalt] ++ @decls.code
 \end{Verbatim}
 
+  Utilizando la palabra clave \texttt{Set} se define el conjunto \texttt{All}
+de elementos para los que se definirá el atributo.
+  
   En la definición del atributo, se especifica que en caso de no haber
-  una regla específica, se calcula usando la concatenación \texttt{++}
-  y como atributo por defecto toma \texttt{[]}.
+una regla específica, se calcula usando la concatenación \texttt{++}
+y como atributo por defecto toma \texttt{[]}. A ésto se le llama
+\textit{use rule}.
 
   \begin{Verbatim}
   attr All syn code use {++} {[]} :: BC
   \end{Verbatim}
 
-  Por ejemplo para la definición de la lista de declaraciones, no es
-  necesario especificar que el código se obtiene concatenando sus
-  partes, se infiere automáticamente usando la regla anterior.
+  Por ejemplo para la definición de la lista de declaraciones:
 
 \begin{Verbatim}
 type Decls = [Decl]
 \end{Verbatim}
+
+  No es necesario especificar que el código se obtiene concatenando sus
+  partes ya que se infiere automáticamente usando la regla anterior.
+
 
   Para poder generar el código de todo el programa, es necesario
   calcular otros atributos previos.
@@ -151,6 +164,9 @@ sem Root
   Se definió un módulo \texttt{Bytecode} que abstrae el código
   de máquina en un tipo \texttt{OpCode} y define funciones para 
   exportarlo como texto o en formato binario.
+
+% TODO(Marcos): Agregar un diagrama con los modulos, indicando que es
+% generado y que importa a que.
 
   Al compilar la gramática usando \textit{UUAGC} se obtiene un módulo
   en lenguaje \texttt{Haskell} que expone la función \texttt{code\_Syn\_Root}

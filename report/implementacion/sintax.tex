@@ -21,6 +21,9 @@ sintaxis abstracta (\emph{AST}\footnote{Del inglés Abstract Syntax Tree}).
   El sistema de gramáticas de atributos
   \textit{UUAG}\cite{uuag} fue usado para la implementación.
 
+
+% TODO(Marcos): Mostrar el tipo Root.
+
   Se define un tipo de datos \texttt{Root} que representa la raíz del árbol.
   El mismo tiene un único constructor \texttt{Root\_Root} que recibe un árbol de tipo
   \texttt{Decls} que representa las declaraciones, y un árbol de tipo \texttt{Dodecls} que
@@ -34,6 +37,8 @@ sintaxis abstracta (\emph{AST}\footnote{Del inglés Abstract Syntax Tree}).
     = (\x y -> Root_Root x y) <$> pDecls <*> pDodecls
   \end{Verbatim}
 
+% TODO(Marcos): Explicar brevemente los combinadores <$> y <*>.
+
   El cuál asume definido un parser de declaraciones \texttt{pDecls} y un parser
   del bloque \texttt{do} (\texttt{pDodecls}).
 
@@ -45,4 +50,4 @@ sintaxis abstracta (\emph{AST}\footnote{Del inglés Abstract Syntax Tree}).
 
   Se va refinando sucesivamente en parsers mas específicos, hasta construir completamente el \emph{AST}.
 
-
+% TODO(Marcos): Poner el parser completo en el apendice.
