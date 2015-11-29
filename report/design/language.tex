@@ -2,11 +2,6 @@
 conjunto de aplicaciones de primitivas del paradigma de programación
 funcional reactiva.
  
-%TODO(Marcos): Se dice que el lenguaje es tipado y con inferencia de
-% tipos, pero en ningun lado se define el sistema de tipos.
-% Implementaste esto?
-% Respuesta: No, pero es tipado.
- 
   Es un lenguaje funcional, tipado y con inferencia de tipos.
   En él todos los valores son inmutables, una vez que son declarados
 no se pueden modificar.
@@ -42,3 +37,13 @@ todos los parámetros que declara.
   Un comentario es una línea que comienza con el símbolo `\#'.
   La gramática completa del lenguaje se puede ver en la
 Figura \ref{fig:grammar}.
+
+  El sistema de tipos respeta las reglas de inferencia definidas en
+la Figura \ref{fig:typesystem}.
+
+% TODO(Guille): Dado que ahora esta el sistema de tipos, aclarar en los
+% lugares que sea necesario, que quedo fuera del alcance en la implementacion
+% y se asume que quien escribe un programa, respeta el sistema.
+
+\input{design/typesystem.tex}
+

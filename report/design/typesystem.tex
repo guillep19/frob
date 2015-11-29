@@ -1,0 +1,60 @@
+\begin{figure}[h!]
+  \begin{center}
+    \caption{Sistema de tipos en \frob{}}
+
+\[
+  \infer[\mathrm{Unidad}]
+  {\Gamma \vdash () : unit}{}
+\]
+
+\[
+  \infer[\mathrm{Numero}]
+  {\Gamma \vdash (n : \textit{Number})}{n\ \textit{es un entero}}
+\]
+
+\[
+  \infer[\mathrm{Variable}]
+  {\Gamma \vdash (v : \mu)}{\Gamma(v) = \mu}
+\]
+
+\[
+  \infer[\mathrm{Aplicacion}]
+  {\Gamma \vdash (f x : \nu)}
+  {\Gamma \vdash f : \mu \rightarrow \nu & \Gamma \vdash x : \mu}
+\]
+
+\[
+  \infer[\mathrm{Condicional}]
+  {\Gamma \vdash (\texttt{if}\ c\ \texttt{then}\ a\ \texttt{else}\ b : \mu)}
+  {\Gamma \vdash c : \nu & \Gamma \vdash a : \mu & \Gamma \vdash b : \mu}
+\]
+
+\[
+  \infer[\mathrm{Entrada}]
+  {\Gamma \vdash \texttt{input} i : \texttt{signal}\ \tau}
+  {\Gamma (i) = \tau}
+\]
+
+\[
+  \infer[\mathrm{Lift_n}]
+{\Gamma \vdash \texttt{lift}_n\ f\ i_1\ \dotsb\ i_n : \texttt{signal}\ \nu}
+  {\Gamma \vdash f : \mu_1 \rightarrow \dotsb \rightarrow \mu_n \rightarrow \nu & \Gamma \vdash i_1 : \texttt{signal}\ \mu_1 \dotsb \Gamma \vdash i_n : \texttt{signal}\ \mu_n}
+\]
+
+\[
+  \infer[\mathrm{Folds}]
+  {\Gamma \vdash \texttt{folds}\ f\ c\ s : \texttt{signal}\ \nu}
+  {\Gamma \vdash f : \mu \rightarrow \nu \rightarrow \nu &
+   \Gamma \vdash c : \nu &
+   \Gamma \vdash s : \texttt{signal}\ \mu}
+\]
+
+\[
+  \infer[\mathrm{Salida}]
+  {\Gamma \vdash \texttt{output}\ o\ s : unit}
+  {\Gamma(o) = \tau & \Gamma \vdash s : \texttt{signal}\ \tau}
+\]
+
+   \label{fig:typesystem}
+   \end{center}
+ \end{figure}
