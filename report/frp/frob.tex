@@ -1,10 +1,10 @@
-\paragraph{Frob}
+\subsubsection{Frob}
 
   Utilizando como base el trabajo realizado en Fran, se construyó Frob
 (Functional Robotics \cite{petersonhudakelliot99:lambdainmotion}
 \cite{petersonhagerhudak99:frob})
-un lenguaje funcional reactivo embebido en haskell, aplicado al
-dominio de la robótica.
+un lenguaje funcional reactivo embebido en el lenguaje \haskell{},
+aplicado al dominio de la robótica.
   
   En éste trabajo se introdujo el concepto de reactividad con el cuál
 utilizando los conceptos de comportamientos y eventos, éstos se combinan
@@ -13,9 +13,11 @@ para realizar las tareas que un robot debe hacer.
 comportamientos, y conseguir que los comportamientos se modifiquen
 utilizando eventos y un conjunto de combinadores específicos.
 
-  Un ejemplo es, dado un robot, éste se tiene que mover a una velocidad
+  Un ejemplo es, dado un robot, este se tiene que mover a una velocidad
 constante hasta que se supere un tiempo máximo o se detecte un objeto.
-  En Frob ésto se expresaría de ésta manera:
+  En Frob se expresaría de esta manera:
+
+%TODO(Marcos) Seria de utilidad poner el tipo de la funcion y explicarlo.
 
 \begin{verbatim}
 goAhead r t =
@@ -24,16 +26,23 @@ goAhead r t =
      -=> stop)
 \end{verbatim}
 
-  Lo que se leería cómo: "Para el robot r, moverse hacia adelante a
+%TODO(Guille):%s/"...."/``...''/g
+
+  Lo que se leería cómo: ``Para el robot r, moverse hacia adelante a
 velocidad 30, hasta que se exceda el tiempo t, o se detecte un objeto
-a menos de distancia 20. En ese momento detenerse."
+a menos de distancia 20. En ese momento detenerse.''
 
   La función \texttt{predicate} se utiliza para generar eventos a partir
 de comportamientos en base a una condición.
   El combinador \texttt{untilB} recibe dos comportamientos y un predicado,
 combina los dos comportamientos, retornando el primero mientras el predicado
 no se cumpla, y luego pasando al siguiente.
-  
+
+%TODO(Marcos): Hay que explicar más el ejemplo.
+% untilB se usa infijo, pero luego se dice que toma tres
+% parámetros y el tercero donde está?
+% falta explicar lo que hace -=> y stop
+
   Otro punto importante de Frob, es que los periféricos del robot se
 asumen implementados, permitiendo que el desarrollador se concentre
 en la lógica específica de su problema, y no en resolver problemas

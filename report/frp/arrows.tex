@@ -21,7 +21,7 @@ tendrá acceso sólo a las señales utilizándolas.
 \begin{definicion}
   Funciones sobre señales (Signal Functions).
   \center{
-    $\textbf{SF}\ \alpha \beta = \textbf{Signal}\ \alpha \rightarrow \textbf{Signal}\ \beta$
+    $\textbf{SF}\ \alpha\ \beta = \textbf{Signal}\ \alpha \rightarrow \textbf{Signal}\ \beta$
   }
 \end{definicion}
 
@@ -30,9 +30,12 @@ desarrollador, en lugar de eso se define un conjunto de funciones
 sobre señales primitivas y un conjunto de combinadores
  para componerlas.
 
+% TODO(Marcos) Si la imagen fue copiada de otro lado, poner referencia
+% a la fuente.
+
 \begin{figure}[h]
 \begin{center}
-\caption{Combinadores}
+  \caption{Combinadores. (Imagen tomada de \cite{yampa})}
 \includegraphics[width=0.9\textwidth]{graphs/yampasf.png}
 \label{fig:arrowcombinators}
 \end{center}
@@ -54,7 +57,8 @@ $\gg$ y \texttt{first}, aunque no es el único.
 
   \paragraph{Yampa}
   El framework Yampa \cite{yampa} embebido en Haskell, 
-define operadores simples para combinarlas y funciones que
-procesan las señales.
+  define los operadores de la Figura \ref{fig:arrowcombinators}
+  para combinar señales y aplicar funciones sobre ellas.
 
+%TODO(Marcos): Ejemplos de los operadores y su uso?
 

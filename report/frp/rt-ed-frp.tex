@@ -1,7 +1,7 @@
 %% Listo
 
   Si bien el paradigma clásico de FRP permite expresar naturalmente
-programas reactivos, ésta expresividad no es gratuita, sinó que
+programas reactivos, ésta expresividad no es gratuita, sino que
 puede llevar a errores muy difíciles de encontrar en los programas.
   Un ejemplo de ésto es el llamado \emph{time leak}, al implementarse
 en un lenguaje como Haskell, que cuenta con evaluación a demanda,
@@ -46,23 +46,26 @@ garantiza mayor eficiencia.
 por los programas es acotado, RT-FRP define un lenguaje base (lambda cálculo)
 de alto órden, y luego sobre esa base define un lenguaje reactivo que obliga
 a declarar las señales y sus conexiones.
-  Sobre éste lenguaje restringido, se proveen demostraciones de que
-se cumplen las restricciones.\\
+
+  Sobre este lenguaje restringido, se proveen demostraciones de que
+se cumplen las restricciones.
 
 \paragraph{Event-Driven FRP}
   Poco después de ésto, se propuso \textit{Event-Driven FRP}
 \cite{wan2002:edfrp}, otra simplificación que añade como restricción
-que las señales sólo puedan ser modificadas mediante un evento.
+que las señales sólo puedan ser modificadas mediante eventos discretos,
+en lugar de ser contínuamente actualizadas con el paso del tiempo.
+
   Aunque parezca muy restrictiva, la justificación de la misma es que
 los sistemas reactivos que se desean implementar están fuertemente
 guiados por eventos.
 
-  La propuesta de Event-Driven FRP era de llevar la programación reactiva
+  La propuesta de Event-Driven FRP es llevar la programación reactiva
 a microcontroladores, para lo cuál define un lenguaje imperativo llamado
 \textit{Simple C}, de tal forma que a partir del mismo sea muy simple
 compilarlo al lenguaje \textit{C} o a las variantes que existen para 
 microcontroladores.
 
-  En particular se implementó un prototipo que era capaz de generar
+  En particular se implementó un prototipo que es capaz de generar
 código para el microcontrolador \textit{PIC16C66} \cite{microchip}.
 

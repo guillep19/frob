@@ -2,12 +2,12 @@
   Al intentar implementar en un computador programas utilizando éste
 paradigma, nos encontramos con varias limitaciones.
   Una de ellas es que no es posible tener valores que se modifiquen de
-forma contínua, la capacidad de cómputo es finita, y no es posible
+forma continua, la capacidad de cómputo es finita, y no es posible
 ejecutar tareas al mismo tiempo, incluso en un entorno con
 paralelismo, el mismo está acotado a la cantidad de procesadores
 con los que se cuente.
 
-  Aunque el paradigma distinga valores contínuos de valores
+  Aunque el paradigma distinga valores continuos de valores
   discretos, se puede hacer una simplificación y asumir que todos
   los valores son señales.
   Las señales en realidad serán una secuencia de valores en el tiempo,
@@ -16,17 +16,17 @@ que éstas cambien.
 
   Valores como el tiempo (reloj) y otros sensores como ser un sensor de
 distancia, entregarán valores periódicamente.
-  Sería imposible que un programa reaccione a un valor contínuo,
+  Sería imposible que un programa reaccione a un valor continuo,
 sin embargo, es muy fácil asumir que lo que importa del tiempo en realidad
 es dada una variación de tiempo cómo se debe comportar nuestro programa.
 
   A su vez un sensor de distancia no nos puede entregar infinitos valores,
 y generalmente sólo importa poder recibir un valor nuevo en un período
 relativamente corto de tiempo.
-  Al igual que una película que simula ser contínua, en realidad está
+  Al igual que una película que simula ser continua, en realidad está
 compuesta de una serie discreta de imágenes en el tiempo, un robot
 reacciona de manera discreta a los cambios que detecte en sus actuadores,
-simulando reacción en tiempo contínuo.
+simulando reacción en tiempo continuo.
 
   Otra limitación en nuestro caso, al tratarse de robots con bajas
 capacidades de cómputo, es que la implementación del lenguaje no
