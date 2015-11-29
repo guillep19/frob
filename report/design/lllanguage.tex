@@ -14,11 +14,14 @@ con su semántica y una máquina virtual abstracta que las ejecuta.
   opcional y una lista de argumentos extra opcionales dependiendo del
   código.
 
-  Utilizaré la siguiente notación para describir las instrucciones:
+  Se usa la siguiente notación para describir las instrucciones:
   \begin{center}
     $\texttt{codigo} [\textit{inmediato}] [, {arg}_1, \dotsb, {arg}_n ]$
   \end{center}
 
+% TODO(Marcos): Por que se distingue entre los arg inmediato y extra
+% Respuesta: Basicamente porque los argumentos extra tienen el doble
+% de tamaño.
 
 \subsection{Conjunto de Instrucciones}
 
@@ -28,7 +31,9 @@ con su semántica y una máquina virtual abstracta que las ejecuta.
 
 \item {
     \texttt{push} ,\textit{value}
-
+    % TODO(Marcos): Quitar la ','.
+    % Justificacion: La ',' aca es necesaria para darse cuenta que
+    %value es extra y no es inmediato.
     La instrucción \texttt{push} coloca el
     valor \textit{value} como tope del stack.
     En el diagrama a la izquierda se muestra el estado del stack antes

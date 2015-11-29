@@ -9,17 +9,20 @@ se ejecuta la operación asociada.
   
   Por ejemplo la expresión ``$5 + 19 * 8$'' en RPN se
 escribe ``$5\ 19\ 8 * +$''.
-  
-  A modo de ejemplo en \alf{} se representa con las
-  siguientes 5 instrucciones.
 
-  \begin{Verbatim}[frame=single]
-  push 5
-  push 19
-  push 8
-  mul
-  add
-  \end{Verbatim}
+% TODO(Marcos): Hacer referencia al apendice, quizas mover el
+% ejemplo a mas adelante donde se explican las operaciones.
+%
+%  A modo de ejemplo en \alf{} se representa con las
+%  siguientes 5 instrucciones.
+%
+%  \begin{Verbatim}[frame=single]
+%  push 5
+%  push 19
+%  push 8
+%  mul
+%  add
+%  \end{Verbatim}
 
   El conjunto \textit{Inputs} representa las entradas de la máquina.
   Dadas $m$ entradas fijas, cada una se identifica con un entero único
@@ -35,7 +38,7 @@ escribe ``$5\ 19\ 8 * +$''.
   \end{center}
 \end{definicion}
   
-  Graficamente las representaré con la notación:
+  Graficamente se representan con la notación:
 
   \input{design/ll_diagram_input.tex}
 
@@ -48,11 +51,11 @@ escribe ``$5\ 19\ 8 * +$''.
 \begin{definicion}
   \textit{Salidas de la máquina}\\
   \begin{center}
-    $\textit{Outputs} \equiv \{\texttt{O}_1 \dotsb \texttt{I}_k\}$.
+    $\textit{Outputs} \equiv \{\texttt{O}_1 \dotsb \texttt{O}_k\}$.
   \end{center}
 \end{definicion}
   
-  Graficamente las representaré con la notación:
+  Graficamente se representan con la notación:
 
   \input{design/ll_diagram_output.tex}
 
@@ -67,7 +70,7 @@ escribe ``$5\ 19\ 8 * +$''.
   \end{center}
 \end{definicion}
 
-  Graficamente las representaré con la notación:
+  Graficamente se representan con la notación:
 
   \input{design/ll_diagram_signal.tex}
 
@@ -81,7 +84,7 @@ escribe ``$5\ 19\ 8 * +$''.
   \end{center}
 \end{definicion}
 
-  El \textit{Stack} lo representaré graficamente con la notación:
+  El \textit{Stack} se representa graficamente con la notación:
 
   \input{design/ll_diagram_stack.tex}
 

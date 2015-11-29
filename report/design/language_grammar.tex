@@ -8,7 +8,7 @@ definitions := definition | definition definitions;
 
 definition := ident arg_list "=" expr;
 
-frps = frp | frp frps;
+frps = frp | frp "," frps;
 
 frp := ident "<- read" expr
      | ident "<- lift" ident ident

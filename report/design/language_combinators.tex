@@ -1,6 +1,6 @@
 
   Un robot cuenta con un conjunto de sensores y un conjunto de actuadores,
-cada uno identificados con un número entero.
+cada uno identificado con un número entero.
 
   Para especificar el comportamiento de un robot en un programa, se crean
 señales a partir de las entradas (sensores), se les aplican funciones
@@ -29,7 +29,7 @@ salidas de acuerdo a que señal está conectada a ellas.
 \subsubsection{Read}
 %%read
   Para crear una señal a partir de una entrada, se utiliza la
-primitiva \texttt{read}.
+primitiva \texttt{read}, que asocia la señal a un identificador.
 
   Asumiendo que un robot tiene un sensor de distancia en la entrada
 \texttt{INPUT\_DISTANCE} se puede definir una señal \texttt{distance},
@@ -44,7 +44,7 @@ distance <- read INPUT_DISTANCE
 El tipo de la primitiva \texttt{read} es:
 
 \begin{center}
-  $read :: IO\ a \rightarrow Int \rightarrow Signal\ a $
+  $read :: Int \rightarrow Signal\ a $
 \end{center}
 
 \subsubsection{Lift}
@@ -88,9 +88,12 @@ El tipo de la primitiva lift es
   $lift :: (a \rightarrow b) \rightarrow Signal\ a \rightarrow Signal\ b$
 \end{center}
 
+%TODO(Marcos): Este tipo es mas claro, pero igual para entenderlo tendria
+% que haberse definido el sistema de tipos del lenguaje.
+
 \subsubsection{Output}
 %%output
-  La primitiva \texttt{output} envía a un actuador, el valor de una señal.
+  La primitiva \texttt{output} envía a un actuador el valor de una señal.
   Asumiendo que el motor del robot está identificado con el valor entero
 \texttt{OUTPUT\_ENGINE}:
 
@@ -105,6 +108,8 @@ output OUTPUT_ENGINE speed
 \begin{center}
 $output :: Signal\ a \rightarrow Int \rightarrow IO\ a$
 \end{center}
+
+%TODO(Marcos): Lo mismo que con los otros tipos.
  
   En la Figura \ref{fig:example1} se puede ver el ejemplo completo.
 
@@ -124,8 +129,14 @@ combinándola sucesivas veces, por ejemplo:
 
 \begin{center}
 $lift3 :: (a \rightarrow b \rightarrow c \rightarrow d) \rightarrow Signal\ a \rightarrow Signal\ b \rightarrow Signal\ c \rightarrow Signal\ d$
-$lift3\ f\ sa\ sb\ sc = lift2\ ((lift2\ f\ sa\ sb)\ sc)$
+$lift3\ f\ sa\ sb\ sc = lift2\ (lift2\ f\ sa\ sb)\ sc$
 \end{center}
+
+% TODO(Marcos): Segun la gramatica del lenguaje no puedo hacer esto.
+% TODO(Guillermo): Además de no tipar, f no se puede aplicar parcialmente
+% para superar esta limitacion, habria que definir tipos mas complejos y/o
+% aceptar currying.
+% Y si lo saco, pasará algo? :D. Quisiera dejarlo fuera del alcance!
 
 \subsubsection{Folds}
 
@@ -138,7 +149,7 @@ función al valor actual de una señal y a un valor acumulado.
   De ésta manera se puede crear una nueva señal para representar estado.
 
   Por ejemplo si se asume definida una señal \texttt{button} que tiene
-el valor $1$ cuando se apreta un botón y sinó el valor $0$, se puede
+el valor $1$ cuando se apreta un botón y sino el valor $0$, se puede
 contar cuántas veces se apretó el botón utilizando el combinador \texttt{folds}
 y una función para sumar el valor acumulado y el nuevo.
 
@@ -159,3 +170,4 @@ El tipo del combinador \texttt{folds} es:
 $folds :: (a \rightarrow b \rightarrow b) \rightarrow b \rightarrow Signal\ a \rightarrow Signal\ b$
 \end{center}
 
+%TODO(Marcos): Mostrar un ejemplo completo que combine tod.o.

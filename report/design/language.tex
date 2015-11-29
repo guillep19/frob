@@ -1,7 +1,12 @@
   En \frob{} los programas consisten de un conjunto de funciones, y un
 conjunto de aplicaciones de primitivas del paradigma de programación
 funcional reactiva.
-  
+ 
+%TODO(Marcos): Se dice que el lenguaje es tipado y con inferencia de
+% tipos, pero en ningun lado se define el sistema de tipos.
+% Implementaste esto?
+% Respuesta: No, pero es tipado.
+ 
   Es un lenguaje funcional, tipado y con inferencia de tipos.
   En él todos los valores son inmutables, una vez que son declarados
 no se pueden modificar.
@@ -19,12 +24,21 @@ naturales ($\mathcal{N}$), y funciones de naturales en naturales.
   El lenguaje evalúa las expresiones, tan pronto como es posible. Las
 funciones tienen un conjunto de variables libres, cuando un valor les es
 asignado, el resultado es calculado.
+  Para invocar una función es necesario saturarla, es decir, invocarla con
+todos los parámetros que declara.
   
-  En lenguajes como Haskell las expresiones no son evaluadas hasta que es
-estrictamente necesario (evaluación a demanda,
-del inglés: \emph{lazy evaluation}). En la programación funcional reactiva
-esto puede llevar a aumentar el uso de memoria considerablemente, y al no
-evaluar incrementalmente, al necesitar un valor puede demorar el cálculo,
-enlenteciendo la evaluación de todo el programa y reduciendo la reactividad.
+%  En lenguajes como Haskell las expresiones no son evaluadas hasta que es
+%estrictamente necesario (evaluación a demanda,
+%del inglés: \emph{lazy evaluation}). En la programación funcional reactiva
+%esto puede llevar a aumentar el uso de memoria considerablemente, y al no
+%evaluar incrementalmente, al necesitar un valor puede demorar el cálculo,
+%enlenteciendo la evaluación de todo el programa y reduciendo la reactividad.
+\input{design/language_grammar.tex}
 
-
+%TODO(Marcos): Explicar en abstracto la gramática.
+% También explicaría un poco en abstracto la gramática, por ejemplo
+% ahí pondría la parte que dice que un programa consiste en un
+% conjunto de funciones y de combinadores de frp.
+  Un comentario es una línea que comienza con el símbolo `\#'.
+  La gramática completa del lenguaje se puede ver en la
+Figura \ref{fig:grammar}.
