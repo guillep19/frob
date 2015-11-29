@@ -6,6 +6,8 @@ fue el desafío planteado a escolares en el año 2013.
 
 \section {Problema}
 
+% TODO(Jorge): Poner la letra como cita textual, entrecomillada, formato.
+
   Se desea implementar un robot autónomo móvil que sea capaz de
 hacer la entrega de un pedido en una casa determinada.
   El mismo debe moverse por un escenario e identificar las casas.
@@ -74,7 +76,7 @@ en la figura \ref{fig:deliverybot}.
 irá corrigiendo su dirección desacelerando el motor del lado que
 se salga de la línea.
   Junto a cada sensor de grises se montará una luz led, que de acuerdo
-a el color del suelo, se reflejará y se podrá decidir si se está viendo
+al color del suelo, se reflejará y se podrá decidir si se está viendo
 algo oscuro (la línea) o algo claro (fuera de la línea).
 
   El sensor de distancia a la izquierda debajo en la figura, se montará
@@ -99,6 +101,9 @@ robot físico creado como prototipo para probar el caso de estudio.
   En la Figura \ref{fig:delivery} se puede ver gráficamente de qué forma
 se combinan los eventos para lograr el objetivo.
 
+% TODO(Marcos): Explicar el diagrama, asociarlo paso a paso con el
+% codigo que hay a continuacion.
+
 \begin{figure}[hbtp]
 \begin{center}
 \caption{Diagrama del caso de estudio}
@@ -106,6 +111,9 @@ se combinan los eventos para lograr el objetivo.
 \label{fig:delivery}
 \end{center}
 \end{figure}
+
+% TODO(Marcos): El diagrama es muy chico, no se distingue.
+% Cambiarlo por un diagrama como los del capitulo de diseno.
 
 Luego se llega a la implementación en el lenguaje \frob{}:
 
@@ -160,6 +168,11 @@ do {
 
 %\end{verbatim}
 
+% TODO(Marcos): Tenemos alguna version escrita en C y/o tortugarte para
+% comparar?
+% TODO(Jorge): Explicar el programa, la mecanica de como se cuentan
+% las casas. Poner un ejemplo imperativo.
+
 
 \section {Conclusiones del caso}
 
@@ -174,7 +187,7 @@ y que entradas tomarán. En un programa imperativo, es normal realizar
 operaciones de entrada y salida dentro de cualquier función, lo que
 dificulta ver cuándo hay efectos secundarios de invocar cada función.
 
-  Finalmente, no es necesario preocuparse por la concurrencia, sinó
+  Finalmente, no es necesario preocuparse por la concurrencia, sino
 por la semántica del programa, la máquina virtual se encargará de
 respetar las definiciones del desarrollador.
 
@@ -187,3 +200,13 @@ programación imperativos tradicionales y ésto puede ocasionar una
 curva inicial de aprendizaje pronunciada, finalmente puede enseñar al
 desarrollador una forma diferente de razonar y pensar la solución
 a los problemas de robótica.
+
+% TODO(Marcos): Asumo que ese problema se pudo representar en
+%la plataforma dada ;-)
+% Se tiene alguna métrica de uso de recursos?
+% cuánta memoria consumió? entonces..
+% hasta en cuales plataformas se podría aplicar?
+% Se puede hacer una estimación más o menos de hasta qué
+% complejidad (tamaño de programa) esto puede esccalar?
+
+% TODO(Jorge): Poner alguna evaluacion con medidas o algo.
