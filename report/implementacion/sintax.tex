@@ -22,9 +22,15 @@ sintaxis abstracta (\emph{AST}\footnote{Del inglés Abstract Syntax Tree}).
   \textit{UUAG}\cite{uuag} fue usado para la implementación.
 
 
-% TODO(Marcos): Mostrar el tipo Root.
-
   Se define un tipo de datos \texttt{Root} que representa la raíz del árbol.
+
+  \begin{Verbatim}
+  data Root
+    | Root
+      decls :: Decls
+      dodecls :: Dodecls
+  \end{Verbatim}
+
   El mismo tiene un único constructor \texttt{Root\_Root} que recibe un árbol de tipo
   \texttt{Decls} que representa las declaraciones, y un árbol de tipo \texttt{Dodecls} que
   representa el bloque \texttt{do}.
@@ -37,17 +43,31 @@ sintaxis abstracta (\emph{AST}\footnote{Del inglés Abstract Syntax Tree}).
     = (\x y -> Root_Root x y) <$> pDecls <*> pDodecls
   \end{Verbatim}
 
-% TODO(Marcos): Explicar brevemente los combinadores <$> y <*>.
-
   El cuál asume definido un parser de declaraciones \texttt{pDecls} y un parser
   del bloque \texttt{do} (\texttt{pDodecls}).
-
+  
   \begin{Verbatim}
   pDecls :: TokenParser Decls
 
   pDodecls :: TokenParser Dodecls
   \end{Verbatim}
 
-  Se va refinando sucesivamente en parsers mas específicos, hasta construir completamente el \emph{AST}.
+  El combinador ``$\langle * \rangle$'' \cite{uuparsing:piriapolis} se utiliza para
+  combinar dos parser y resolver producciones de largo 2 en una gramática,
+  en este caso reconocer primero la lista de declaraciones de funciones, y
+  luego el bloque \texttt{do}.
+  El tipo del combinador es:
 
-% TODO(Marcos): Poner el parser completo en el apendice.
+  \begin{center}
+    $(\langle*\rangle) :: \texttt{Parser}\ s\ a \rightarrow \texttt{Parser}\ s\ b \rightarrow \texttt{Parser}\ s\ (a, b)$
+  \end{center}
+
+  El combinador ``$\langle \$ \rangle$'' se utiliza para aplicar una
+función al resultado de un parser, en éste caso la función es aplicar
+el constructor \texttt{Root\_Root}.
+
+  Para construir el parser completo, se va refinando sucesivamente
+en parsers mas específicos, hasta construir completamente el \emph{AST}.
+  En el apéndice \ref{appendix:parser} se encuentra código del parser
+implementado.
+
