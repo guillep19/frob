@@ -17,31 +17,26 @@ utilizando eventos y un conjunto de combinadores específicos.
 constante hasta que se supere un tiempo máximo o se detecte un objeto.
   En Frob se expresaría de esta manera:
 
-%TODO(Marcos) Seria de utilidad poner el tipo de la funcion y explicarlo.
-
 \begin{verbatim}
+goAhead :: Robot -> Time -> WheelControl
 goAhead r t =
   (forward 30 'untilB'
     (predicate (time > t) .|.  predicate (frontSonar r < 20))
      -=> stop)
 \end{verbatim}
 
-%TODO(Guille):%s/"...."/``...''/g
-
   Lo que se leería cómo: ``Para el robot r, moverse hacia adelante a
 velocidad 30, hasta que se exceda el tiempo t, o se detecte un objeto
 a menos de distancia 20. En ese momento detenerse.''
 
-  La función \texttt{predicate} se utiliza para generar eventos a partir
-de comportamientos en base a una condición.
-  El combinador \texttt{untilB} recibe dos comportamientos y un predicado,
-combina los dos comportamientos, retornando el primero mientras el predicado
-no se cumpla, y luego pasando al siguiente.
-
-%TODO(Marcos): Hay que explicar más el ejemplo.
-% untilB se usa infijo, pero luego se dice que toma tres
-% parámetros y el tercero donde está?
-% falta explicar lo que hace -=> y stop
+\begin{itemize}
+  \item \texttt{predicate} se utiliza para generar eventos a partir
+        de comportamientos en base a una condición.
+  \item \texttt{untilB} cambia de comportamiento en respuesta
+        a un evento.
+  \item \texttt{.|.} toma dos eventos y los intercala.
+  \item \texttt{-=>} Asocia un nuevo valor, luego de que ocurre el evento.
+\end{itemize}
 
   Otro punto importante de Frob, es que los periféricos del robot se
 asumen implementados, permitiendo que el desarrollador se concentre
