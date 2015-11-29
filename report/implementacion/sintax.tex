@@ -40,7 +40,7 @@ sintaxis abstracta (\emph{AST}\footnote{Del inglés Abstract Syntax Tree}).
   \begin{Verbatim}
   pRoot :: TokenParser Root
   pRoot
-    = (\x y -> Root_Root x y) <$> pDecls <*> pDodecls
+    = Root_Root <$> pDecls <*> pDodecls
   \end{Verbatim}
 
   El cuál asume definido un parser de declaraciones \texttt{pDecls} y un parser
