@@ -13,13 +13,40 @@ y de fácil acceso en el medio local.
   Utiliza el microprocesador \texttt{PIC 18F4550} \cite{pic18} el cuál se programa
   utilizando el lenguaje \texttt{C}.
 
-  Existen actualmente tres versiones del proyecto Butiá, así como varias
-  herramientas de desarrollo.
+  Además de la placa \texttt{USB4Butia}, también existen tres versiones
+del robot Butiá, así como varias herramientas de desarrollo.
   Entre ellas se encuentran el entorno de desarrollo integrado \texttt{Tortubots} \cite{Tortubots},
   \texttt{Butialo} \cite{Butialo} que permite programar utilizando el lenguaje \textit{Lua},
   se puede utilizar \textit{Python}, y también otro IDE llamado \texttt{Yatay} \cite{yatay}
   también desarrollado como proyecto de la Facultad de Ingeniería.
 
-  La versión actual del proyecto es \texttt{USB4Butia 3.0}.
+  La versión actual de la placa es \texttt{USB4Butia 1.9}.
   Todas las versiones del proyecto cuentan con todo el software necesario libre, así
 como las instrucciones para construir el hardware, que también es libre.
+
+  El robot \texttt{Butia 1.0} utiliza la placa \texttt{USB4Butia 1.9},
+la versión \texttt{Butia 2.0} utiliza una placa \textit{Arduino}, y
+la versión \texttt{Butia 3.0} utiliza la placa \texttt{Beagleboard Black}
+\cite{beagleboard}.
+
+  En la Tabla \ref{table-usbbutia} se muestran las especificaciones del
+\texttt{UBS4Butia 1.9}, ya que \textit{Arduino} ya fue relevado y
+\texttt{Beagleboard Black} no es una plataforma con bajas capacidades
+de cómputo.
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\setlength\tabcolsep{2pt}
+\caption{Modelo USB4Butia}
+\label{table-usbbutia}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+  \hline
+  Modelo & Flash & SRAM & EEPROM & Procesador & Arquitectura & Frecuencia \\
+  \hline
+  USB4Butia 1.9 & 32 KB & 2 KB & 256 Bytes & PIC 18F4550 & 8 bit & 48 MHz \\
+  \hline
+ \end{tabular}
+\end{table}
+
+
