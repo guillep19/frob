@@ -1,7 +1,9 @@
 
-% TODO(Marcos): Decir por que se decidio definir un lenguaje propio y no
-% utilizar los que se estudiaron anteriormente.
-% Tambien decir que comparte con esos lenguajes y en que difiere.
+  Dados los requerimientos específicos del dominio, se decidió definir un lenguaje
+propio llamado \frob{}. El lenguaje comparte con el Real-Time FRP y con el Arrowized FRP la noción
+de señal, donde no se distingue entre eventos discretos y continuos.
+  A su vez, en el lenguaje se permite manipular las señales directamente, con un
+conjunto de primitivas similar al del lenguaje Elm.
 
   En este capítulo se describe el diseño del lenguaje \frob{} junto con su semántica.
   Luego se explica de qué manera es traducido al lenguaje \alf{} de

@@ -164,8 +164,6 @@ sem Root
   de máquina en un tipo \texttt{OpCode} y define funciones para 
   exportarlo como texto o en formato binario.
 
-% TODO(Marcos): Agregar un diagrama con los modulos, indicando que es
-% generado y que importa a que.
 
   Al compilar la gramática usando \textit{UUAGC} se obtiene un módulo
   en lenguaje \texttt{Haskell} que expone la función \texttt{code\_Syn\_Root}
@@ -173,5 +171,15 @@ sem Root
   tipo \texttt{[OpCode]}.
 
   Utilizando el módulo \texttt{Bytecode}, el código se obtiene y 
-  escribe en un archivo (.alf) terminando el proceso de compilación.
+escribe en un archivo (.alf) terminando el proceso de compilación.
 
+  Los módulos del compilador y sus dependencias se pueden ver en
+la Figura \ref{fig:williecmodules}.
+
+\begin{figure}[h!]
+  \begin{center}
+    \caption{Paquetes del compilador \compilador{}}
+    {\includegraphics[width=160mm]{graphs/williecpackages.png}}
+   \label{fig:williecmodules}
+  \end{center}
+\end{figure}
