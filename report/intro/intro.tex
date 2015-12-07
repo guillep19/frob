@@ -1,47 +1,43 @@
-%TODO(marcos): La intro se parece mas a un resumen que a una intro.
-% Dedicar mas espacio a presentar y motivar el problema.
-
-
   Este documento desarrolla el proceso de construcción de
 herramientas que permitan programar robots utilizando
-el paradigma de programación funcional reactiva.
+el paradigma de \emph{programación funcional reactiva}.
+  El proyecto es motivado por la necesidad de contar con
+un lenguaje que brinde soporte al uso de la robótica
+como herramienta educativa.
 
-  Para ello se define el lenguaje \frob{} de alto nivel,
+  La característica más destacable es utilizar un enfoque
+orientado a programación funcional, y lograr con ello resolver problemas
+de robótica razonando en alto nivel.
+
+  Para analizar el problema, se desarrolla un estado del
+arte relevando un conjunto de lenguajes de programación funcional
+reactiva y se introducen los conceptos principales.
+
+  Luego se analiza un conjunto de plataformas de hardware con bajas
+capacidades de cómputo, en lo posible de bajo costo, que puedan
+ser utilizadas para construir robots autónomos.
+
+  Se define el lenguaje \frob{} funcional reactivo de alto nivel,
 que permite expresar los comportamientos de un robot y sus
 interacciones.
   El lenguaje permite expresar los mismos en base a
 \emph{Señales} y relaciones entre ellas, que permiten
 capturar la naturaleza reactiva del dominio.
+  Al ser construído para enseñar conceptos de robótica,
+uno de los objetivos es que sea simple de utilizar e intuitivo.
 
-  Éste lenguaje fue construído para
-enseñar conceptos de robótica, por lo tanto
-uno de los objetivos es que sea simple de
-utilizar e intuitivo.
-
-  Otro objetivo planteado es que debe ser posible programar
-sistemas robóticos embebidos en plataformas de
-hardware de baja capacidad de cómputo, en lo posible de
-bajo costo.
-  Se realizó un estado del arte investigando una gran variedad
-de plataformas, evaluando sus características,
-especialmente la capacidad de cómputo, cantidad de memoria y
-costo estimado.
-
-  En los siguientes capítulos se introduce el concepto de
-programación funcional reactiva, junto con sus variantes y
-algunos ejemplos.
-  Luego de decidir cuál de éstas variantes es más útil
-en nuestro dominio, se muestra la definición del lenguaje
-\frob{} y cuál es el proceso desde que se escribe un programa
-hasta que es ejecutado dentro de una plataforma de hardware.
+  Luego se muestra el proceso desde que se escribe un programa \frob{}
+hasta que es ejecutado dentro de una plataforma de hardware de las
+anteriormente relevadas.
 
   Para cumplir con el objetivo de que la implementación sea
-portable, se separó la misma en dos fases. Los programas son
-compilados a código \alf{} de menor nivel de abstracción,
-el cuál es ejecutado por una máquina virtual que definiremos.
+portable, se separó la misma en dos fases.
+  Los programas \frob{} son compilados a código \alf{} de
+menor nivel de abstracción, el cual es ejecutado por una
+máquina virtual que definiremos.
   La misma puede ser portada a distintas plataformas.
 
   Para finalizar se trata un caso de estudio completo, en el
-que se implementa usando \frob{} y construyendo un robot físico
+que se construye un robot físico y se implementa usando \frob{}
 la solución a un desafío robótico tomado de la
 competencia \textit{SumoUY} \cite{sumouy}.
