@@ -88,9 +88,6 @@ El tipo de la primitiva lift es
   $lift :: (a \rightarrow b) \rightarrow Signal\ a \rightarrow Signal\ b$
 \end{center}
 
-%TODO(Marcos): Este tipo es mas claro, pero igual para entenderlo tendria
-% que haberse definido el sistema de tipos del lenguaje.
-
 \subsubsection{Output}
 %%output
   La primitiva \texttt{output} envía a un actuador el valor de una señal.
@@ -106,10 +103,8 @@ output OUTPUT_ENGINE speed
   El tipo de la primitiva output es
 
 \begin{center}
-$output :: Signal\ a \rightarrow Int \rightarrow IO\ a$
+$output :: Signal\ a \rightarrow Int \rightarrow ()$
 \end{center}
-
-%TODO(Marcos): Lo mismo que con los otros tipos.
  
   En la Figura \ref{fig:example1} se puede ver el ejemplo completo.
 
@@ -124,19 +119,19 @@ que recibe dos señales y produce una nueva aplicando una función.
 $lift2 :: (a \rightarrow b \rightarrow c) \rightarrow Signal\ a \rightarrow Signal\ b \rightarrow Signal\ c$
 \end{center}
 
-  Utilizando \texttt{lift2} se pueden definir funciones \texttt{liftN}
-combinándola sucesivas veces, por ejemplo:
-
-\begin{center}
-$lift3 :: (a \rightarrow b \rightarrow c \rightarrow d) \rightarrow Signal\ a \rightarrow Signal\ b \rightarrow Signal\ c \rightarrow Signal\ d$
-$lift3\ f\ sa\ sb\ sc = lift2\ (lift2\ f\ sa\ sb)\ sc$
-\end{center}
-
-% TODO(Marcos): Segun la gramatica del lenguaje no puedo hacer esto.
-% TODO(Guillermo): Además de no tipar, f no se puede aplicar parcialmente
-% para superar esta limitacion, habria que definir tipos mas complejos y/o
-% aceptar currying.
-% Y si lo saco, pasará algo? :D. Quisiera dejarlo fuera del alcance!
+%  Utilizando \texttt{lift2} se pueden definir funciones \texttt{liftN}
+%combinándola sucesivas veces, por ejemplo:
+%
+%\begin{center}
+%$lift3 :: (a \rightarrow b \rightarrow c \rightarrow d) \rightarrow Signal\ a \rightarrow Signal\ b \rightarrow Signal\ c \rightarrow Signal\ d$
+%$lift3\ f\ sa\ sb\ sc = lift2\ (lift2\ f\ sa\ sb)\ sc$
+%\end{center}
+%
+%% Solved(Marcos): Segun la gramatica del lenguaje no puedo hacer esto.
+%% Solved(Guillermo): Además de no tipar, f no se puede aplicar parcialmente
+%% para superar esta limitacion, habria que definir tipos mas complejos y/o
+%% aceptar currying.
+%% Y si lo saco, pasará algo? :D. Quisiera dejarlo fuera del alcance!
 
 \subsubsection{Folds}
 
