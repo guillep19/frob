@@ -20,7 +20,7 @@ WORD LightSensor::read() {
   int status = iic.read(addr, buffer, 2);
   float result = 0;
   result = ((buffer[0]<<8)|buffer[1])/1.2;
-  pc.printf("//////////////////////////////Status: %d, Light intensity: %.4f Lux\r\n", status, result);
+  //pc.printf("//////////////////////////////Status: %d, Light intensity: %.4f Lux\r\n", status, result);
   //if (status != 0) {
   //  return 255;
   //}
