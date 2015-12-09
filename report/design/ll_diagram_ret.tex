@@ -1,0 +1,46 @@
+\begin{tikzpicture}
+\selectlanguage{english}
+  %\draw[step=1cm,gray,very thin,xshift=0cm,yshift=0cm] (0,0) grid (12,4);
+  
+ \begin{scope}[xshift=0cm,yshift=0cm,very thick,
+    node distance=2cm,on grid,>=stealth',
+    block/.style={rectangle,draw,fill=cyan!20},
+    comp/.style={circle,draw,fill=orange!40},
+  stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
+  \node[stack=7,xshift=2cm,yshift=2cm,text width=1.1cm,align=center] {
+    \nodepart{one} $v$
+    \nodepart{two} \scriptsize{\texttt{ret ip}}
+    \nodepart{three} \scriptsize{\texttt{fp}}
+    \nodepart{four} $s_n$
+    \nodepart{five} $s_{n-1}$
+    \nodepart{six} $\dotsb$
+    \nodepart{seven} $s_o$
+   };
+   \draw [->,line width=1pt] (0.5,3.9) -- node[below]{\tiny{TOS}} (1.3, 3.9);
+   \draw [->,line width=1pt] (0.5,3.4) -- node[below]{\tiny{FP}} (1.3, 3.4);
+   \draw [decorate,decoration={brace,amplitude=3pt},xshift=0.7cm,yshift=0pt]
+   (0.5,1.2) -- (0.5,2.3) node [black,midway,xshift=-0.6cm] 
+   {\footnotesize args};
+   \end{scope}
+ \draw [->,line width=1.7pt] (5,2) -- (7,2);
+
+\begin{scope}[xshift=8cm,yshift=0cm,very thick,
+    node distance=2cm,on grid,>=stealth',
+    block/.style={rectangle,draw,fill=cyan!20},
+    comp/.style={circle,draw,fill=orange!40},
+    stack/.style={rectangle split,rectangle split parts=#1,draw,anchor=center}]
+  \node[stack=4,xshift=2cm,yshift=2cm,
+        text width=1.1cm,align=center,text height=0.3cm] {
+    \nodepart{one} \vphantom{fruit}
+    \nodepart{two} $v$
+    \nodepart{three} $\dotsb$
+    \nodepart{four} $s_o$
+  };
+ \draw [->,line width=1pt] (0.5,2.5) -- node[below]{\tiny{TOS}} (1.3, 2.5);
+ \draw [->,line width=1pt] (0.5,1.9) -- node[below]{\tiny{FP}} (1.3, 1.9);
+ \end{scope} 
+
+\selectlanguage{spanish}
+\end{tikzpicture}
+
+

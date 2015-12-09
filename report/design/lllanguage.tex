@@ -54,6 +54,26 @@ con su semántica y una máquina virtual abstracta que las ejecuta.
 
     \input{design/ll_diagram_mul.tex}
 }
+\item {
+    \texttt{call}, ${arg}_1$
+
+    Sirve para invocar una función, cuya posición en el código es ${arg}_1$.
+    Coloca en el stack el valor de \texttt{fp} y coloca la posición siguiente
+    en el código, donde seguirá ejecutando el código al retornar la función.
+    Luego en \texttt{ip} coloca el valor ${arg}_1$.
+
+    \input{design/ll_diagram_call.tex}
+}
+\item {
+    \texttt{ret}
+
+    Sirve para retornar el valor resultado de la ejecución de una función.
+    Toma del tope del stack el resultado \texttt{value}, revierte los valores
+    de \texttt{sp} y \texttt{fp}, y coloca \texttt{value} en el nuevo tope
+    del stack.
+
+    \input{design/ll_diagram_ret.tex}
+}
 \end{itemize}
 
 \subsection{Instrucciones para manipular señales}
