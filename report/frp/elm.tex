@@ -22,4 +22,15 @@ operador $fold$ sobre una lista.
   Dado un valor inicial y una función, aplica la función sobre
 cada valor, utilizando el último valor conocido como primer argumento.
 
-%TODO(Marcos): Ejemplos
+  La Figura \ref{fig:elmexample} muestra un programa Elm de ejemplo.
+  El mismo toma una señal \texttt{Mouse.position}, y dada la función
+  \texttt{asText} que convierte un par de valores en texto, utiliza
+  \texttt{lift} para aplicar la función a las coordenadas de un Mouse.
+ 
+\begin{figure}[h]
+  \begin{center}
+  \caption{Ejemplo de programa Elm. (Imagen tomada de \cite{evanczaplicki2012:Elm})}
+  \includegraphics[width=0.9\textwidth]{graphs/elmexample.png}
+  \label{fig:elmexample}
+  \end{center}
+\end{figure}
