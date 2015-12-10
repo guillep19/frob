@@ -1,33 +1,11 @@
-
-  En esta sección veremos un caso de estudio usado para verificar la
-implementación.
-  El problema fue tomado de la competencia SumoUY \cite{sumouy}, el mismo
-fue el desafío planteado a escolares en el año 2013.
+\input{cases/intro.tex}
 
 \section {Problema}
-
-``{\itshape Se desea implementar un robot autónomo móvil que sea capaz de
-hacer la entrega de un pedido en una casa determinada.
-  El mismo debe moverse por un escenario e identificar las casas.
-  Para recorrer la ruta de entrega, podrá valerse de una línea negra
-que representará la calle de la ciudad.
-
-  Las casas estarán ubicadas a un lado de la calle. En el recorrido
-se encuentran varias casas, el robot deberá entregar un pedido
-en la quinta casa por la que pase.
-
-  El robot deberá pasar por alto las casas anteriores y
-al llegar a la casa objetivo debe detenerse totalmente.
-
-  Para probar la solución, se armará un escenario que consiste de
-un piso blanco con una línea negra que puede tener curvas.
-
-  Al lado derecho de la línea se ubicarán cajas a menos de 30
-centímetros representando las casas.}''
+\input{cases/problem.tex}
 
 \section {Solución}
 
-Se armó un robot móvil (Figura \ref{fig:deliverybot}) que cuenta con 3 sensores:
+  Se armó un robot móvil que cuenta con 3 sensores:
 
 \begin{itemize}
 \item Sensor de grises izquierdo
@@ -42,17 +20,10 @@ Se armó un robot móvil (Figura \ref{fig:deliverybot}) que cuenta con 3 sensore
 \item Motor derecho 
 \end{itemize}
 
-\begin{figure}[hbtp]
-\begin{center}
-  \caption{Diagrama del robot móvil
-    (realizado utilizando fritzing \cite{fritzing})
-  }
-\includegraphics[width=0.9\textwidth]{graphs/breaboardbb.png}
-\label{fig:deliverybot}
-\end{center}
-\end{figure}
+\input{cases/breadboard.tex}
 
-  El diagrama muestra los componentes físicos que son montados en el robot
+  El diagrama de la Figura \ref{fig:breadboard} muestra los
+componentes físicos que son montados en el robot
 para resolver el problema y cómo se interconectan.
   Arriba se pueden ver los dos motores, que irán uno a cada lado
 del robot y sólo se moverán hacia adelante.
@@ -69,7 +40,7 @@ controla cada motor.
 
   El robot utilizará dos sensores de grises montados al frente
 para mantenerse sobre la línea, ambos pueden verse a la derecha abajo
-en la figura \ref{fig:deliverybot}.
+en la Figura \ref{fig:breadboard}.
   Con los motores el robot se moverá hacia adelante inicialmente, e
 irá corrigiendo su dirección desacelerando el motor del lado que
 se salga de la línea.
@@ -87,78 +58,27 @@ se detendrá totalmente cuando la cuenta llegue al valor 5.
   En la Figura \ref{fig:robotfisico} se puede ver el
 robot físico creado como prototipo para probar el caso de estudio.
 
-\begin{figure}[hbtp]
-\begin{center}
-\caption{Robot físico implementado}
-\includegraphics[width=0.9\textwidth]{graphs/alf.jpg}
-\label{fig:robotfisico}
-\end{center}
-\end{figure}
+\input{cases/alf.tex}
 
+\newpage
+\subsection{Implementación usando \frob{}}
+  Luego se llega a la implementación en el lenguaje \frob{}:
 
-  En la Figura \ref{fig:delivery} se puede ver gráficamente de qué forma
+\input{cases/code_willie.tex}
+
+\subsection{Diagrama de la solución}
+  Utilizando la notación definida en la Sección \ref{section:diseno},
+en la Figura \ref{fig:delivery} se puede ver gráficamente de qué forma
 se combinan los eventos para lograr el objetivo.
+
+\input{cases/graph.tex}
+%\input{cases/graph2.tex}
 
 % TODO(Marcos): Explicar el diagrama, asociarlo paso a paso con el
 % codigo que hay a continuacion.
 % El diagrama es muy chico, no se distingue.
 % Cambiarlo por un diagrama como los del capitulo de diseno.
 
-\begin{figure}[hbtp]
-\begin{center}
-\caption{Diagrama del caso de estudio}
-\includegraphics[width=0.9\textwidth]{graphs/delivery.png}
-\label{fig:delivery}
-\end{center}
-\end{figure}
-
-
-Luego se llega a la implementación en el lenguaje \frob{}:
-
-\begin{verbatim}
-
-INPUT_DISTANCE = 1
-INPUT_COLOR_LEFT = 2
-INPUT_COLOR_RIGHT = 3
-OUTPUT_ENGINE_LEFT = 1
-OUTPUT_ENGINE_RIGHT = 2
-
-MIN_DISTANCE = 100
-MIN_GREY = 50
-
-hay_casa d = if (d < MIN_DISTANCE) then 1 else 0
-distinto a b = if (a /= b) then 1 else 0
-velocidad_casa num = if (num >= 5) then 0 else 100
-
-and a b = if (a && b) then 1 else 0
-suma a b = (a + b)
-multiplicar a b = (a * b)
-
-color_a_vel gris = if (gris > MIN_GREY) 1 else 1/2
-
-
-do {
-    distance <- read INPUT_DISTANCE,
-    color_izq <- read INPUT_COLOR_LEFT,
-    color_der <- read INPUT_COLOR_RIGHT,
-
-    viendo_casa <- lift hay_casa distance,
-    cambio <- folds distinto 0 viendo_casa,
-    nueva_casa <- lift2 and viendo_casa cambio,
-    cuenta <- folds suma 0 nueva_casa,
-    velocidad <- lift velocidad_casa cuenta,
-
-    multip_izq <- lift color_a_vel color_izq,
-    multip_der <- lift color_a_vel color_der,
-
-    speed_left <- lift2 multiplicar velocidad multip_izq,
-    speed_right <- lift2 multiplicar velocidad multip_der,
-
-    output MOTOR_IZQ speed_left,
-    output MOTOR_DER speed_right
-}
-
-\end{verbatim}
 
 %\section{Solución sin utilizar \frob}
 
@@ -170,48 +90,6 @@ do {
 % Explicar el programa, la mecanica de como se cuentan
 % las casas. Poner un ejemplo imperativo.
 
-
 \section {Conclusiones del caso}
+\input{cases/conclusiones.tex}
 
-  A diferencia de un programa imperativo tradicional, en el programa
-\frob{} dentro del bloque \texttt{do} se puede ver claramente cómo
-se procesan las entradas, para generar los valores de las salidas.
-  Al razonar utilizando funciones sobre señales, no es necesario
-tener en cuenta estado global, ni el orden de ejecución de
-diferentes rutinas.
-
-  Al estar obligado a escribir funciones puras, el desarrollador
-puede abstraerse mejor al pensar que funciones necesita implementar,
-y que entradas tomarán. En un programa imperativo, es normal realizar
-operaciones de entrada y salida dentro de cualquier función, lo que
-dificulta ver cuándo hay efectos secundarios de invocar cada función.
-
-  Finalmente, no es necesario preocuparse por la concurrencia, sino
-por la semántica del programa, la máquina virtual se encargará de
-respetar las definiciones del desarrollador.
-
-  Tampoco es necesario preocuparse por las interacciones de entrada
-y salida, ya que por decisión de diseño existen abstracciones en
-la máquina bien definidas para cada una.
-
-  Si bien \frob{} es muy diferente a los lenguajes de
-programación imperativos tradicionales y ésto puede ocasionar una
-curva inicial de aprendizaje pronunciada, finalmente puede enseñar al
-desarrollador una forma diferente de razonar y pensar la solución
-a los problemas de robótica.
-
-  El problema se pudo representar en la plataforma \texttt{MBED LPC1768} antes
-mencionada, utilizando el robot construido.
-  La memoria Flash total utilizada en la prueba sumó 44 KB, por lo que
-aún faltaría mejorar la implementación para llegar a menos de 32 KB y
-cubrir mas plataformas.
-  Sin embargo el programa \frob{} compilado a \alf{} ocupa tan solo 88 Bytes,
-el hecho de que se utilicen abstracciones para entrada y salida, ayuda a mantener
-bajo el tamaño de los programas \alf{}. El resto es ocupado por la implementación de
-la máquina virtual.
-  La memoria RAM utilizada, al usar memoria estática no supera los 512 Bytes, y no
-crece con el correr del tiempo.
-
-  Éstos resultados indican que es posible realizar desafíos robóticos y se puede
-escalar en tamaño, quedando como necesidad, reducir aún más el tamaño de la
-máquina virtual.

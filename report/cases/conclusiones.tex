@@ -1,0 +1,42 @@
+  A diferencia de un programa imperativo tradicional, en el programa
+\frob{} dentro del bloque \texttt{do} se puede ver claramente cómo
+se procesan las entradas, para generar los valores de las salidas.
+  Al razonar utilizando funciones sobre señales, no es necesario
+tener en cuenta estado global, ni el orden de ejecución de
+diferentes rutinas.
+
+  Al estar obligado a escribir funciones puras, el desarrollador
+puede abstraerse mejor al pensar que funciones necesita implementar,
+y que entradas tomarán. En un programa imperativo, es normal realizar
+operaciones de entrada y salida dentro de cualquier función, lo que
+dificulta ver cuándo hay efectos secundarios de invocar cada función.
+
+  Finalmente, no es necesario preocuparse por la concurrencia, sino
+por la semántica del programa, la máquina virtual se encargará de
+respetar las definiciones del desarrollador.
+
+  Tampoco es necesario preocuparse por las interacciones de entrada
+y salida, ya que por decisión de diseño existen abstracciones en
+la máquina bien definidas para cada una.
+
+  Si bien \frob{} es muy diferente a los lenguajes de
+programación imperativos tradicionales y ésto puede ocasionar una
+curva inicial de aprendizaje pronunciada, finalmente puede enseñar al
+desarrollador una forma diferente de razonar y pensar la solución
+a los problemas de robótica.
+
+  El problema se pudo representar en la plataforma \texttt{MBED LPC1768} antes
+mencionada, utilizando el robot construido.
+  La memoria Flash total utilizada en la prueba sumó 44 KB, por lo que
+aún faltaría mejorar la implementación para llegar a menos de 32 KB y
+cubrir mas plataformas.
+  Sin embargo el programa \frob{} compilado a \alf{} ocupa tan solo 88 Bytes,
+el hecho de que se utilicen abstracciones para entrada y salida, ayuda a mantener
+bajo el tamaño de los programas \alf{}. El resto es ocupado por la implementación de
+la máquina virtual.
+  La memoria RAM utilizada, al usar memoria estática no supera los 512 Bytes, y no
+crece con el correr del tiempo.
+
+  Éstos resultados indican que es posible realizar desafíos robóticos y se puede
+escalar en tamaño, quedando como necesidad, reducir aún más el tamaño de la
+máquina virtual.

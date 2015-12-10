@@ -1,0 +1,85 @@
+\begin{center}
+\begin{tikzpicture}
+\selectlanguage{english}
+  %\draw[step=1cm,gray,very thin,xshift=0cm,yshift=0cm] (0,0) grid (15,16);
+
+\begin{scope}[xshift=0cm,yshift=0cm,very thick,
+    node distance=2cm,on grid,>=stealth',
+    block/.style={rectangle,draw,fill=cyan!20},
+    value/.style={rectangle,draw,fill=red!20},
+    func/.style={rectangle,draw,fill=green!20},
+    comp/.style={circle,draw,fill=orange!40}]
+
+  \node [block] (i1) [xshift=6cm,yshift=14cm] {$\texttt{I}_{\texttt{INPUT\_DISTANCE}}$};
+  \node [block] (i2) [xshift=1cm,yshift=14cm] {$\texttt{I}_{\texttt{INPUT\_COLOR\_LEFT}}$};
+  \node [block] (i3) [xshift=13cm,yshift=14cm] {$\texttt{I}_{\texttt{INPUT\_COLOR\_RIGHT}}$};
+
+  \node [comp] (ca1) [xshift=6cm,yshift=12cm] {\tiny{\texttt{distance}}};
+  \node [comp] (ca2) [xshift=1cm,yshift=12cm] {\tiny{\texttt{color\_izq}}};
+  \node [comp] (ca3) [xshift=13cm,yshift=12cm] {\tiny{\texttt{color\_der}}};
+
+  \node [comp] (ca4) [xshift=6cm,yshift=10cm] {\tiny{\texttt{viendo\_casa}}};
+  \node [comp] (ca7) [xshift=8cm,yshift=10cm] {\tiny{\texttt{cambio}}};
+  \node [comp] (ca5) [xshift=1cm,yshift=10cm] {\tiny{\texttt{multip\_izq}}};
+  \node [comp] (ca6) [xshift=13cm,yshift=10cm] {\tiny{\texttt{multip\_der}}};
+
+  \node [comp] (ca8) [xshift=7cm,yshift=8cm] {\tiny{\texttt{nueva\_casa}}};
+  \node [comp] (ca9) [xshift=7cm,yshift=6cm] {\tiny{\texttt{cuenta}}};
+  \node [comp] (ca10) [xshift=7cm,yshift=4cm] {\tiny{\texttt{velocidad}}};
+
+  \node [comp] (ca11) [xshift=4cm,yshift=2cm] {\tiny{\texttt{speed\_left}}};
+  \node [comp] (ca12) [xshift=10cm,yshift=2cm] {\tiny{\texttt{speed\_right}}};
+  
+  \node [block] (o1) [xshift=4cm,xshift=0cm] {$\texttt{O}_{\texttt{MOTOR\_IZQ}}$};
+  \node [block] (o2) [xshift=10cm,xshift=0cm] {$\texttt{O}_{\texttt{MOTOR\_DER}}$};
+  
+  \node [func]  (f1) [xshift=8cm, yshift=11.5cm] {\tiny{distinto}};
+  \node [value] (v1) [right=of ca7,xshift=0.5cm] {$v_i (v_0 = 0)$};
+  \draw[-,line width=1pt] (ca7) -- node[below]{\tiny{state}} (v1);
+
+  \node [func]  (f2) [left=of ca4] {\tiny{hay\_casa}};
+  \node [func]  (f3) [left=of ca5] {\tiny{color\_a\_vel}};
+  \node [func]  (f4) [right=of ca6] {\tiny{color\_a\_vel}};
+
+  \node [func]  (f5) [right=of ca8] {\tiny{and}};
+  \node [func]  (f6) [right=of ca9] {\tiny{suma}};
+  \node [value] (v2) [left=of ca9,xshift=-0.5cm] {$v_i (v_0 = 0)$};
+  \draw[-,line width=1pt] (ca9) -- node[below]{\tiny{state}} (v2);
+  \node [func]  (f7) [right=of ca10] {\tiny{velocidad\_casa}};
+
+  \node [func]  (f8) [left=of ca11] {\tiny{multiplicar}};
+  \node [func]  (f9) [right=of ca12] {\tiny{multiplicar}};
+
+  %funciones:
+  \draw[-] (f2) -- (ca4);
+  \draw[-] (f3) -- (ca5);
+  \draw[-] (f4) -- (ca6);
+  \draw[-] (f5) -- (ca8);
+  \draw[-] (f6) -- (ca9);
+  \draw[-] (f7) -- (ca10);
+  \draw[-] (f8) -- (ca11);
+  \draw[-] (f9) -- (ca12);
+
+  \draw[-] (ca1) -- (i1);
+  \draw[-] (ca2) -- (i2);
+  \draw[-] (ca3) -- (i3);
+  \draw[-] (ca4) -- (ca1);
+  \draw[-] (ca5) -- (ca2);
+  \draw[-] (ca6) -- (ca3);
+  \draw[-] (ca7) -- (f1);
+  \draw[-] (ca7) -- (ca4);
+  \draw[-] (ca8) -- (ca7);
+  \draw[-] (ca8) -- (ca4);
+  \draw[-] (ca9) -- (ca8);
+  \draw[-] (ca10) -- (ca9);
+  \draw[-] (ca11) -- (ca5);
+  \draw[-] (ca12) -- (ca6);
+  \draw[-] (ca11) -- (ca10);
+  \draw[-] (ca12) -- (ca10);
+  \draw[-] (ca11) -- (o1);
+  \draw[-] (ca12) -- (o2);
+ \end{scope} 
+
+\selectlanguage{spanish}
+\end{tikzpicture}
+\end{center}
