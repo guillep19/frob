@@ -67,14 +67,68 @@ robot físico creado como prototipo para probar el caso de estudio.
 \input{cases/code_willie.tex}
 
 \subsection{Diagrama de la solución}
-  Utilizando la notación definida en la Sección \ref{section:diseno},
-en la Figura \ref{fig:delivery} se puede ver gráficamente de qué forma
-se combinan las señales para lograr el objetivo.
 
 \input{cases/graph.tex}
 
-% TODO(Marcos): Explicar el diagrama, asociarlo con el codigo
+  Utilizando la notación definida en la Sección \ref{section:diseno},
+en la Figura \ref{fig:delivery} se puede ver gráficamente de qué forma
+se combinan las señales para lograr el objetivo.
+  A la izquierda se ve como se procesa la señal del sensor de grises
+izquierdo, se le aplica la función \texttt{color\_a\_vel} cuyo resultado
+se utilizará para decidir la velocidad del motor de la rueda izquierda.
+  A la derecha análogamente, se procesa la señal del sensor de grises
+derecho. En el código se puede ver en las líneas:
 
+  \begin{verbatim}
+  color_izq <- read INPUT_COLOR_LEFT,
+  color_der <- read INPUT_COLOR_RIGHT,
+  ...
+  multip_izq <- lift color_a_vel color_izq,
+  multip_der <- lift color_a_vel color_der,
+  \end{verbatim}
+  
+  Luego en el centro de la Figura está la lógica que cuenta las casas.
+  Primero se procesa la señal \texttt{distance} usando la función
+\texttt{hay\_casa} para crear una señal \texttt{viendo\_casa}
+que indica si actualmente hay una casa o no.
+
+  La señal \texttt{cambio} mantiene un estado que indica si la
+señal \texttt{viendo\_casa} cambia de valor, se usa para detectar
+cuando se comienza a ver una casa, y no contarla varias veces
+mientras se pasa frente a ella.
+  La señal \texttt{nueva\_casa} se forma combinando \texttt{hay\_casa}
+y \texttt{cambio} para detectar el comienzo del paso frente a una casa.
+  La señal \texttt{cuenta} mantiene la cuenta de veces
+que \texttt{nueva\_casa} toma el valor $1$, emitiendo la cantidad
+de casas que se detectaron.
+
+  Aplicando la función \texttt{velocidad\_casa} se verifica
+según la cuenta de casas, si el robot debe detenerse o continuar.
+
+  Todo ésto se puede ver en el código en las siguientes líneas:
+
+  \begin{verbatim}
+    distance <- read INPUT_DISTANCE,
+    ...
+    viendo_casa <- lift hay_casa distance,
+    cambio <- folds distinto 0 viendo_casa,
+    nueva_casa <- lift2 and viendo_casa cambio,
+    cuenta <- folds suma 0 nueva_casa,
+    velocidad <- lift velocidad_casa cuenta,
+  \end{verbatim}
+
+  Finalmente, utilizando la señal \texttt{velocidad}, \texttt{multip\_izq}
+  y \texttt{multip\_der}, se calcula la velocidad que deberá tener cada
+  motor, \texttt{speed\_left} y \texttt{speed\_right}, y se envía al
+  motor correspondiente.
+
+  \begin{verbatim}
+    speed_left <- lift2 multiplicar velocidad multip_izq,
+    speed_right <- lift2 multiplicar velocidad multip_der,
+
+    output MOTOR_IZQ speed_left,
+    output MOTOR_DER speed_right
+  \end{verbatim}
 
 %\section{Solución sin utilizar \frob}
 
