@@ -1,0 +1,74 @@
+\begin{verbatim}
+typedef int bool;
+#define true 1
+#define false 0
+
+#include "mbed.h"
+#include "hcsr04.h"
+#include "pwmEngine.h"
+#include "bh1750.h"
+
+const int INPUT_DISTANCE = 1;
+const int INPUT_COLOR_LEFT = 2;
+const int INPUT_COLOR_RIGHT = 3;
+const int OUTPUT_ENGINE_LEFT = 1;
+const int OUTPUT_ENGINE_RIGHT = 2;
+
+const int MIN_DISTANCE = 100;
+const int MIN_GREY = 50;
+
+bool hay_casa(int distance) {
+  return (d < MIN_DISTANCE);
+}
+
+int main() {
+  bool viendo_casa = false;
+  int cuenta = 0;
+
+  //Crear sensores de grises
+  I2C iic(p28, p27);
+  BH1750 gray_sensor_r(iic, BH1750_V_CHIP_ADDR);
+  BH1750 gray_sensor_l(iic, BH1750_G_CHIP_ADDR);
+
+  //Crear sensor de distancia
+  HCSR04 distance_sensor(p14, p15); //trig, echo
+
+  //Crear salida pwm hacia los motores
+  PWMEngine engine_left(p24);
+  PWMEngine engine_right(p25);
+
+  while (true) {
+    int distance = distance_sensor.read();
+
+    // Contar casas
+    bool hay_casa = hay_casa(distance);
+    if (hay_casa) {
+      if (!viendo_casa) {
+        viendo_casa = true;
+        cuenta += 1;
+      }
+    } else {
+      viendo_casa = false;
+    }
+
+    if (cuenta >= 5) {
+      // Detenerse al llegar a la ultima casa
+      engine_left.write(0);
+      engine_right.write(0);
+    } else {
+      // Seguir linea
+      int color_izq = gray_sensor_l.read();
+      int color_der = gray_sensor_r.read();
+      int vel_izq = 200;
+      int vel_der = 200;
+      if (color_izq < MIN_GREY) {
+        vel_izq = 100;
+      }
+      if (color_der < MIN_GREY) {
+        vel_der = 100;
+      }
+      engine_left.write(vel_izq);
+      engine_right.write(vel_der);
+    }
+}
+\end{verbatim}
