@@ -9,7 +9,7 @@ Noticias
 * Viernes 18-12-2015:
   - Defensa de proyecto.
 * Lunes 14-12-2015:
-  - Entrega de Informe final.
+  - Entrega de [Informe final](https://github.com/guillep19/frob/blob/master/report/Informe.pdf). 
 * Sábado 10-10-2015 - Domingo 13-12-2015:
   - Correcciones de Informe.
   - Presentación.
