@@ -2,7 +2,6 @@
 #include "lightSensor.h"
 #include "mbed.h"
 #include "FrobDefinitions.h"
-#include "serial.h"
 
 LightSensor::LightSensor(PinName sda, PinName scl,
                          int addr, char mode): iic(sda, scl) {
@@ -20,10 +19,6 @@ WORD LightSensor::read() {
   int status = iic.read(addr, buffer, 2);
   float result = 0;
   result = ((buffer[0]<<8)|buffer[1])/1.2;
-  //pc.printf("//////////////////////////////Status: %d, Light intensity: %.4f Lux\r\n", status, result);
-  //if (status != 0) {
-  //  return 255;
-  //}
   WORD value = (buffer[0] << 8) | buffer[1];
   return value;
 }

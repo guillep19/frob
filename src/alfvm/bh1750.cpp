@@ -1,6 +1,5 @@
 
 #include "bh1750.h"
-#include "serial.h"
  
 BH1750::BH1750 (PinName p_sda, PinName p_scl) : _i2c(p_sda, p_scl) {
     BH1750_addr = BH1750_G_CHIP_ADDR;
@@ -36,7 +35,6 @@ WORD BH1750::read() {
     float value = lux();
     int intvalue = (int)(value + 0.5);
     WORD ret = (WORD) intvalue;
-    //pc.printf("///////////////////////////// %.4f (%d) Lux\r\n", value, ret);
     return (WORD) intvalue;
 }
  

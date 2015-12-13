@@ -73,3 +73,51 @@ size_t GetFreeSize(void)
 
   return total;
 }
+
+void print_stack() {
+  //pc.printf("Stack: ");
+  WORD* p = (WORD*) stack;
+  if (p != sp) {
+    p++;
+    for (; p != sp; p++) {
+      //pc.printf("-> [%d] ", *p);
+    };
+    //pc.printf("-> [%d] -x", *sp);
+  } else {
+    //pc.printf("-x");
+  }
+  //pc.printf("\n");
+}
+
+void print_graph() {
+  WORD iter;
+  BYTE fwd_iter, fwd_count;
+  for (iter = 0; iter < 10; iter++) {
+    fwd_count = graph.inputs[iter].fwd_count;
+    if (fwd_count > 0) {
+      for (fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
+        //pc.printf("I %d -> S %d\n",
+        //          iter, graph.nodes[graph.inputs[iter].fwd[fwd_iter]].id);
+      }
+    }
+  }
+  //Print Signal Functions
+  for (iter = 0; iter < graph.count; iter++) {
+    fwd_count = graph.nodes[iter].fwd_count;
+    Node source = graph.nodes[iter];
+    for (fwd_iter = 0; fwd_iter < fwd_count; fwd_iter++) {
+      Node dest = graph.nodes[source.fwd[fwd_iter]];
+      BYTE fwd_place = source.fwd_place[fwd_iter];
+      //pc.printf("S %d -> S %d.%d (fun:%d)\n",
+                //source.id, dest.id, fwd_place, dest.function_loc);
+    }
+  }
+  //Print output functions
+  for (iter = 0; iter < 10; iter++) {
+    WORD source = graph.outputs[iter].source;
+    //if (source != -1) {
+      //pc.printf("S %d -> O %d\n",
+      //          graph.nodes[source].id, iter);
+    //}
+  }
+}
