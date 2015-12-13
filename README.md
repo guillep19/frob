@@ -6,8 +6,13 @@ Proyecto de grado - Guillermo Pacheco - Facultad de Ingeniería - UdelaR
 
 Noticias
 --------
-* Sábado 10-10-2015 - :
+* Viernes 18-12-2015:
+  - Defensa de proyecto.
+* Lunes 14-12-2015:
+  - Entrega de Informe final.
+* Sábado 10-10-2015 - Domingo 13-12-2015:
   - Correcciones de Informe.
+  - Presentación.
 * Domingo 05-10-2015:
   - Finalizo implementación de compilador en haskell.
 * Sábado 23-05-2015 a Domingo 24-05-2015:
