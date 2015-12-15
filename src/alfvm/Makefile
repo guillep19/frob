@@ -38,6 +38,7 @@ all: $(PROJECT).bin $(PROJECT).hex
 
 clean:
 	rm -f $(PROJECT).bin $(PROJECT).elf $(PROJECT).hex $(PROJECT).map $(PROJECT).lst $(OBJECTS) $(DEPS)
+	rm -f test test.o
 
 .s.o:
 	$(AS) $(CPU) -o $@ $<
