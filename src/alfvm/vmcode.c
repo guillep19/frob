@@ -1,4 +1,7 @@
-extern CODE code = {
+
+#include "vmcode.h"
+
+CODE code = {
   /*000:*/  t_push << 8,
   /*001:*/  2,
   /*002:*/  t_store << 8 | 0, //INPUT_COLOR_LEFT

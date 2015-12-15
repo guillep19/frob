@@ -1,142 +1,12 @@
-//#include <stdio.h>
-//#include <stdint.h>
-
 #include "mbed.h"
 #include "FrobDefinitions.h"
 #include "IOInterface.h"
 #include "graph.h"
 #include "debug.h"
-#include "vmcode.c"
+#include "vmcode.h"
 #include "globals.h"
 #include "functions.h"
-
-WORD globals[64]; //128 bytes
-//Total:1/2 kb (arduino nano tiene 2kb)
-
-//helper to call a function
-void call_function(WORD location, WORD return_ip) {
-  *++sp = fp; //store oldfp
-  *++sp = return_ip; //store oldip
-  fp = (WORD) (sp - stack); //create new frame
-  ip = (WORD*) code + location; //jump to function
-}
-//Functions
-void f_call() { //arg0, arg1, count ! oldfp, oldip
-  WORD fun_location = *ip;
-  WORD old_ip = (WORD) (++ip - (WORD*) code);
-  call_function(fun_location, old_ip);
-}
-void f_ret() {
-  WORD ret_value = *sp;
-  sp = stack + fp; //remove current frame
-  WORD return_index = *sp--; 
-  ip = (WORD*) code + return_index; //restore ip
-  if (return_index == 0) ip = 0; //to stop run_thread when 
-                                 //return ip is 0. HACK
-  fp = *sp--; //restore fp
-  aux = *sp--; //get count to pop arguments
-  sp -= aux; //remove arguments
-  *++sp = ret_value; //push result to return
-}
-void f_load_param() {
-  *++sp = stack[fp - inm - 3]; //3 because of count,oldfp,oldip
-}
-//FRP combinators
-void f_lift() {
-    //lift inm=id word=source word=function_loc
-    WORD id = inm;
-    WORD source = *ip++;
-    WORD function_loc = *ip++;
-    WORD source_pos = find_node(graph, source);
-    if ((source_pos == -1)||(find_node(graph, id) != -1)) {
-      return;
-    }
-    WORD dest_pos = create_node(graph, id, function_loc, 1);
-    link_nodes(graph, source_pos, dest_pos, 0);
-  }
-  void f_lift2() {
-    WORD id = inm;
-    WORD s1 = *ip++;
-    WORD s2 = *ip++;
-    WORD function_loc = *ip++;
-    WORD s1_pos = find_node(graph, s1);
-    WORD s2_pos = find_node(graph, s2);
-    if ((s1_pos == -1)||(s2_pos == -1)) {
-      return;
-    }
-    if (find_node(graph, id) != -1) {
-      return;
-    }
-    WORD dest_pos = create_node(graph, id, function_loc, 2);
-    link_nodes(graph, s1_pos, dest_pos, 0);
-    link_nodes(graph, s2_pos, dest_pos, 1);
-  }
-  void f_folds() {
-    BYTE id = inm;
-    BYTE source = *ip++;
-    WORD acum = globals[*ip++];
-    WORD function_loc = *ip++;
-    WORD source_pos = find_node(graph, source);
-    if ((source_pos == -1) || (find_node(graph, id) != -1)) {
-      return;
-    }
-    WORD node_pos = create_fold_node(graph, id, function_loc, acum);
-    link_nodes(graph, source_pos, node_pos, 0);
-}
-//IO
-void f_read() {
-  //read inm=id word=input
-  WORD id = inm;
-  WORD input = globals[*ip++];
-  //add graph node
-  WORD node_pos = create_node(graph, id, -1, 1);
-  //link input to node
-  link_input(graph, input, node_pos);
-}
-void f_write() {
-  //write inm=id word=output
-  WORD id = inm;
-  WORD output = *ip++;
-  WORD node_pos = find_node(graph, id);
-  if (node_pos == -1) {
-    return;
-  }
-  link_output(graph, output, id);
-}
-
-//Jumps
-void f_jump() {
-  aux = *ip;
-  ip = (WORD*) code + aux;
-}
-void f_jump_false() {
-  aux = *ip++;
-  if (!*sp--) ip = (WORD*) code + aux;
-}
-void f_cmp_eq() {
-  aux = *sp--;
-  if (aux == *sp--) *++sp = 1; else *++sp = 0;
-}
-void f_cmp_neq() {
-  aux = *sp--;
-  if (aux != *sp--) *++sp = 1; else *++sp = 0;
-}
-void f_cmp_gt() {
-  aux = *sp--;
-  if (*sp-- > aux) *++sp = 1; else *++sp = 0;
-}
-void f_cmp_lt() {
-  aux = *sp--;
-  if (*sp-- < aux) *++sp = 1; else *++sp = 0;
-}
-
-//Memory operations
-void f_store() {
-  globals[inm] = *sp--;
-}
-void f_load() {
-  *++sp = globals[inm];
-}
+#include "frp.h"
 
 void (*functions[])() = {
   f_halt,
@@ -155,8 +25,6 @@ void (*functions[])() = {
   f_op_not,
   //Stack operations
   f_push, f_pop, f_dup,
-  // Memory operations
-  f_store, f_load
 };
 
 void run_thread() {

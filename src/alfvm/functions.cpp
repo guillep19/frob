@@ -1,5 +1,6 @@
 #include "functions.h"
 #include "globals.h"
+#include "vmcode.h"
 
 void f_halt() {
   ip = 0;
@@ -44,4 +45,57 @@ void f_pop() {
 void f_dup() {
   sp++;
   *sp = *(sp-1);
+}
+//helper to call a function
+void call_function(WORD location, WORD return_ip) {
+  *++sp = fp; //store oldfp
+  *++sp = return_ip; //store oldip
+  fp = (WORD) (sp - stack); //create new frame
+  ip = (WORD*) code + location; //jump to function
+}
+//Functions
+void f_call() { //arg0, arg1, count ! oldfp, oldip
+  WORD fun_location = *ip;
+  WORD old_ip = (WORD) (++ip - (WORD*) code);
+  call_function(fun_location, old_ip);
+}
+void f_ret() {
+  WORD ret_value = *sp;
+  sp = stack + fp; //remove current frame
+  WORD return_index = *sp--; 
+  ip = (WORD*) code + return_index; //restore ip
+  if (return_index == 0) ip = 0; //to stop run_thread //return ip is 0.
+  fp = *sp--; //restore fp
+  aux = *sp--; //get count to pop arguments
+  sp -= aux; //remove arguments
+  *++sp = ret_value; //push result to return
+}
+void f_load_param() {
+  *++sp = stack[fp - inm - 3]; //3 because of count,oldfp,oldip
+}
+
+//Jumps
+void f_jump() {
+  aux = *ip;
+  ip = (WORD*) code + aux;
+}
+void f_jump_false() {
+  aux = *ip++;
+  if (!*sp--) ip = (WORD*) code + aux;
+}
+void f_cmp_eq() {
+  aux = *sp--;
+  if (aux == *sp--) *++sp = 1; else *++sp = 0;
+}
+void f_cmp_neq() {
+  aux = *sp--;
+  if (aux != *sp--) *++sp = 1; else *++sp = 0;
+}
+void f_cmp_gt() {
+  aux = *sp--;
+  if (*sp-- > aux) *++sp = 1; else *++sp = 0;
+}
+void f_cmp_lt() {
+  aux = *sp--;
+  if (*sp-- < aux) *++sp = 1; else *++sp = 0;
 }

@@ -1,7 +1,7 @@
 
 #include "globals.h"
 
-WORD stack[256] = {0}; //256 bytes
+WORD stack[256]; //256 bytes
 WORD* sp = stack;
 WORD fp = 0;
 WORD* ip;
@@ -12,3 +12,5 @@ WORD aux = 0;
 WORD aux2 = 0;
 
 Graph graph;
+
+WORD globals[64]; //128 bytes

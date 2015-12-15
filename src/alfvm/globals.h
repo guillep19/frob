@@ -16,4 +16,9 @@ extern WORD aux;
 extern WORD aux2;
 extern Graph graph;
 
+//TODO: Borrar
+extern WORD globals[64];
+
+//Total:1/2 kb (arduino nano tiene 2kb)
+
 #endif /* _GLOBALS_H_ */
