@@ -62,9 +62,41 @@ void test_3() {
   assert((sp-stack) == 1);
 }
 
+// Test nested function calls
+void test_4() {
+  sp = stack;
+  printStack();
+  call_function(99, 0);
+  printStack();
+  assert((sp-stack) == 2);
+  call_function(99, 1);
+  printStack();
+  assert((sp-stack) == 4);
+  printStack();
+  call_function(99, 2);
+  printStack();
+  *++sp = 19;
+  printStack();
+  assert((sp-stack) == 7);
+  printf("returning\n");
+  f_ret();
+  printStack();
+  assert((ip-code) == 2);
+  f_ret();
+  printStack();
+  assert((ip-code) == 1);
+  f_ret();
+  printStack();
+  assert(ip == 0);
+  assert(*sp == 19);
+  assert((sp-stack) == 1);
+  printStack();
+}
+
 int main() {
   test_1();
   test_2();
   test_3();
+  test_4();
   return 0;
 }
