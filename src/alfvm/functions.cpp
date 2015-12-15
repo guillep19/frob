@@ -61,17 +61,19 @@ void f_call() { //arg0, arg1, count ! oldfp, oldip
 }
 void f_ret() {
   WORD ret_value = *sp;
-  sp = stack + fp; //remove current frame
+  sp = stack + fp; //go to beggining of current frame
+  //restore ip
   WORD return_index = *sp--; 
   ip = (WORD*) code + return_index; //restore ip
   if (return_index == 0) ip = 0; //to stop run_thread //return ip is 0.
-  fp = *sp--; //restore fp
-  aux = *sp--; //get count to pop arguments
-  sp -= aux; //remove arguments
+  //restore fp
+  fp = *sp--;
+  // go to outer frame
+  sp = stack + fp;
   *++sp = ret_value; //push result to return
 }
 void f_load_param() {
-  *++sp = stack[fp - inm - 3]; //3 because of count,oldfp,oldip
+  *++sp = stack[fp - inm - 2]; // 2 because of oldfp,oldip
 }
 
 //Jumps

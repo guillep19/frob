@@ -1,9 +1,9 @@
 #include "IOInterface.h"
 #include "mbed.h"
-#include "hcsr04.h"
-#include "pwmEngine.h"
-#include "frobTimer.h"
-#include "bh1750.h"
+#include "IO/hcsr04.h"
+#include "IO/pwmEngine.h"
+#include "IO/frobTimer.h"
+#include "IO/bh1750.h"
 
 #define FROB_LED1 0
 DigitalOut led(LED1);
