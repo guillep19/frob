@@ -16,4 +16,6 @@ extern WORD aux;
 extern WORD aux2;
 extern Graph graph;
 
+extern void (*functions[])();
+
 #endif /* _GLOBALS_H_ */
