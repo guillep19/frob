@@ -79,6 +79,7 @@ void _update_signal(BYTE id) {
   if (function_loc == -1) { //no function (id)
     graph.nodes[id].value = graph.nodes[id].arg[0];
   } else {
+    //TODO REMOVE ARG_COUNT!!! FUCKING HEISENBUG!!!!
     //push args and arg_count
     BYTE arg_count = graph.nodes[id].arg_count;
 
@@ -94,7 +95,7 @@ void _update_signal(BYTE id) {
 
     if (graph.nodes[id].is_fold) arg_count++; //ONLY FOR FOLD
 
-    *++sp = (WORD) arg_count;
+    //*++sp = (WORD) arg_count;
     call_function(function_loc, 0);
     run_thread();
     graph.nodes[id].value = *sp--;

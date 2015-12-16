@@ -10,24 +10,17 @@ INPUT_COLOR_RIGHT = 3
 OUTPUT_ENGINE_LEFT = 1
 OUTPUT_ENGINE_RIGHT = 2
 
-# Constantes
-# Al recibir un valor de distancia menor a MIN_DISTANCE, se considera
-# que se esta frente a una casa.
-MIN_DISTANCE = 100
 # Los valores del sensor de gris menores e este valor se consideran BLANCO
-MIN_GREY = 50 
 
-MAX_SPEED = 300 # Variar la amplitud?
-MIN_SPEED = 150
+hay_casa d = if (d < 30) then 1 else 0
+#velocidad_casa num = if (num >= 5) then 0 else 50
+color_a_vel gris = 200 
+#if (gris > 1) then 200 else 0
 
-hay_casa d = if (d < MIN_DISTANCE) then 1 else 0
-velocidad_casa num = if (num >= 5) then 0 else 100
-color_a_vel gris = if (gris > MIN_GREY) then 2 else 1
-
-suma a b = (a + b)
+#suma a b = (a + b)
 multiplicar a b = (a * b)
-and_ a b = if (a and b) then 1 else 0
-distinto a b = if (a /= b) then 1 else 0
+#and_ a b = if (a and b) then 1 else 0
+#distinto a b = if (a /= b) then 1 else 0
 
 do {
     distance <- read INPUT_DISTANCE
@@ -35,17 +28,17 @@ do {
     color_der <- read INPUT_COLOR_RIGHT
 
     viendo_casa <- lift hay_casa distance
-    cambio <- folds distinto 0 viendo_casa
-    nueva_casa <- lift2 and_ viendo_casa cambio
-    cuenta <- folds suma 0 nueva_casa
-    velocidad <- lift velocidad_casa cuenta
+    #cambio <- folds distinto 0 viendo_casa
+    #nueva_casa <- lift2 and_ viendo_casa cambio
+    #cuenta <- folds suma 0 nueva_casa
+    #velocidad <- lift velocidad_casa cuenta
 
     multip_izq <- lift color_a_vel color_izq
     multip_der <- lift color_a_vel color_der
 
-    speed_left <- lift2 multiplicar velocidad multip_izq
-    speed_right <- lift2 multiplicar velocidad multip_der
+    speed_left <- lift2 multiplicar viendo_casa multip_izq
+    speed_right <- lift2 multiplicar viendo_casa multip_der
 
-    output OUTPUT_ENGINE_LEFT speed_left
-    output OUTPUT_ENGINE_RIGHT speed_right
+    output OUTPUT_ENGINE_LEFT multip_izq
+    output OUTPUT_ENGINE_RIGHT multip_der
 }

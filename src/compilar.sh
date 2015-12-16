@@ -23,3 +23,6 @@ make
 mv mbed_alfvm.bin ../mbed_alfvm.bin
 make clean
 cd ..
+
+rm /media/guillep/MBED/mbed_alfvm.bin
+mv mbed_alfvm.bin /media/guillep/MBED/mbed_alfvm.bin
