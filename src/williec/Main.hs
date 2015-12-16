@@ -12,6 +12,7 @@ import UU.Pretty
 import System.Environment
 import System.IO
 import Data.Char
+import Text.Printf
 
 import Lexer
 import Parser
@@ -43,9 +44,9 @@ compile source dest
        putStrLn "-----------------"
        let prettyBC = printBC output
        writeFile dest prettyBC
-       --let destBin = dest ++ ".bin"
-       --    hexBC = printBinBC output
-       --writeFile destBin hexBC
+       let destBin = dest ++ ".bin"
+           hexBC = foldr (++) "" (map (printf "0x%04x\n") (printBinBC output))
+       writeFile destBin hexBC
 
 runParser :: [Token] -> IO Root
 runParser = parseIOMessage show pRoot
