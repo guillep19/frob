@@ -22,7 +22,7 @@ MIN_SPEED = 150
 
 hay_casa d = if (d < MIN_DISTANCE) then 1 else 0
 velocidad_casa num = if (num >= 5) then 0 else 100
-color_a_vel gris = if (gris > MIN_GREY) then 1 else 1/2
+color_a_vel gris = if (gris > MIN_GREY) then 2 else 1
 
 suma a b = (a + b)
 multiplicar a b = (a * b)
