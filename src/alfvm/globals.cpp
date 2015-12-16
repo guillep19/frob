@@ -12,5 +12,3 @@ WORD aux = 0;
 WORD aux2 = 0;
 
 Graph graph;
-
-WORD globals[64]; //128 bytes

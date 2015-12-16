@@ -36,9 +36,6 @@
 #define t_push       0x16 //*++sp = inmediate (0..255)
 #define t_pop        0x17 //sp--
 #define t_dup        0x18 //sp--
-//Memory operations
-#define t_store      0x19 //globals[inm] = *sp--
-#define t_load       0x1a //*++sp = globals[inm]
 
 typedef uint8_t BYTE;
 typedef int16_t WORD;
