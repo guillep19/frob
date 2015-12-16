@@ -5,6 +5,8 @@
 #include "globals.h"
 #include "vmcode.h"
 #include "functions.h"
+#include "frp.h"
+#include "graph.h"
 
 #include "assert.h"
 
@@ -47,7 +49,6 @@ void test_3() {
   // Load first argument:
   inm = 0;
   f_load_param();
-  printStack();
   assert(*sp == 19);
   assert((sp-stack) == 4);
   // Put the result in the stack:
@@ -65,32 +66,69 @@ void test_3() {
 // Test nested function calls
 void test_4() {
   sp = stack;
-  printStack();
   call_function(99, 0);
-  printStack();
   assert((sp-stack) == 2);
   call_function(99, 1);
-  printStack();
   assert((sp-stack) == 4);
-  printStack();
   call_function(99, 2);
-  printStack();
   *++sp = 19;
-  printStack();
   assert((sp-stack) == 7);
-  printf("returning\n");
   f_ret();
-  printStack();
   assert((ip-code) == 2);
   f_ret();
-  printStack();
   assert((ip-code) == 1);
   f_ret();
-  printStack();
   assert(ip == 0);
   assert(*sp == 19);
   assert((sp-stack) == 1);
-  printStack();
+}
+
+void test_5() {
+  // Test read
+  sp = stack;
+  graph = create_graph();
+  *++sp = 5; // Input 5
+  inm = 0; // Signal 0
+  assert((sp-stack) == 1);
+  f_read();
+  assert((sp-stack) == 0);
+  assert(graph_size(graph) == 1);
+  assert(find_node(graph, 0) != -1);
+  assert(find_node(graph, 0) == 0);
+  // Test lift
+  // lift id source function
+  inm = 1;
+  CODE test5code = {0, 19}; //source, function
+  ip = (WORD*) test5code;
+  f_lift();
+  assert(graph_size(graph) == 2);
+  assert(find_node(graph, 1) != -1);
+  assert(find_node(graph, 1) == 1);
+  // Test lift2:
+  // lift2 id source1 source2 function
+  inm = 2;
+  CODE lift2args = {0, 1, 20};
+  ip = (WORD*) lift2args;
+  f_lift2();
+  assert(graph_size(graph) == 3);
+  assert(find_node(graph, 2) != -1);
+  assert(find_node(graph, 2) == 2);
+  // Test folds:
+  // folds id, src f (start value in stack)
+  *++sp = 10;
+  inm = 3;
+  CODE folds_args = {2, 29};
+  ip = (WORD*) folds_args;
+  f_folds();
+  assert(graph_size(graph) == 4);
+  assert(find_node(graph, 3) != -1);
+  assert(find_node(graph, 3) == 3);
+  // Test output:
+  // output id (stack arg)
+  *++sp = 1;
+  inm = 2;
+  f_write();
+  assert(graph_size(graph) == 4);
 }
 
 int main() {

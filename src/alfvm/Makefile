@@ -77,5 +77,5 @@ DEPS = $(OBJECTS:.o=.d) $(SYS_OBJECTS:.o=.d)
 -include $(DEPS)
 
 test:
-	g++ vmcode.c functions.cpp globals.cpp test.cpp -o test
+	g++ vmcode.c functions.cpp globals.cpp graph.cpp frp.cpp test.cpp -o test
 	./test

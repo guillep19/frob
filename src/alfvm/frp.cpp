@@ -31,10 +31,11 @@ void f_lift2() {
   link_nodes(graph, s1_pos, dest_pos, 0);
   link_nodes(graph, s2_pos, dest_pos, 1);
 }
+//folds id, src f (start value in stack)
 void f_folds() {
   BYTE id = inm;
   BYTE source = *ip++;
-  WORD acum = globals[*ip++];
+  WORD acum = *sp--;
   WORD function_loc = *ip++;
   WORD source_pos = find_node(graph, source);
   if ((source_pos == -1) || (find_node(graph, id) != -1)) {
@@ -45,18 +46,18 @@ void f_folds() {
 }
 //IO
 void f_read() {
-  //read inm=id word=input
+  //read inm=id (input in stack)
   WORD id = inm;
-  WORD input = globals[*ip++];
+  WORD input = *sp--;
   //add graph node
   WORD node_pos = create_node(graph, id, -1, 1);
   //link input to node
   link_input(graph, input, node_pos);
 }
 void f_write() {
-  //write inm=id word=output
+  //write inm=id (output in stack)
   WORD id = inm;
-  WORD output = *ip++;
+  WORD output = *sp--;
   WORD node_pos = find_node(graph, id);
   if (node_pos == -1) {
     return;

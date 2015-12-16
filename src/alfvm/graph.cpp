@@ -21,6 +21,10 @@ Graph create_graph() {
   return graph;
 }
 
+WORD graph_size(Graph &graph) {
+  return graph.count;
+}
+
 /*
  * Returns the index of the node id in the graph.
  * If the id does not exist, it returns -1.

@@ -38,6 +38,8 @@ struct Graph {
 
 Graph create_graph();
 
+WORD graph_size(Graph &graph);
+
 WORD find_node(Graph &graph, BYTE id);
 
 WORD create_node(Graph &graph, BYTE id, WORD function_loc, BYTE arg_count);
