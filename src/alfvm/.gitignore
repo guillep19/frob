@@ -4,3 +4,4 @@ mbed_alfvm.elf
 mbed_alfvm.hex
 mbed_alfvm.map
 test
+test_code
